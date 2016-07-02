@@ -1,0 +1,15 @@
+{
+  "name": "asp-phaser-generator",
+  "version": "1.0.0",
+  "description": "Convert from ASP to Phaser",
+  "main": "index.js",
+  "scripts": {
+    "test": "tape test/*.js | colortape"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "colortape": "^0.1.1",
+    "tape": "^4.6.0"
+  }
+}
