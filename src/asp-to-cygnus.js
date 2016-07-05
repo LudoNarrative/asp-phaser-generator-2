@@ -1,7 +1,5 @@
 /*
-  This file translates the ResGen ASP logic into Rensa-flavored JSON.
-  Useful for visualizing the generated ASP games, as well as for translating
-  the generated games into Phaser code.
+  This file translates the generated ASP logic into Rensa-flavored JSON. Useful for visualizing the generated ASP games, as well as for translating the generated games into Phaser code.
 */
 
 // X(Y). --> Y is_a X.
@@ -46,7 +44,7 @@ function translateInitialize(str){
     var x = b.substring(0,hypStart2);
     var y = b.substring(hypStart2+1,hypMid);
     var z = b.substring(hypMid+1,hypEnd);
-    return {"l":[y], "relation":"has_"+x, "r":[z]};
+    return {"l":[y], "relation":"set_"+x, "r":[z]};
   }
   return null;
 }

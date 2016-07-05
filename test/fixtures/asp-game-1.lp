@@ -1,5 +1,5 @@
 resource(r1).
-initialize(set(r1, low)).
+initialize(set_value(r1, low)).
 
 precondition(le(r1, med), o1).
 result(o1, increase(r1, low)).

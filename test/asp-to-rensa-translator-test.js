@@ -1,7 +1,8 @@
 var test = require('tape');
 var fs = require('fs');
-var translateAsp = require('../src/asp-to-rensa-translator');
-var aspGameLines = fs.readFileSync('./test/fixtures/asp-game-1.lp', 'utf8').split('\n');
+var translateAsp = require('../src/asp-to-cygnus');
+var aspGameLines = fs.readFileSync('./fixtures/asp-game-1.lp', 'utf8').split('\n');
+var initialPhaserFile = fs.readFileSync('./fixtures/initial-phaser-file.json', 'utf8');
 
 test('given ASP game array, it generates a list of assertions', function (t) {
   var output = translateAsp(aspGameLines);

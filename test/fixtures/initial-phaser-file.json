@@ -1,0 +1,29 @@
+[
+  {
+    "l":["low"],
+    "relation":["is_a"],
+    "r":["variable"],
+    "value":1
+  },
+  {
+    "l":["med"],
+    "relation":["is_a"],
+    "r":["variable"],
+    "value":10
+  },
+  {
+    "l":["high"],
+    "relation":["is_a"],
+    "r":["variable"],
+    "value":100
+  },
+  {
+    "l":["prog"],
+    "relation": "is_a",
+    "r":["program"],
+    "setup": {},
+    "create":{"vars":[],"sprites":[],"buttons":[]},
+    "update":{"functions":[],"outcomes":[]},
+    "render":{}
+  }
+]
