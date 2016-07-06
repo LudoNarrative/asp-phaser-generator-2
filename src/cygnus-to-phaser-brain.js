@@ -13,10 +13,12 @@ exports.cygnusToPhaser = function(initialBrain,cygnusBrain){
   var finalBrain = initialBrain.clone();
 
   // Find the ID of the assertion containing the program data.
+  // For now, we assume only one program.
   var pID = finalBrain.getAssertionsWith({"relation":"is_a","r":["program"]})[0];
 
   // Use the information from the cygnusBrain to edit this assertion.
   finalBrain = modifyProgram(pID, initialBrain, cygnusBrain);
+
   return finalBrain;
 };
 
@@ -38,10 +40,11 @@ function modifyProgram(pID, initialBrain, cygnusBrain){
     if (isVariableTypeAssertion(cygnusBrain.assertions[i])){
       tempVarTypes[cygnusBrain.assertions[i]["l"]] = cygnusBrain.assertions[i]["r"];
     }
-    else if (isSetValueAssertion(cygnusBrain.assertions[i])){
+    else if (isSetValueAssertion(cygnusBrain.assertions[i])){      
       tempVarValues[cygnusBrain.assertions[i]["l"]] = cygnusBrain.assertions[i]["r"];
     }
     else if (exports.isConditionalAssertion(cygnusBrain.assertions[i])){
+      // TODO add local var names for cygnusBrain.assertions[i] etc. (readability)
       var newAssertion = cygnusBrain.assertions[i].clone();
       var newLeft = [];
       var newRight = [];
@@ -82,15 +85,17 @@ function modifyProgram(pID, initialBrain, cygnusBrain){
     // TODO other types of assertions
   }
 
-  // Push all known variables (with/without values) into the newCreate vars array.
+  // Push all known variables (with/without values) into into newBrain's assertions.
   for (var k in tempVarTypes) {
     if (tempVarTypes.hasOwnProperty(k)) {
       // If we know what the value of the variable is,
       if (tempVarValues.hasOwnProperty(k)){
-        newProgram["create"]["vars"].push({"l":[k], "relation":"is_a", "r":["variable"],"variableType":tempVarTypes[k],"value":tempVarValues[k]});
+        newBrain.addAssertion({"l":[k], "relation":"is_a", "r":["variable"],"variableType":tempVarTypes[k],"value":tempVarValues[k]});
+        // newProgram["create"]["vars"].push({"l":[k], "relation":"is_a", "r":["variable"],"variableType":tempVarTypes[k],"value":tempVarValues[k]});
       }
       else{
-        newProgram["create"]["vars"].push({"l":[k], "relation":"is_a", "r":["variable"],"variableType":tempVarTypes[k]});
+        newBrain.addAssertion({"l":[k], "relation":"is_a", "r":["variable"],"variableType":tempVarTypes[k]});
+        // newProgram["create"]["vars"].push({"l":[k], "relation":"is_a", "r":["variable"],"variableType":tempVarTypes[k]});
       }
     }
   }

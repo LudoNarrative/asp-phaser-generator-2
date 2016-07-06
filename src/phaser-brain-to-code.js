@@ -7,32 +7,36 @@ var ctp = require('./cygnus-to-phaser-brain');
 // Output: Phaser program (string).
 exports.writePhaserProgram = function(brain){
   var programText = "";
+  // Output variable initializations first.
   for (var i in brain.assertions){
     /* VARIABLE INSTANTIATIONS */
     if (ctp.isVariableAssertion(brain.assertions[i])){
-      programText += translateVariableAssertion(brain.assertions[i]);
+      programText += translateVariableAssertion(brain, brain.assertions[i]);
     }
+  }
+  // Now write code related to the program assertion.
+  for (var j in brain.assertions){
     /* WRITING A PROGRAM FROM A PROGRAM ASSERTION CONTAINING PHASER ABSTRACT SYNTAX */
     // We assume, for now, there is only one "program" assertion.
-    else if (brain.assertions[i]["relation"]=="is_a" && brain.assertions[i]["r"].indexOf("program")>=0){
+    if (brain.assertions[j]["relation"]=="is_a" && brain.assertions[j]["r"].indexOf("program")>=0){
       // For each function property specified in the object (e.g. "setup"),
-      for (var p in brain.assertions[i]) {
-        if (brain.assertions[i].hasOwnProperty(p) && typeof brain.assertions[i][p]!=="function") {
+      for (var p in brain.assertions[j]) {
+        if (brain.assertions[j].hasOwnProperty(p) && typeof brain.assertions[j][p]!=="function") {
           if (p!="l" && p!="relation" && p!="r"){
             // Write the content for that function.
             programText += "function " + p + "{";
 
             // For each content property specified in the function (e.g. "vars"),
-            for (var c in brain.assertions[i][p]) {
-              if (brain.assertions[i][p].hasOwnProperty(c)) {
+            for (var c in brain.assertions[j][p]) {
+              if (brain.assertions[j][p].hasOwnProperty(c)) {
                 // For each assertion in the list of assertions,
-                for (var a in brain.assertions[i][p][c]){
+                for (var a in brain.assertions[j][p][c]){
                   // Declare / change value of variables.
-                  if (ctp.isVariableAssertion(brain.assertions[i][p][c][a])){
-                    programText += "\n\t" + translateVariableAssertion(brain.assertions[i][p][c][a]);
+                  if (ctp.isVariableAssertion(brain.assertions[j][p][c][a])){
+                    programText += "\n\t" + translateVariableAssertion(brain, brain.assertions[j][p][c][a]);
                   }
-                  else if (ctp.isConditionalAssertion(brain.assertions[i][p][c][a])){
-                    programText += "\n\t" + translateConditionalAssertion(brain.assertions[i][p][c][a]);
+                  else if (ctp.isConditionalAssertion(brain.assertions[j][p][c][a])){
+                    programText += "\n\t" + translateConditionalAssertion(brain.assertions[j][p][c][a]);
                   }
                 }
               }
@@ -48,16 +52,30 @@ exports.writePhaserProgram = function(brain){
 };
 
 
-
+// Input: assertion to convert ("a"), brain that contains that assertion ("b")
 // Convert an assertion containing a variable declaration to string.
-var translateVariableAssertion = function(a){
+// We're assuming here, like in most other places, that there is only one
+// element in the list.
+var translateVariableAssertion = function(b, a){
   var str="";
-  str += "var "+a["l"];
-  // Set variable equal to value, if specified.
-  if (a.hasOwnProperty("value")){
-    str += " = "+a["value"];
+  // If this is an attribute (e.g. "e1.health")
+  if (a["l"][0].indexOf(".")>=0){
+    // Make sure there is a value defined (for e.g. "e1.health"),
+    // and also make sure that e1 is a defined variable.
+    var parent = a["l"][0].substring(0,a["l"][0].indexOf("."))
+    if (a.hasOwnProperty("value") && b.getAssertionsWith({"l":[parent],"relation":"is_a","r":["variable"]}).length>0){
+      str += a["l"][0]+" = "+a["value"]+";\n";
+    }
   }
-  str += ";\n";
+  // If this isn't an attribute (e.g. "e1")
+  else{
+    str += "var "+a["l"][0];
+    // Set variable equal to value, if specified.
+    if (a.hasOwnProperty("value")){
+      str += " = "+a["value"];
+    }
+    str += ";\n";
+  }
   return str;
 }
 
@@ -94,7 +112,7 @@ var translateConditionalAssertion = function(a){
     str+=a["l"][i]["r"];
 
     if (i <a["l"].length-1){
-      str+=" " + a["l"][i+1]["logicalOp"];
+      str+=" " + a["l"][i+1]["logicalOp"] + " ";
     }
   }
   str+="){\n";
