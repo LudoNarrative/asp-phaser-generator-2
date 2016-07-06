@@ -19,7 +19,7 @@ exports.writePhaserProgram = function(brain){
     /* WRITING A PROGRAM FROM A PROGRAM ASSERTION CONTAINING PHASER ABSTRACT SYNTAX */
     // We assume, for now, there is only one "program" assertion.
     if (brain.assertions[j]["relation"]=="is_a" && brain.assertions[j]["r"].indexOf("program")>=0){
-      // For each function property specified in the object (e.g. "setup"),
+      // For each function property specified in the object (e.g. "create"),
       for (var p in brain.assertions[j]) {
         if (brain.assertions[j].hasOwnProperty(p) && typeof brain.assertions[j][p]!=="function") {
           if (p!="l" && p!="relation" && p!="r"){
@@ -37,6 +37,9 @@ exports.writePhaserProgram = function(brain){
                   }
                   else if (ctp.isConditionalAssertion(brain.assertions[j][p][c][a])){
                     programText += "\n\t" + translateConditionalAssertion(brain.assertions[j][p][c][a]);
+                  }
+                  else if (ctp.isRelationType(brain.assertions[j][p][c][a], "has_sprite")){
+                    programText += "\n\t" + translateHasSpriteAssertion(brain, brain.assertions[j][p][c][a])
                   }
                 }
               }
@@ -126,5 +129,24 @@ var translateConditionalAssertion = function(a){
     }
   }
   str+="}\n"
+  return str;
+};
+
+// Input: b is the full brain, a is the assertion to translate.
+// Example:
+// > player has_sprite sprite1
+// > sprite1 is_a sprite with image: someImageName
+// > game.load.image('"'+player+'"', 'sprites/' + someImageName);
+var translateHasSpriteAssertion=function(b, a){
+  var str = "";
+
+  // Find sprite image name.
+  var spriteImgID = b.getAssertionsWith({"l":[a["r"][0]],"relation":"is_a","r":["sprite"]})[0];
+
+  // If the image name exists, add the appropriate preload message for the sprite.
+  if (b.assertions[spriteImgID]["image"]){
+    var img = b.assertions[spriteImgID]["image"];
+    str+= 'game.load.image("' + a["r"][0] + '", "sprites/'+img+'");\n'
+  }
   return str;
 }

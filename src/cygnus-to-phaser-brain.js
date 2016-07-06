@@ -10,23 +10,56 @@ Output: Cygnus input translated into Phaser abstract syntax,
         merged with initial Phaser content (brain).
 */
 exports.cygnusToPhaser = function(initialBrain,cygnusBrain){
+  // Make a clone of the initial brain.
   var finalBrain = initialBrain.clone();
 
   // Find the ID of the assertion containing the program data.
   // For now, we assume only one program.
+  // This ID should be zero.
   var pID = finalBrain.getAssertionsWith({"relation":"is_a","r":["program"]})[0];
 
-  // Use the information from the cygnusBrain to edit this assertion.
-  finalBrain = modifyProgram(pID, initialBrain, cygnusBrain);
+  // Use the information from the cygnusBrain to edit the final brain.
+  finalBrain = mergeInitialWithCygnus(pID, finalBrain, cygnusBrain);
+
+  // Add preload information.
+  finalBrain = updatePreload(pID, finalBrain);
 
   return finalBrain;
 };
 
+// Add preload information based on any "has_sprite" assertions.
+// e.g. player has_sprite sprite should be an assertion in preload.
+var updatePreload=function(pID, brain){
+  var newBrain = brain.clone();
+
+  // newProgram will contain any existing assertions, plus any we modify.
+  var newProgram = JSON.parse(JSON.stringify(brain.assertions[pID]));
+
+  // For each assertion in the brain,
+  for (var i in brain.assertions){
+    // If it's a has_sprite assertion,
+    if (exports.isRelationType(brain.assertions[i],"has_sprite")){
+      // Add assertion to ["preload"]["images"]
+      newProgram["preload"]["images"].push(brain.assertions[i]);
+
+      // Remove this assertion from the brain.
+      delete newBrain.assertions[i];
+    }
+  }
+  // Update the program assertion.
+  newBrain.assertions[pID] = newProgram;
+
+  return newBrain;
+}
+
+
 // Modify the contents of the create function inside the program data assertion.
 // For now, we assume all variable setting happens in create.
 // We're also assuming that any old assertions won't be repeated.
-function modifyProgram(pID, initialBrain, cygnusBrain){
+var mergeInitialWithCygnus = function(pID, initialBrain, cygnusBrain){
+  // Make a clone of the initial brain.
   var newBrain = initialBrain.clone();
+
   // newProgram will contain any existing assertions, plus any we gain from cygnusBrain.
   var newProgram = initialBrain.assertions[pID].clone();
 
@@ -40,7 +73,7 @@ function modifyProgram(pID, initialBrain, cygnusBrain){
     if (isVariableTypeAssertion(cygnusBrain.assertions[i])){
       tempVarTypes[cygnusBrain.assertions[i]["l"]] = cygnusBrain.assertions[i]["r"];
     }
-    else if (isSetValueAssertion(cygnusBrain.assertions[i])){      
+    else if (isSetValueAssertion(cygnusBrain.assertions[i])){
       tempVarValues[cygnusBrain.assertions[i]["l"]] = cygnusBrain.assertions[i]["r"];
     }
     else if (exports.isConditionalAssertion(cygnusBrain.assertions[i])){
@@ -115,12 +148,16 @@ var isVariableTypeAssertion=function(a){
   return a["relation"]=="is_a" && (a["r"].indexOf("resource")>=0 || a["r"].indexOf("entity")>=0);
 };
 
+exports.isRelationType=function(a,relationType){
+  return a["relation"]==relationType;
+};
+
 // Check if an assertion is setting the value of one or more concepts.
 var isSetValueAssertion=function(a){
-  return a["relation"]=="set_value";
+  return exports.isRelationType(a,"set_value");
 };
 
 // Check if an assertion is a conditional.
 exports.isConditionalAssertion = function(a){
-  return a["relation"]=="causes";
+  return exports.isRelationType(a,"causes");
 }

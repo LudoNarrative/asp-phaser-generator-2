@@ -2,6 +2,7 @@ resource(r1).
 initialize(set(r1, low)).
 
 entity(e1).
+
 resource(health(e1)).
 initialize(set(health(e1), 100)).
 
