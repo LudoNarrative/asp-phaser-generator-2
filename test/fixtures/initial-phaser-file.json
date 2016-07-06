@@ -1,29 +1,46 @@
 [
   {
+    "l":["prog"],
+    "relation": "is_a",
+    "r":["program"],
+    "preload": {"images":[]},
+    "create":{"vars":[],"sprites":[],"buttons":[]},
+    "update":{"functions":[],"outcomes":[]},
+    "render":{}
+  },
+  {
     "l":["low"],
-    "relation":["is_a"],
+    "relation":"is_a",
     "r":["variable"],
     "value":1
   },
   {
     "l":["med"],
-    "relation":["is_a"],
+    "relation":"is_a",
     "r":["variable"],
     "value":10
   },
   {
     "l":["high"],
-    "relation":["is_a"],
+    "relation":"is_a",
     "r":["variable"],
     "value":100
   },
   {
-    "l":["prog"],
-    "relation": "is_a",
-    "r":["program"],
-    "setup": {},
-    "create":{"vars":[],"sprites":[],"buttons":[]},
-    "update":{"functions":[],"outcomes":[]},
-    "render":{}
+    "l":["player"],
+    "relation":"is_a",
+    "r":["variable"],
+    "variableType":["entity"]
+  },
+  {
+    "l":["player"],
+    "relation":"has_sprite",
+    "r":["ball"]
+  },
+  {
+    "l":["ball"],
+    "relation":"is_a",
+    "r":["sprite"],
+    "image":"ball.png"
   }
 ]
