@@ -78,7 +78,7 @@ var updatePreload=function(pID, brain){
   // For each assertion in the brain,
   for (var i in brain.assertions){
     // If it's a has_sprite assertion,
-    if (exports.isRelationType(brain.assertions[i],"has_sprite")){
+    if (exports.isRelationType(brain.assertions[i],"has_sprite")){      
       var inPreload = false;
       // Check if is this sprite is already in ["preload"]["images"].
       for (var e=0; e<newProgram["preload"]["images"].length;e++){
@@ -163,7 +163,9 @@ var mergeInitialWithCygnus = function(pID, initialBrain, cygnusBrain){
         "r": newRight
       });
     }
-    // TODO other types of assertions
+    else{
+      newBrain.addAssertion(cygnusBrain.assertions[i]);
+    }
   }
 
   // Push all known variables (with/without values) into into newBrain's assertions.

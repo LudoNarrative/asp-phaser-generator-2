@@ -38,16 +38,34 @@ function translateSimpleRelation(str){
 // initialize(set_X(Y,Z)). --> Y has_X Z
 // Example: initialize(set_value(confidence,5)).
 function translateInitialize(str){
-  var hypStart = str.indexOf("(set");
-  var b = str.substring(hypStart+4);
-  var hypStart2 = b.indexOf("(");
-  var hypMid = b.indexOf(",");
-  var hypEnd = b.indexOf(")).");
-  if (hypStart != -1 && hypStart2 != -1 && hypMid != -1 && hypEnd != -1){
-    var y = b.substring(hypStart2+1,hypMid);
-    var z = b.substring(hypMid+1,hypEnd);
-    return {"l":[translateNested(y)], "relation":"set_value", "r":[translateNested(z)], "tags":["global"]};
+  // Check for set_sprite command.
+  var setSpriteStart = str.indexOf("(set_sprite");
+  // initialize(set_sprite(e1, pink_square)).
+  if (setSpriteStart != -1){
+    var b = str.substring(setSpriteStart+10);
+    var hypStart2 = b.indexOf("(");
+    var hypMid = b.indexOf(",");
+    var hypEnd = b.indexOf(")).");
+    if (hypStart2 != -1 && hypMid != -1 && hypEnd != -1){
+      var y = b.substring(hypStart2+1,hypMid);
+      var z = b.substring(hypMid+1,hypEnd);      
+      return {"l":[translateNested(y)], "relation":"has_sprite", "r":[translateNested(z)]};
+    }
   }
+  // Otherwise, check for set command.
+  else{
+    var hypStart = str.indexOf("(set");
+    var b = str.substring(hypStart+4);
+    var hypStart2 = b.indexOf("(");
+    var hypMid = b.indexOf(",");
+    var hypEnd = b.indexOf(")).");
+    if (hypStart != -1 && hypStart2 != -1 && hypMid != -1 && hypEnd != -1){
+      var y = b.substring(hypStart2+1,hypMid);
+      var z = b.substring(hypMid+1,hypEnd);
+      return {"l":[translateNested(y)], "relation":"set_value", "r":[translateNested(z)], "tags":["global"]};
+    }
+  }
+
   return null;
 }
 

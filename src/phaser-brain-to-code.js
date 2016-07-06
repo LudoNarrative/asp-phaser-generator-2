@@ -142,8 +142,7 @@ var translateHasSpriteAssertion=function(b, a){
 
   // Find sprite image name.
   var spriteImgID = b.getAssertionsWith({"l":[a["r"][0]],"relation":"is_a","r":["sprite"]});
-
-
+  
   // If the image name exists, add the appropriate preload message for the sprite.
   if (spriteImgID!=undefined && b.assertions[spriteImgID]!=undefined){
     if (b.assertions[spriteImgID]["image"]){

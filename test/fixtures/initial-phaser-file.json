@@ -50,5 +50,11 @@
     "r":["sprite"],
     "image":"square.png",
     "tags":["randomSprite"]
+  },
+  {
+    "l":["pink_square"],
+    "relation":"is_a",
+    "r":["sprite"],
+    "image":"pink_square.png"
   }
 ]
