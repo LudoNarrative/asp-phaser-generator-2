@@ -2,6 +2,8 @@
   This file translates Cygnus abstract syntax into Phaser abstract syntax.
 */
 
+var rensa = require('./brain');
+
 /*
 Input:  initial Phaser abstract syntax content (brain),
         Cygnus abstract syntax (brain).
@@ -21,10 +23,48 @@ exports.cygnusToPhaser = function(initialBrain,cygnusBrain){
   // Use the information from the cygnusBrain to edit the final brain.
   finalBrain = mergeInitialWithCygnus(pID, finalBrain, cygnusBrain);
 
+  // If no sprite is specified for an entity or resource, choose one at random from the Phaser brain.  (Optional step.)
+  // finalBrain = addMissingSprites(finalBrain);
+
+  // TODO If no location is specified for an entity or resource, choose random x and y locations.  (Optional step.)
+  // finalBrain = addMissingLocations(finalBrain);
+
   // Add preload information.
   finalBrain = updatePreload(pID, finalBrain);
 
   return finalBrain;
+};
+
+var addMissingSprites=function(brain){
+  var newBrain = brain.clone();
+  // For each assertion in the brain,
+  for (var i in brain.assertions){
+    // If this assertion is about an entity or resource,
+    if ((exports.isVariableAssertion(brain.assertions[i]) && brain.assertions[i].hasOwnProperty("variableType") && (brain.assertions[i]["variableType"]=="resource" || brain.assertions[i]["variableType"]=="entity")) || isVariableTypeAssertion(brain.assertions[i])){
+      // Look for the associated sprite.
+      var spriteID = brain.getAssertionsWith({"l":brain.assertions[i]["l"],"relation":"has_sprite"})[0];
+
+      // If there is no sprite,
+      if (spriteID==undefined){
+        // Find all the sprites known by the brain that are tagged with "randomSprite".
+        var randomSpriteIDs = brain.getAssertionsWith({"relation":"is_a","r":["sprite"],"tags":["randomSprite"]});
+
+        // Choose one of these sprites at random.
+        var randomSpriteID =  randomSpriteIDs[Math.floor(Math.random()*randomSpriteIDs.length)];
+
+        var randomSprite = brain.getAssertionByID(randomSpriteID);
+
+        // Add a new assertion to the brain with the random sprite.
+        newBrain.addAssertion({"l":brain.assertions[i]["l"],"relation":"has_sprite","r":randomSprite["l"]});
+      }
+    }
+  }
+  return newBrain;
+};
+
+var addMissingLocations=function(brain){
+  var newBrain = brain.clone();
+  return newBrain;
 };
 
 // Add preload information based on any "has_sprite" assertions.
@@ -39,8 +79,17 @@ var updatePreload=function(pID, brain){
   for (var i in brain.assertions){
     // If it's a has_sprite assertion,
     if (exports.isRelationType(brain.assertions[i],"has_sprite")){
-      // Add assertion to ["preload"]["images"]
-      newProgram["preload"]["images"].push(brain.assertions[i]);
+      var inPreload = false;
+      // Check if is this sprite is already in ["preload"]["images"].
+      for (var e=0; e<newProgram["preload"]["images"].length;e++){
+        if (rensa.arraysEqual(newProgram["preload"]["images"][e]["r"],brain.assertions[i]["r"])&& rensa.arraysEqual(newProgram["preload"]["images"][e]["l"],brain.assertions[i]["l"])){
+          inPreload=true;
+        }
+      }
+      // Add assertion to ["preload"]["images"] if it's not already in there.
+      if (!inPreload){
+        newProgram["preload"]["images"].push(brain.assertions[i]);
+      }
 
       // Remove this assertion from the brain.
       delete newBrain.assertions[i];
@@ -50,8 +99,7 @@ var updatePreload=function(pID, brain){
   newBrain.assertions[pID] = newProgram;
 
   return newBrain;
-}
-
+};
 
 // Modify the contents of the create function inside the program data assertion.
 // For now, we assume all variable setting happens in create.

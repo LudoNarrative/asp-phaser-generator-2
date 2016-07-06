@@ -1,5 +1,5 @@
 var translateAsp = require('./src/asp-to-cygnus');
-var brain = require('./src/brain');
+var rensa = require('./src/brain');
 var ctp = require('./src/cygnus-to-phaser-brain');
 var translatePhaserBrain = require('./src/phaser-brain-to-code');
 
@@ -14,12 +14,12 @@ function AspPhaserGenerator(generatedAsp, initialPhaserFile) {
   this.aspGame = lines;
 
   // Store the initial Phaser file as a brain.
-  this.initialPhaser = brain.makeBrain(JSON.parse(initialPhaserFile));
+  this.initialPhaser = rensa.makeBrain(JSON.parse(initialPhaserFile));
 }
 
 AspPhaserGenerator.prototype.generate = function(debug) {
   // Create a Rensa brain from literal ASP.
-  var cygnus = brain.makeBrain(translateAsp(this.aspGame));
+  var cygnus = rensa.makeBrain(translateAsp(this.aspGame));
 
   // Translate this brain into Phaser Abstract Syntax given some initial Phaser assertions.
   var generatedPhaserBrain = ctp.cygnusToPhaser(this.initialPhaser, cygnus);

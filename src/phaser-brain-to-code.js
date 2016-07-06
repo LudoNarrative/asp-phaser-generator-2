@@ -141,12 +141,15 @@ var translateHasSpriteAssertion=function(b, a){
   var str = "";
 
   // Find sprite image name.
-  var spriteImgID = b.getAssertionsWith({"l":[a["r"][0]],"relation":"is_a","r":["sprite"]})[0];
+  var spriteImgID = b.getAssertionsWith({"l":[a["r"][0]],"relation":"is_a","r":["sprite"]});
+
 
   // If the image name exists, add the appropriate preload message for the sprite.
-  if (b.assertions[spriteImgID]["image"]){
-    var img = b.assertions[spriteImgID]["image"];
-    str+= 'game.load.image("' + a["r"][0] + '", "sprites/'+img+'");\n'
+  if (spriteImgID!=undefined && b.assertions[spriteImgID]!=undefined){
+    if (b.assertions[spriteImgID]["image"]){
+      var img = b.assertions[spriteImgID]["image"];
+      str+= 'game.load.image("' + a["l"][0] + '", "sprites/'+img+'");\n'
+    }
   }
   return str;
 }

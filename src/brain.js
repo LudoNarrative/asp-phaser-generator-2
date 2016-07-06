@@ -271,7 +271,7 @@ Assertion.prototype.equals = function(other){
       if (this.hasOwnProperty(property)) {
         if (other.hasOwnProperty(property)) {
           if (!(JSON.stringify(other[property]) === JSON.stringify(this[property]))) {
-            if (!(arraysEqual(other[property],this[property]))){
+            if (!(exports.arraysEqual(other[property],this[property]))){
               return false;
             }
           }
@@ -295,7 +295,7 @@ Assertion.prototype.clone = function(){
 
 // Helper for Assertion.prototype.equals.
 // Determines if two arrays are equal.
-function arraysEqual(a, b) {
+exports.arraysEqual=function(a, b) {
   if (a === b) return true;
   if (a == null || b == null) return false;
   if (a.length != b.length) return false;
@@ -337,7 +337,7 @@ exports.makeBrain = function(facts){
 };
 
 // Checks if an array contains an object.
-function containsObj(obj, list) {
+exports.containsObj=function(obj, list) {
   var i;
   for (i = 0; i < list.length; i++) {
       if (JSON.stringify(obj) === JSON.stringify(list[i])) {

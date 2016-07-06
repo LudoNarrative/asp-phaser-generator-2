@@ -35,12 +35,20 @@
   {
     "l":["player"],
     "relation":"has_sprite",
-    "r":["ball"]
+    "r":["circle"]
   },
   {
-    "l":["ball"],
+    "l":["circle"],
     "relation":"is_a",
     "r":["sprite"],
-    "image":"ball.png"
+    "image":"circle.png",
+    "tags":["randomSprite"]
+  },
+  {
+    "l":["square"],
+    "relation":"is_a",
+    "r":["sprite"],
+    "image":"square.png",
+    "tags":["randomSprite"]
   }
 ]
