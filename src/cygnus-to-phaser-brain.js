@@ -81,8 +81,8 @@ var preventOverlap = function(brain){
 
       // Change x and y at random for this assertion, within the bounds of the game.
       if (curID!=undefined){
-        newBrain.getAssertionByID(curID).x=Math.round(Math.random() * canvasSize[0])
-        newBrain.assertions[curID].y=Math.round(Math.random() * canvasSize[1])
+        newBrain.getAssertionByID(curID).x=Math.round(Math.random() * canvasSize[0]);
+        newBrain.assertions[curID].y=Math.round(Math.random() * canvasSize[1]);
       }
 
     }
@@ -138,21 +138,31 @@ var isOverlap = function(brain, id1, id2){
 
 var initSpriteCoordinates = function(brain){
   var newBrain = brain.clone();
+
+  // Get the assertion that defines the canvas size.
+  var canvasSizeID = brain.getAssertionsWith({"l":["canvasSize"],"relation":"has_value"})[0];
+  var canvasSize = brain.getAssertionByID(canvasSizeID)["r"];
+
   // For each assertion in the brain,
   for (var i in brain.assertions){
     // If this assertion is about adding a sprite to a location (add_to_location)
     if (exports.isRelationType(brain.assertions[i],"add_to_location")){
-      // We need to find what general location it is (e.g. what does "center" mean for "x" and "y"?).  So, find the assertion in the brain that corresponds to "center" (the right part of the assertion).
-      var coordID = brain.getAssertionsWith({"l":brain.assertions[i]["r"],"relation":"is_a","r":["location"]})[0];
-      // If coordID is defined,
-      if (coordID!=undefined){
-        // Get x and y coordinates.
-        var x = brain.getAssertionByID(coordID)["x"];
-        var y = brain.getAssertionByID(coordID)["y"];
-        newBrain.assertions[i]["x"] = x;
-        newBrain.assertions[i]["y"] = y;
+      if (brain.assertions[i]["r"]==["random"]){
+        newBrain.assertions[i]["x"] = Math.round(Math.random() * canvasSize[0]);
+        newBrain.assertions[i]["y"] = Math.round(Math.random() * canvasSize[1]);
       }
-
+      else{
+        // We need to find what general location it is (e.g. what does "center" mean for "x" and "y"?).  So, find the assertion in the brain that corresponds to "center" (the right part of the assertion).
+        var coordID = brain.getAssertionsWith({"l":brain.assertions[i]["r"],"relation":"is_a","r":["location"]})[0];
+        // If coordID is defined,
+        if (coordID!=undefined){
+          // Get x and y coordinates.
+          var x = brain.getAssertionByID(coordID)["x"];
+          var y = brain.getAssertionByID(coordID)["y"];
+          newBrain.assertions[i]["x"] = x;
+          newBrain.assertions[i]["y"] = y;
+        }
+      }
     }
   }
   return newBrain;
