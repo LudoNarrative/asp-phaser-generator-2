@@ -8,6 +8,8 @@ many(e2).
 initialize(set(r1, low)).
 
 initialize(add(e1, center)).
+initialize(add(r1, center)).
+initialize(add(e2, center)).
 initialize(set_sprite(e1, glowing_unicorn)).
 
 initialize(set_sprite(e2, pineapple)).
@@ -18,5 +20,3 @@ result(o1, increase(r1, low)).
 
 precondition(ge(r1, med), o2).
 result(o2, change_mode(game_win)).
-
-

@@ -38,17 +38,32 @@ function translateSimpleRelation(str){
 // initialize(set_X(Y,Z)). --> Y has_X Z
 // Example: initialize(set_value(confidence,5)).
 function translateInitialize(str){
-  // Check for set_sprite command.
+
+  var addCommand = str.indexOf("(add");
   var setSpriteStart = str.indexOf("(set_sprite");
-  // initialize(set_sprite(e1, pink_square)).
-  if (setSpriteStart != -1){
+
+  // Check for add command.
+  if (addCommand != -1){
+    var b = str.substring(addCommand+4);
+    var hypStart2 = b.indexOf("(");
+    var hypMid = b.indexOf(",");
+    var hypEnd = b.indexOf(")).");
+    if (hypStart != -1 && hypStart2 != -1 && hypMid != -1 && hypEnd != -1){
+      var y = b.substring(hypStart2+1,hypMid);
+      var z = b.substring(hypMid+1,hypEnd);      
+      return {"l":[translateNested(y)], "relation":"add_to_location", "r":[translateNested(z)], "tags":["create"]};
+    }
+  }
+
+  // Check for set_sprite command.
+  else if (setSpriteStart != -1){
     var b = str.substring(setSpriteStart+10);
     var hypStart2 = b.indexOf("(");
     var hypMid = b.indexOf(",");
     var hypEnd = b.indexOf(")).");
     if (hypStart2 != -1 && hypMid != -1 && hypEnd != -1){
       var y = b.substring(hypStart2+1,hypMid);
-      var z = b.substring(hypMid+1,hypEnd);      
+      var z = b.substring(hypMid+1,hypEnd);
       return {"l":[translateNested(y)], "relation":"has_sprite", "r":[translateNested(z)]};
     }
   }

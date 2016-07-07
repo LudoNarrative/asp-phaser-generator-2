@@ -26,13 +26,120 @@ exports.cygnusToPhaser = function(initialBrain,cygnusBrain){
   // If no sprite is specified for an entity or resource, choose one at random from the Phaser brain.  (Optional step.)
   // finalBrain = addMissingSprites(finalBrain);
 
-  // TODO If no location is specified for an entity or resource, choose random x and y locations.  (Optional step.)
-  // finalBrain = addMissingLocations(finalBrain);
+  // Change abstract locations (e.g. "center") to actual screen coordinates.
+  finalBrain = initSpriteCoordinates(finalBrain);
+
+  // Adjust coordinates if sprites are overlapping.
+  finalBrain = preventOverlap(finalBrain);
 
   // Add preload information.
   finalBrain = updatePreload(pID, finalBrain);
 
   return finalBrain;
+};
+
+// While sprite coordinates overlap, change their position by some random amount.
+var preventOverlap = function(brain){
+  var newBrain = brain.clone();
+  var locationAssertions = [];
+  // For each assertion in the brain,
+  for (var i in brain.assertions){
+    // If this contains location information (relation: add_to_location),
+    if (exports.isRelationType(brain.assertions[i],"add_to_location")){
+      // Add this assertion's ID to the list.
+      locationAssertions.push(brain.getAssertionID(brain.assertions[i]));
+    }
+  }
+
+  // Get the assertion that defines the canvas size.
+  var canvasSizeID = brain.getAssertionsWith({"l":["canvasSize"],"relation":"has_value"})[0];
+  var canvasSize = brain.getAssertionByID(canvasSizeID)["r"];
+
+  var overlap = true;
+  // TODO should put a check in here to ensure we don't loop infinitely.
+  while(overlap){
+    // For each location assertion,
+    for (var j=0;j<locationAssertions.length;j++){
+      // Store the current assertion ID.
+      var curID = locationAssertions[j];      
+
+      // Change x and y at random for this assertion, within the bounds of the game.
+      if (curID!=undefined){
+        newBrain.getAssertionByID(curID).x=Math.round(Math.random() * canvasSize[0])
+        newBrain.assertions[curID].y=Math.round(Math.random() * canvasSize[1])
+      }
+
+    }
+    // If none are overlapping, set overlap to false.
+    overlap=false;
+    for (var k=0;k<locationAssertions;k++){
+      var id1 = locationAssertions[k];
+      for (var m=0;m<locationAssertions;m++){
+        var id2 = locationAssertions[m];
+        if (k != m && id1!=undefined && id2 !=undefined){
+          if (isOverlap(brain,id1,id2)){
+            overlap=true;
+          }
+        }
+      }
+    }
+
+  }
+  return newBrain;
+};
+
+// (TODO we need checks here to make sure the IDs found here are valid.  We're assuming the user inputs the right initial Phaser code.)
+var isOverlap = function(brain, id1, id2){
+  var a = brain.getAssertionByID(id1);
+  var b = brain.getAssertionByID(id2);
+
+  // Find height and width for a and b based on the sprite used.
+  // The left side of a/b's assertion is the keyword.
+  var aSpriteID = brain.getAssertionsWith({"l":a["l"],"relation":"has_sprite"})[0];
+  var bSpriteID = brain.getAssertionsWith({"l":b["l"],"relation":"has_sprite"})[0];
+
+  // The right side of aSpriteID and bSpriteID's assertions is_a sprite with defined width and height.  Find those assertions.
+  var aSpriteName = brain.getAssertionByID(aSpriteID)["r"];
+  var bSpriteName = brain.getAssertionByID(bSpriteID)["r"];
+
+  var aSpriteDimID = brain.getAssertionsWith({"l":aSpriteName,"relation":"is_a","r":["sprite"]})[0];
+  var bSpriteDimID = brain.getAssertionsWith({"l":bSpriteName,"relation":"is_a","r":["sprite"]})[0];
+
+  var aWidth=brain.getAssertionByID(aSpriteDimID)["width"];
+  var aHeight=brain.getAssertionByID(aSpriteDimID)["height"];
+  var bWidth=brain.getAssertionByID(bSpriteDimID)["width"];
+  var bHeight=brain.getAssertionByID(bSpriteDimID)["height"];
+
+  // Now we can finally do the collision check.
+  return !(
+      ((a["y"] + aHeight) < (b["y"])) ||
+      (a["y"] > (b["y"] + bHeight)) ||
+      ((a["x"] + aWidth) < b["x"]) ||
+      (a["x"] > (b["x"] + bWidth))
+  );
+
+}
+
+var initSpriteCoordinates = function(brain){
+  var newBrain = brain.clone();
+  // For each assertion in the brain,
+  for (var i in brain.assertions){
+    // If this assertion is about adding a sprite to a location (add_to_location)
+    if (exports.isRelationType(brain.assertions[i],"add_to_location")){
+      // We need to find what general location it is (e.g. what does "center" mean for "x" and "y"?).  So, find the assertion in the brain that corresponds to "center" (the right part of the assertion).
+      var coordID = brain.getAssertionsWith({"l":brain.assertions[i]["r"],"relation":"is_a","r":["location"]})[0];
+      // If coordID is defined,
+      if (coordID!=undefined){
+        // Get x and y coordinates.
+        var x = brain.getAssertionByID(coordID)["x"];
+        var y = brain.getAssertionByID(coordID)["y"];
+        newBrain.assertions[i]["x"] = x;
+        newBrain.assertions[i]["y"] = y;
+      }
+
+    }
+  }
+  return newBrain;
 };
 
 var addMissingSprites=function(brain){
@@ -62,11 +169,6 @@ var addMissingSprites=function(brain){
   return newBrain;
 };
 
-var addMissingLocations=function(brain){
-  var newBrain = brain.clone();
-  return newBrain;
-};
-
 // Add preload information based on any "has_sprite" assertions.
 // e.g. player has_sprite sprite should be an assertion in preload.
 var updatePreload=function(pID, brain){
@@ -78,7 +180,7 @@ var updatePreload=function(pID, brain){
   // For each assertion in the brain,
   for (var i in brain.assertions){
     // If it's a has_sprite assertion,
-    if (exports.isRelationType(brain.assertions[i],"has_sprite")){      
+    if (exports.isRelationType(brain.assertions[i],"has_sprite")){
       var inPreload = false;
       // Check if is this sprite is already in ["preload"]["images"].
       for (var e=0; e<newProgram["preload"]["images"].length;e++){
