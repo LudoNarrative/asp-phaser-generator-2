@@ -32,12 +32,28 @@ exports.cygnusToPhaser = function(initialBrain,cygnusBrain){
   // Adjust coordinates if sprites are overlapping.
   finalBrain = preventOverlap(finalBrain);
 
+  // Add sprites in the create method.
+  finalBrain = addSprites(pID, finalBrain);
+
   // Add preload information.
   finalBrain = updatePreload(pID, finalBrain);
 
   return finalBrain;
 };
 
+var addSprites=function(pID, brain){
+  var newBrain = brain.clone();
+  var newProgram = JSON.parse(JSON.stringify(brain.assertions[pID]));
+
+  for (var i in brain.assertions){
+    if (exports.isRelationType(brain.assertions[i],"add_to_location")){
+      newProgram["create"]["sprites"].push(brain.assertions[i]);
+    }
+  }
+  // Update the program assertion.
+  newBrain.assertions[pID] = newProgram;
+  return newBrain;
+};
 // While sprite coordinates overlap, change their position by some random amount.
 var preventOverlap = function(brain){
   var newBrain = brain.clone();
@@ -61,7 +77,7 @@ var preventOverlap = function(brain){
     // For each location assertion,
     for (var j=0;j<locationAssertions.length;j++){
       // Store the current assertion ID.
-      var curID = locationAssertions[j];      
+      var curID = locationAssertions[j];
 
       // Change x and y at random for this assertion, within the bounds of the game.
       if (curID!=undefined){

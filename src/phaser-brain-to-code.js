@@ -39,7 +39,11 @@ exports.writePhaserProgram = function(brain){
                     programText += "\n\t" + translateConditionalAssertion(brain.assertions[j][p][c][a]);
                   }
                   else if (ctp.isRelationType(brain.assertions[j][p][c][a], "has_sprite")){
-                    programText += "\n\t" + translateHasSpriteAssertion(brain, brain.assertions[j][p][c][a])
+                    programText += "\n\t" + translateHasSpriteAssertion(brain, brain.assertions[j][p][c][a]);
+                  }
+                  else if (ctp.isRelationType(brain.assertions[j][p][c][a], "add_to_location")){
+
+                    programText += "\n\t" + translateAddSpriteAssertion(brain, brain.assertions[j][p][c][a]);
                   }
                 }
               }
@@ -142,7 +146,7 @@ var translateHasSpriteAssertion=function(b, a){
 
   // Find sprite image name.
   var spriteImgID = b.getAssertionsWith({"l":[a["r"][0]],"relation":"is_a","r":["sprite"]});
-  
+
   // If the image name exists, add the appropriate preload message for the sprite.
   if (spriteImgID!=undefined && b.assertions[spriteImgID]!=undefined){
     if (b.assertions[spriteImgID]["image"]){
@@ -150,5 +154,12 @@ var translateHasSpriteAssertion=function(b, a){
       str+= 'game.load.image("' + a["l"][0] + '", "sprites/'+img+'");\n'
     }
   }
+  return str;
+}
+
+// Example: player = game.add.sprite(playerX, playerY, 'playerSpriteName');
+var translateAddSpriteAssertion=function(b,a){
+  var str="";
+  str+=a["l"][0]+" = game.add.sprite(" + a["x"]+","+a["y"]+ ","+ "'"+a["l"][0]+"');\n";
   return str;
 }
