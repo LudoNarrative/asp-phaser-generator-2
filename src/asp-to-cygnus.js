@@ -50,7 +50,7 @@ function translateInitialize(str){
     var hypEnd = b.indexOf(")).");
     if (hypStart != -1 && hypStart2 != -1 && hypMid != -1 && hypEnd != -1){
       var y = b.substring(hypStart2+1,hypMid);
-      var z = b.substring(hypMid+1,hypEnd);      
+      var z = b.substring(hypMid+1,hypEnd);
       return {"l":[translateNested(y)], "relation":"add_to_location", "r":[translateNested(z)], "tags":["create"]};
     }
   }
@@ -86,10 +86,8 @@ function translateInitialize(str){
 
 
 /*
-  precondition(A(B,C),D). result(D,E(F,G)).
-  --> {"l": [{"l":[B],"relation":A,"r":[C]}],
-       "relation": "causes",
-      "r": [{"l":[F],"relation":E,"r":[G]}]}
+  Takes in a list of precondition statements and another list of the results they cause.
+  Returns a list of assertions to add.
 
  Examples:
  1) precondition(below(confidence,5),bad_face).
@@ -102,16 +100,103 @@ function translateInitialize(str){
 
  3) precondition(le(r1, med), o1).
     result(o1, increase(r1, low)).
-
 */
 function translatePrecondition(preconds, results){
+  // If this is a click control_event precondition-result pair, we'll need to initialize the listener for the mouse in the "create" function, and create a new function for the listener's callback.
+  var isClickEvent = false;
+  // For every precondition in preconds,
+  for (i in preconds){
+    if (preconds[i].indexOf("control_event(click(")>=0){
+      isClickEvent=true;
+    }
+  }
+  if (isClickEvent){
+    return translateClickPrecondition(preconds,results);
+  }
+  // Otherwise, assume the precondition should be fed into the update function ([“update”][“outcomes”]).
+   else{
+     return translateUpdatePrecondition(preconds,results);
+   }
+};
+
+/*
+ Handles preconditions/results that occur as a result of clicking.
+
+ Examples:
+ 1) precondition(control_event(click(e1)), o1).
+    result(o1, add(e2, random)).
+    result(o1, increase(r1, low)).
+*/
+var translateClickPrecondition = function(preconds,results){
+  // List of assertions to push.
+  assertionsToAdd = [];
+
+  // Name of the click listener.
+  var listenerName = "";
+
   // List of precond and result dictionaries to be added to left
   // and right concepts.
-  ps = []
-  rs = []
+  var ps = [];
+  var rs = [];
 
-  // precondition(le(r1, med), o1).
-  // precondition(ge(health(e1), 0), o1).
+  // For every precondition in preconds,
+  for (i in preconds){
+    var p = preconds[i].substring(1);
+    var start = p.indexOf("(");
+    var mid = p.lastIndexOf("),");
+
+    if (start != -1 && mid != -1){
+      var a = p.substring(0,start);
+      var bList = p.substring(start+1, mid).split(",");
+
+      // If this is the control event, don't add to our final array of preconditions.
+      if (a=="control_event"){
+        // Grab the argument of the click. (Assume bList has one element).
+        var argument = bList[0].substring(bList[0].indexOf("(")+1,bList[0].indexOf(")"));
+        listenerName = argument+"ClickListener";
+        var clickAssertion = {"l":[listenerName],"relation":"is_a","r":["click_listener"],"for":[argument],"tags":["create"]};
+        assertionsToAdd.push(clickAssertion);
+        ps.push(clickAssertion);
+
+      }
+      // Otherwise, push this precondition into our final array of all preconditions.
+      else{
+        ps = addNormalPrecond(ps, bList, a);
+      }
+    }
+  }
+  rs = addNormalResult(rs, results);
+  console.log(rs);
+
+  // If we have valid preconditions and results,
+  if (ps.length > 0 && rs.length > 0){
+    /* Form the final assertion.
+       This conditional will be stored in a function called listenerName, in the format of:
+            if (each precondition in ps is true){
+              execute each result in rs.
+            }
+    */
+    assertionsToAdd.push({"l": ps,"relation":"causes","r":rs, "listener":listenerName});
+  }
+  return assertionsToAdd;
+};
+
+/*
+  Handles conditional statements that should be displayed in the update function (["updates"]["outcomes"]) of the final Phaser program.
+
+  Examples:
+  1) precondition(le(r1, med), o1).
+     result(o1, increase(r1, low)).
+
+  2) precondition(gt(health(e1), 0), o2).
+     result(o2, increase(r1, low)).
+     result(o2, decrease(health(e1), 1)).
+*/
+var translateUpdatePrecondition = function(preconds,results){
+  // List of precond and result dictionaries to be added to left
+  // and right concepts.
+  var ps = [];
+  var rs = [];
 
   // For every precondition in preconds,
   for (i in preconds){
@@ -124,20 +209,40 @@ function translatePrecondition(preconds, results){
       var bList = p.substring(start+1, mid).split(",");
 
       // Push this precondition into our final array of all preconditions.
-      if (bList.length==2){ // B = bList[0], C = bList[1]
-        ps.push({"l":[translateNested(bList[0])],"relation":a,"r":[bList[1]]});
-      }
-      else if (bList.length==3){
-        if (typeof bList[2] == "number"){
-          ps.push({"l":[translateNested(bList[0])],"relation":a,"r":[bList[1]],"num":bList[2]});
-        }
-        else{
-          ps.push({"l":[translateNested(bList[0])],"relation":a,"r":[bList[1]]});
-        }
-      }
+      ps = addNormalPrecond(ps, bList, a);
     }
   }
 
+  rs = addNormalResult(rs, results);
+
+  // If we have valid preconditions and results,
+  if (ps.length > 0 && rs.length > 0){
+    // Form the final assertion.
+    return [{"l": ps,"relation":"causes","r":rs}];
+  }
+  return null;
+};
+
+// Helper for translateUpdatePrecondition and translateClickPrecondition.
+// Populates the list of precondition assertions.
+var addNormalPrecond = function(ps, bList,a){
+  if (bList.length==2){ // B = bList[0], C = bList[1]
+    ps.push({"l":[translateNested(bList[0])],"relation":a,"r":[bList[1]]});
+  }
+  else if (bList.length==3){
+    if (typeof bList[2] == "number"){
+      ps.push({"l":[translateNested(bList[0])],"relation":a,"r":[bList[1]],"num":bList[2]});
+    }
+    else{
+      ps.push({"l":[translateNested(bList[0])],"relation":a,"r":[bList[1]]});
+    }
+  }
+  return ps;
+};
+
+// Helper for translateUpdatePrecondition and translateClickPrecondition.
+// Populates the list of result assertions.
+var addNormalResult = function(rs, results){
   // For every result in results,
   for (i in results){
     var r = results[i];
@@ -167,14 +272,8 @@ function translatePrecondition(preconds, results){
       }
     }
   }
-
-  // If we have valid preconditions and results,
-  if (ps.length > 0 && rs.length > 0){
-    // Form the final assertion.
-    return {"l": ps,"relation":"causes","r":rs};
-  }
-  return null;
-}
+  return rs;
+};
 
 /*
   Assumption: only one layer of nesting, e.g., only examples like:
@@ -202,22 +301,21 @@ function translateASP(lines){
   var doneLines = [];
   // For each line,
   for (var i in lines){
-    var assertionToAdd = null;
+    var assertionsToAdd = null;
     // If is_a relation,
     if (isIsA(lines[i])){
-      assertionToAdd = translateIsA(lines[i]);
+      assertionsToAdd = [translateIsA(lines[i])];
       doneLines.push(lines[i]);
     }
     // If initializing values,
     else if (isInitialize(lines[i])){
-      assertionToAdd = translateInitialize(lines[i]);
+      assertionsToAdd = [translateInitialize(lines[i])];
       doneLines.push(lines[i]);
     }
     // If precondition / result
     else if (isPrecondition(lines[i])){
       if (!containsObj(lines[i], doneLines)){
         var keyword = lines[i].substring(lines[i].lastIndexOf(",")+1,lines[i].lastIndexOf(")."));
-
         // If we haven't addressed this keyword,
         if (doneKeywords.indexOf(keyword)==-1){
           // Find all related preconditions and results.
@@ -225,25 +323,29 @@ function translateASP(lines){
           results = findResults(lines, keyword);
 
           // Make and add assertion.
-          assertionToAdd = translatePrecondition(preconds, results);
+          assertionsToAdd = translatePrecondition(preconds, results);
 
           // Add keyword to the list that shows we've already addressed it.
           doneKeywords.push(keyword);
 
           // Add all preconditions and results to doneLines.
           for (p in preconds){
-            doneLines.push(preconds[p])
+            doneLines.push(preconds[p]);
           }
           for (r in results){
-            doneLines.push(results[r])
+            doneLines.push(results[r]);
           }
         }
       }
     }
 
     // Add new assertion to final list of all assertions.
-    if (assertionToAdd != null){
-      assertions.push(assertionToAdd);
+    if (assertionsToAdd != null){
+      for (var k=0;k<assertionsToAdd.length;k++){
+        if (assertionsToAdd[k]!=null){
+            assertions.push(assertionsToAdd[k]);
+        }
+      }
     }
   }
   return assertions;

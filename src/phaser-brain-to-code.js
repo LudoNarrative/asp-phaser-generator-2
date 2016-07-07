@@ -24,7 +24,7 @@ exports.writePhaserProgram = function(brain){
         if (brain.assertions[j].hasOwnProperty(p) && typeof brain.assertions[j][p]!=="function") {
           if (p!="l" && p!="relation" && p!="r"){
             // Write the content for that function.
-            programText += "function " + p + "{";
+            programText += "function " + p + "(){";
 
             // For each content property specified in the function (e.g. "vars"),
             for (var c in brain.assertions[j][p]) {
@@ -44,6 +44,10 @@ exports.writePhaserProgram = function(brain){
                   else if (ctp.isRelationType(brain.assertions[j][p][c][a], "add_to_location")){
 
                     programText += "\n\t" + translateAddSpriteAssertion(brain, brain.assertions[j][p][c][a]);
+                  }
+                  // TODO: might need isListenerAssertion at some point.
+                  else if (ctp.isCallbackAssertion(brain.assertions[j][p][c][a])){
+                    programText += "\n\t" + translateListenerAssertion(brain.assertions[j][p][c][a]);
                   }
                 }
               }
@@ -95,44 +99,53 @@ var translateSetValue = function(a){
 var translateConditionalAssertion = function(a){
   var str="";
 
-  /* Formulate hypothesis. */
-  str += "if(";
-
-  // Add each assertion in the hypothesis.
-  for (var i=0; i< a["l"].length;i++){
-    str += a["l"][i]["l"];
-    if (a["l"][i]["relation"]=="gt"){
-      str += ">";
-    }
-    else if (a["l"][i]["relation"]=="ge"){
-      str += ">=";
-    }
-    else if (a["l"][i]["relation"]=="lt"){
-      str += "<";
-    }
-    else if (a["l"][i]["relation"]=="le"){
-      str += "<=";
-    }
-    else{
-      console.log("Error: unrecognized relation " + a["relation"] + " for conditional assertion.  \n\tFile: PhaserInterpreter.  Function: translateConditionalAssertion.");
-    }
-    str+=a["l"][i]["r"];
-
-    if (i <a["l"].length-1){
-      str+=" " + a["l"][i+1]["logicalOp"] + " ";
-    }
+  var emptyHypothesis = false;
+  if (a["l"].length < 1){
+    emptyHypothesis = true;
   }
-  str+="){\n";
+
+  /* Formulate hypothesis. */
+  if (!emptyHypothesis){
+    str += "if(";
+    // Add each assertion in the hypothesis.
+    for (var i=0; i< a["l"].length;i++){
+      str += a["l"][i]["l"];
+      if (a["l"][i]["relation"]=="gt"){
+        str += ">";
+      }
+      else if (a["l"][i]["relation"]=="ge"){
+        str += ">=";
+      }
+      else if (a["l"][i]["relation"]=="lt"){
+        str += "<";
+      }
+      else if (a["l"][i]["relation"]=="le"){
+        str += "<=";
+      }
+      else{
+        console.log("Error: unrecognized relation " + a["relation"] + " for conditional assertion.  \n\tFile: PhaserInterpreter.  Function: translateConditionalAssertion.");
+      }
+      str+=a["l"][i]["r"];
+
+      if (i <a["l"].length-1){
+        str+=" " + a["l"][i+1]["logicalOp"] + " ";
+      }
+    }
+    str+="){\n";
+  }
 
   /* Formulate conclusion. */
   // Add each assertion in the conclusion.
   for (var j=0; j<a["r"].length;j++){
-    str+="\t\t";
+    if (!emptyHypothesis){str+="\t\t";}
     if (a["r"][j]["relation"]=="set_value"){
       str+=translateSetValue(a["r"][j]);
     }
   }
-  str+="}\n"
+  if (!emptyHypothesis){
+    str+="\t}"
+  }
+  str+="\n"
   return str;
 };
 
@@ -161,5 +174,14 @@ var translateHasSpriteAssertion=function(b, a){
 var translateAddSpriteAssertion=function(b,a){
   var str="";
   str+=a["l"][0]+" = game.add.sprite(" + a["x"]+","+a["y"]+ ","+ "'"+a["l"][0]+"');\n";
+  return str;
+}
+
+// Example: {"l":["e1"],"relation":"triggers","r":["e1ClickListener"]}
+//  >> e1.inputEnabled = true;
+//  >> e1.events.onInputDown.add(e1ClickListener, this);
+var translateListenerAssertion=function(a){
+  var str="";
+  str = a["l"][0]+".inputEnabled = true;\n\t"+a["l"][0]+".events.onInputDown.add("+a["r"][0]+", this);\n"
   return str;
 }

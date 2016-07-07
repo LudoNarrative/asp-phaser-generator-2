@@ -253,43 +253,65 @@ var mergeInitialWithCygnus = function(pID, initialBrain, cygnusBrain){
       tempVarValues[cygnusBrain.assertions[i]["l"]] = cygnusBrain.assertions[i]["r"];
     }
     else if (exports.isConditionalAssertion(cygnusBrain.assertions[i])){
-      // TODO add local var names for cygnusBrain.assertions[i] etc. (readability)
+      // We are going to add a new assertion based on the current "old" assertion in the cygnus brain (cygnusBrain.assertions[i]).
       var newAssertion = cygnusBrain.assertions[i].clone();
       var newLeft = [];
       var newRight = [];
 
-      // Update each element in left array
-      // > add logicalOp &&.
-      for (var m in cygnusBrain.assertions[i]["l"]){
-        // TODO add each property of cygnusBrain.assertions[i]["l"][m],
-        // not just l, relation, r
-        var newLeftA =  {"l":cygnusBrain.assertions[i]["l"][m]["l"],"relation":cygnusBrain.assertions[i]["l"][m]["relation"],"r":cygnusBrain.assertions[i]["l"][m]["r"],"logicalOp":"&&"};
-        newLeft.push(newLeftA);
-      }
-
-      // Update each element in right array.
-      // > increase, decrease --> set_value.
-      for (var n in cygnusBrain.assertions[i]["r"]){
-        var newRightA ={};
-        newRightA["l"]=cygnusBrain.assertions[i]["r"][n]["l"];
-
-        if (cygnusBrain.assertions[i]["r"][n]["relation"]=="increase"){
-          newRightA["relation"]="set_value";
-          // TODO fix so not assuming newRightA["l"] consists of one element
-          newRightA["r"]=[newRightA["l"][0]+"+"+cygnusBrain.assertions[i]["r"][n]["r"]];
+      // Check if one of the preconditions (elements in the left array) is a click listener.
+      var isClickConditional=false;
+      // Get the click listener assertion, if any.
+      var clickAssertion = null;
+      for (var q in cygnusBrain.assertions[i]["l"]){
+        var oldHypRight = cygnusBrain.assertions[i]["l"][q]["r"];
+        if (rensa.arraysEqual(oldHypRight,["click_listener"])){
+          isClickConditional=true;
+          clickAssertion = cygnusBrain.assertions[i]["l"][q];
         }
-        else if (cygnusBrain.assertions[i]["r"][n]["relation"]=="decrease"){
-          newRightA["relation"]="set_value";
-          newRightA["r"]=[newRightA["l"][0]+"-"+cygnusBrain.assertions[i]["r"][n]["r"]];
-        }
-        newRight.push(newRightA);
       }
-      // Push the new assertion into the outcomes list.
-      newProgram["update"]["outcomes"].push({
-        "l": newLeft,
-        "relation":"causes",
-        "r": newRight
-      });
+      if (isClickConditional && clickAssertion!=null){
+        // Get the name of the click listener function.
+        var clickListenFn = clickAssertion["l"][0];
+        // Get the entity/resource/etc. that is to be clicked.
+        var clicked = clickListenFn.substring(0,clickListenFn.indexOf("ClickListener"));
+        // Add listener to create method.
+        // i.e., in create: e1.events.onInputDown.add(e1ClickListener, this);
+        newProgram["create"]["listeners"].push({
+          "l": [clicked],
+          "relation":"triggers",
+          "r": [clickListenFn]
+        });
+        /*
+          Add new function to the brain that contains all other preconditions (besides the click listener) and the results.
+          i.e.,
+            function e1ClickListener() {
+            	if (precond_1 && precond_2 &&...precond_n){
+                result_1;...result_n;
+              }
+            }
+        */
+        newLeft = getNewHypotheses(newLeft, cygnusBrain.assertions[i]["l"]);
+        newRight = getNewConclusions(newRight,cygnusBrain.assertions[i]["r"]);
+
+        newProgram[clickListenFn] = {};
+        newProgram[clickListenFn]["outcomes"] = [];
+        newProgram[clickListenFn]["outcomes"].push({
+          "l": newLeft,
+          "relation":"causes",
+          "r": newRight
+        });
+      }
+      else{
+        newLeft = getNewHypotheses(newLeft, cygnusBrain.assertions[i]["l"]);
+        newRight = getNewConclusions(newRight,cygnusBrain.assertions[i]["r"]);
+
+        // Push the new assertion into the outcomes list.
+        newProgram["update"]["outcomes"].push({
+          "l": newLeft,
+          "relation":"causes",
+          "r": newRight
+        });
+      }
     }
     else{
       newBrain.addAssertion(cygnusBrain.assertions[i]);
@@ -316,6 +338,53 @@ var mergeInitialWithCygnus = function(pID, initialBrain, cygnusBrain){
   return newBrain;
 };
 
+// assert = cygnusBrain.assertions[i]["l"]
+var getNewHypotheses = function(newLeft, assert){
+  // Update each element in left array
+  // > add logicalOp &&.
+  for (var m in assert){
+    // TODO add each property of cygnusBrain.assertions[i]["l"][m], (not just l, relation, r)
+
+    // Here are the "old" values from the cygnus brain corresponding to the left attribute.
+    var oldLeft = assert[m]["l"];
+    var oldRelation = assert[m]["relation"];
+    var oldRight = assert[m]["r"];
+
+    if (!rensa.arraysEqual(oldRight,["click_listener"])){
+      var newLeftA =  {"l":oldLeft,"relation":oldRelation,"r":oldRight,"logicalOp":"&&"};
+      newLeft.push(newLeftA);
+    }
+  }
+  return newLeft;
+};
+
+// assert = cygnusBrain.assertions[i]["r"];
+var getNewConclusions = function(newRight, assert){
+  // Update each element in right array.
+  // > increase, decrease --> set_value.
+  for (var n in assert){
+    var newRightA ={};
+    newRightA["l"]=assert[n]["l"];
+
+    // Here are the "old" values from the cygnus brain corresponding to the right attribute.
+    var oldRelation = assert[n]["relation"];
+    var oldRight = assert[n]["r"];
+
+    if (oldRelation=="increase"){
+      newRightA["relation"]="set_value";
+      // TODO fix so not assuming newRightA["l"] consists of one element
+      newRightA["r"]=[newRightA["l"][0]+"+"+oldRight];
+    }
+    else if (oldRelation=="decrease"){
+      newRightA["relation"]="set_value";
+      newRightA["r"]=[newRightA["l"][0]+"-"+oldRight];
+    }
+    newRight.push(newRightA);
+  }
+  return newRight;
+};
+
+
 // Check if an assertion is a variable declaration in Phaser Abstract Syntax.
 exports.isVariableAssertion=function(a){
   return a["relation"]=="is_a" && (a["r"].indexOf("variable")>=0);
@@ -338,4 +407,8 @@ var isSetValueAssertion=function(a){
 // Check if an assertion is a conditional.
 exports.isConditionalAssertion = function(a){
   return exports.isRelationType(a,"causes");
+}
+
+exports.isCallbackAssertion = function(a){
+  return exports.isRelationType(a,"triggers");
 }
