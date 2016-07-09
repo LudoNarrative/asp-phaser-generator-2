@@ -20,6 +20,30 @@
     "value":{"confidence":5,"optimism":2,"difficulty":3}
   },
   {
+    "l":["gridLinesHorizontal"],
+    "relation":"is_a",
+    "r":["variable"],
+    "value":10
+  },
+  {
+    "l":["gridLinesVertical"],
+    "relation":"is_a",
+    "r":["variable"],
+    "value":10
+  },
+  {
+    "l":["grid"],
+    "relation":"is_a",
+    "r":["variable"],
+    "value":"initGrid()"
+  },
+  {
+    "l":["gridIdx"],
+    "relation":"is_a",
+    "r":["variable"],
+    "value":0
+  },
+  {
     "l":["low"],
     "relation":"is_a",
     "r":["variable"],
@@ -94,5 +118,12 @@
     "r":["function"],
     "params":[],
     "lines":["var x = game.rnd.integerInRange(0, game.world.width-1);","var y = game.rnd.integerInRange(0, game.world.height-1);","return new Phaser.Point(x,y);"]
+  },
+  {
+    "l":["initGrid"],
+    "relation":"is_a",
+    "r":["function"],
+    "params":[],
+    "lines":["grid = [];","for(var i=0; i<gridLinesHorizontal; i++) {for(var j=0; j<gridLinesVertical; j++) {grid.push(new Phaser.Point(i * gridSize, j * gridSize));}}","Phaser.Utils.shuffle(grid);","return grid;"]
   }
 ]
