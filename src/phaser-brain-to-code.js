@@ -169,14 +169,15 @@ var translateConditionalAssertion = function(b,a){
 
   /* Formulate conclusion. */
   // Add each assertion in the conclusion.
+  if (!emptyHypothesis && addWhitespace){str+="\t\t";}
   for (var j=0; j<a["r"].length;j++){
-    if (!emptyHypothesis && addWhitespace){str+="\t\t";}
     if (a["r"][j]["relation"]=="set_value"){
       str+=translateSetValue(a["r"][j]);
     }
     else if (a["r"][j]["relation"]=="add_to_location"){
       str+=translateAddSpriteAssertion(b,a["r"][j]);
     }
+    if (addWhitespace){str+="\t";}
   }
   if (!emptyHypothesis && addWhitespace){
     str+="\t}"
