@@ -23,13 +23,13 @@
     "l":["gridLinesHorizontal"],
     "relation":"is_a",
     "r":["variable"],
-    "value":14
+    "value":13
   },
   {
     "l":["gridLinesVertical"],
     "relation":"is_a",
     "r":["variable"],
-    "value":10
+    "value":9
   },
   {
     "l":["gridSize"],
@@ -123,7 +123,7 @@
     "relation":"is_a",
     "r":["function"],
     "params":[],
-    "lines":["var x = game.rnd.integerInRange(0, game.world.width-1);","var y = game.rnd.integerInRange(0, game.world.height-1);","return new Phaser.Point(x,y);"]
+    "lines":["var x=game.rnd.integerInRange(0,game.world.width-1);","var y=game.rnd.integerInRange(0,game.world.height-1);","return new Phaser.Point(x,y);"]
   },
   {
     "l":["initGrid"],
@@ -151,6 +151,6 @@
     "relation":"is_a",
     "r":["function"],
     "params":["a"],
-    "lines":["var j, x, i;","for (i=a.length; i; i--) {j=Math.floor(Math.random()*i);x=a[i-1];a[i-1]=a[j];a[j] = x;}"]
+    "lines":["var j,x,i;","for(i=a.length;i;i--){j=Math.floor(Math.random()*i);x=a[i-1];a[i-1]=a[j];a[j]=x;}"]
   }
 ]
