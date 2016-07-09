@@ -32,6 +32,12 @@
     "value":10
   },
   {
+    "l":["gridSize"],
+    "relation":"is_a",
+    "r":["variable"],
+    "value":30
+  },
+  {
     "l":["grid"],
     "relation":"is_a",
     "r":["variable"],
