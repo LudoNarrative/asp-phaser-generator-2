@@ -130,14 +130,14 @@
     "relation":"is_a",
     "r":["function"],
     "params":[],
-    "lines":["grid=[];","for(var i=0;i<gridLinesHorizontal;i++){for(var j=0;j<gridLinesVertical;j++){grid.push(new Phaser.Point(i*gridSize,j*gridSize));}}","Phaser.Utils.shuffle(grid);","return grid;"]
+    "lines":["grid=[];","for(var i=0;i<gridLinesHorizontal;i++){for(var j=0;j<gridLinesVertical;j++){grid.push(new Phaser.Point(i*gridSize,j*gridSize));}}","shuffle(grid);","return grid;"]
   },
   {
     "l":["addAtRandomPoint"],
     "relation":"is_a",
     "r":["function"],
     "params":["sprite"],
-    "lines":["var spawned=addAtPos(grid[gridIdx], sprite);","gridIdx++;","if(gridIdx===grid.length){gridIdx=0;Phaser.Utils.shuffle(grid);}","return spawned;"]
+    "lines":["var spawned=addAtPos(grid[gridIdx], sprite);","gridIdx++;","if(gridIdx===grid.length){gridIdx=0;shuffle(grid);}","return spawned;"]
   },
   {
     "l":["addAtPos"],
@@ -145,5 +145,12 @@
     "r":["function"],
     "params":["point","sprite"],
     "lines":["return game.add.sprite(point.x,point.y,sprite);"]
+  },
+  {
+    "l":["shuffle"],
+    "relation":"is_a",
+    "r":["function"],
+    "params":["a"],
+    "lines":["var j, x, i;","for (i=a.length; i; i--) {j=Math.floor(Math.random()*i);x=a[i-1];a[i-1]=a[j];a[j] = x;}"]
   }
 ]
