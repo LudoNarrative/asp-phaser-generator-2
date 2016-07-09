@@ -178,7 +178,7 @@ var translateHasSpriteAssertion=function(b, a){
   if (spriteImgID!=undefined && b.assertions[spriteImgID]!=undefined){
     if (b.assertions[spriteImgID]["image"]){
       var img = b.assertions[spriteImgID]["image"];
-      str+= 'game.load.image("' + a["l"][0] + '","assets/'+img+'");'
+      str+= "game.load.image('" + a["l"][0] + "','assets/"+img+"');"
       if (addWhitespace){str+="\n";}
     }
   }
