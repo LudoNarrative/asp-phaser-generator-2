@@ -2,6 +2,7 @@
  This file generates a string containing a complete Phaser program, giving a
  brain that contains Phaser abstract syntax.
 */
+var addWhitespace = false;
 var ctp = require('./cygnus-to-phaser-brain');
 // Input: Phaser abstract syntax (brain).
 // Output: Phaser program (string).
@@ -31,29 +32,31 @@ exports.writePhaserProgram = function(brain){
               if (brain.assertions[j][p].hasOwnProperty(c)) {
                 // For each assertion in the list of assertions,
                 for (var a in brain.assertions[j][p][c]){
+                  if (addWhitespace){programText+="\n\t";}
                   // Declare / change value of variables.
                   if (ctp.isVariableAssertion(brain.assertions[j][p][c][a])){
-                    programText += "\n\t" + translateVariableAssertion(brain, brain.assertions[j][p][c][a]);
+                    programText += translateVariableAssertion(brain, brain.assertions[j][p][c][a]);
                   }
                   else if (ctp.isConditionalAssertion(brain.assertions[j][p][c][a])){
-                    programText += "\n\t" + translateConditionalAssertion(brain, brain.assertions[j][p][c][a]);
+                    programText += translateConditionalAssertion(brain, brain.assertions[j][p][c][a]);
                   }
                   else if (ctp.isRelationType(brain.assertions[j][p][c][a], "has_sprite")){
-                    programText += "\n\t" + translateHasSpriteAssertion(brain, brain.assertions[j][p][c][a]);
+                    programText += translateHasSpriteAssertion(brain, brain.assertions[j][p][c][a]);
                   }
                   else if (ctp.isRelationType(brain.assertions[j][p][c][a], "add_to_location")){
 
-                    programText += "\n\t" + translateAddSpriteAssertion(brain, brain.assertions[j][p][c][a]);
+                    programText += translateAddSpriteAssertion(brain, brain.assertions[j][p][c][a]);
                   }
                   // TODO: might need isListenerAssertion at some point.
                   else if (ctp.isCallbackAssertion(brain.assertions[j][p][c][a])){
-                    programText += "\n\t" + translateListenerAssertion(brain.assertions[j][p][c][a]);
+                    programText += translateListenerAssertion(brain.assertions[j][p][c][a]);
                   }
                 }
               }
             }
 
-            programText += "};\n\n";
+            programText += "};";
+            if (addWhitespace){programText += "\n\n"}
           }
         }
       }
@@ -75,7 +78,8 @@ var translateVariableAssertion = function(b, a){
     // and also make sure that e1 is a defined variable.
     var parent = a["l"][0].substring(0,a["l"][0].indexOf("."))
     if (a.hasOwnProperty("value") && b.getAssertionsWith({"l":[parent],"relation":"is_a","r":["variable"]}).length>0){
-      str += a["l"][0]+" = "+a["value"]+";\n";
+      str += a["l"][0]+"="+a["value"]+";";
+      if (addWhitespace){str+="\n";}
     }
   }
   // If this isn't an attribute (e.g. "e1")
@@ -83,16 +87,22 @@ var translateVariableAssertion = function(b, a){
     str += "var "+a["l"][0];
     // Set variable equal to value, if specified.
     if (a.hasOwnProperty("value")){
-      str += " = "+a["value"];
+      str += "="+a["value"];
     }
-    str += ";\n";
+    str += ";";
+    if (addWhitespace){str+="\n";}
   }
   return str;
 }
 
 // Convert an assertion that changes the value of a variable to string.
 var translateSetValue = function(a){
-  return a["l"] + "=" + a["r"] + ";\n";
+  if (addWhitespace){
+    return a["l"] + "=" + a["r"] + ";\n";
+  }
+  else{
+    return a["l"] + "=" + a["r"] + ";";
+  }
 }
 
 // Convert an assertion containing a conditional to string.
@@ -131,13 +141,14 @@ var translateConditionalAssertion = function(b,a){
         str+=" " + a["l"][i+1]["logicalOp"] + " ";
       }
     }
-    str+="){\n";
+    str+="){";
+    if (addWhitespace){str+="\n";}
   }
 
   /* Formulate conclusion. */
   // Add each assertion in the conclusion.
   for (var j=0; j<a["r"].length;j++){
-    if (!emptyHypothesis){str+="\t\t";}
+    if (!emptyHypothesis && addWhitespace){str+="\t\t";}
     if (a["r"][j]["relation"]=="set_value"){
       str+=translateSetValue(a["r"][j]);
     }
@@ -145,10 +156,10 @@ var translateConditionalAssertion = function(b,a){
       str+=translateAddSpriteAssertion(b,a["r"][j]);
     }
   }
-  if (!emptyHypothesis){
+  if (!emptyHypothesis && addWhitespace){
     str+="\t}"
   }
-  str+="\n"
+  if (addWhitespace){str+="\n";}
   return str;
 };
 
@@ -167,7 +178,8 @@ var translateHasSpriteAssertion=function(b, a){
   if (spriteImgID!=undefined && b.assertions[spriteImgID]!=undefined){
     if (b.assertions[spriteImgID]["image"]){
       var img = b.assertions[spriteImgID]["image"];
-      str+= 'game.load.image("' + a["l"][0] + '", "assets/'+img+'");\n'
+      str+= 'game.load.image("' + a["l"][0] + '","assets/'+img+'");'
+      if (addWhitespace){str+="\n";}
     }
   }
   return str;
@@ -176,7 +188,8 @@ var translateHasSpriteAssertion=function(b, a){
 // Example: player = game.add.sprite(playerX, playerY, 'playerSpriteName');
 var translateAddSpriteAssertion=function(b,a){
   var str="";
-  str+=a["l"][0]+" = game.add.sprite(" + a["x"]+","+a["y"]+ ","+ "'"+a["l"][0]+"');\n";
+  str+=a["l"][0]+"=game.add.sprite(" + a["x"]+","+a["y"]+ ","+ "'"+a["l"][0]+"');";
+  if (addWhitespace){str+="\n";}
   return str;
 }
 
@@ -185,6 +198,9 @@ var translateAddSpriteAssertion=function(b,a){
 //  >> e1.events.onInputDown.add(e1ClickListener, this);
 var translateListenerAssertion=function(a){
   var str="";
-  str = a["l"][0]+".inputEnabled = true;\n\t"+a["l"][0]+".events.onInputDown.add("+a["r"][0]+", this);\n"
+  str += a["l"][0]+".inputEnabled = true;";
+  if (addWhitespace){str+="\n\t";}
+  str+=a["l"][0]+".events.onInputDown.add("+a["r"][0]+",this);";
+  if (addWhitespace){str+="\n";}
   return str;
 }
