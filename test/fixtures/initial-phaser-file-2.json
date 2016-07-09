@@ -15,22 +15,22 @@
     "value":{"confidence":5,"optimism":2,"difficulty":3}
   },
   {
+    "l":["gridSize"],
+    "relation":"is_a",
+    "r":["variable"],
+    "value":30
+  },
+  {
     "l":["gridLinesHorizontal"],
     "relation":"is_a",
     "r":["variable"],
-    "value":13
+    "value":"Math.floor((game.width-1)/gridSize)"
   },
   {
     "l":["gridLinesVertical"],
     "relation":"is_a",
     "r":["variable"],
-    "value":9
-  },
-  {
-    "l":["gridSize"],
-    "relation":"is_a",
-    "r":["variable"],
-    "value":60
+    "value":"Math.floor((game.height-1)/gridSize)"
   },
   {
     "l":["grid"],
