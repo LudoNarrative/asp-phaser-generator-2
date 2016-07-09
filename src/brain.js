@@ -107,6 +107,9 @@ Brain.prototype.getAssertionsWith = function(d){
             flag = false;
           }
         }
+        else{
+          flag=false;
+        }
       }
     }
     if (flag){

@@ -23,23 +23,74 @@ exports.cygnusToPhaser = function(initialBrain,cygnusBrain){
   // Use the information from the cygnusBrain to edit the final brain.
   finalBrain = mergeInitialWithCygnus(pID, finalBrain, cygnusBrain);
 
-  // If no sprite is specified for an entity or resource, choose one at random from the Phaser brain.  (Optional step.)
+  // If no sprite is specified for an entity or resource, choose one at random from the Phaser brain.  (Optional step.) TODO: resources probably won't have sprites; just entities.
   // finalBrain = addMissingSprites(finalBrain);
 
   // Change abstract locations (e.g. "center") to actual screen coordinates.
   finalBrain = initSpriteCoordinates(finalBrain);
 
   // Adjust coordinates if sprites are overlapping.
+  //TODO: fix this for causes << although...maybe all of this should be done inside the generated program anyway?
   finalBrain = preventOverlap(finalBrain);
 
   // Add sprites in the create method.
   finalBrain = addSprites(pID, finalBrain);
+
+  // Update add_to_location - check each conclusion in "outcomes" for each function
+  finalBrain = updateAddToLocation(pID, finalBrain);
 
   // Add preload information.
   finalBrain = updatePreload(pID, finalBrain);
 
   return finalBrain;
 };
+
+var updateAddToLocation = function(pID, brain){
+  var newBrain = brain.clone();
+  var oldProgram = brain.assertions[pID]
+  var newProgram = JSON.parse(JSON.stringify(oldProgram));
+
+  // TODO this only changes coordinates inside the conclusion of a causes relation.
+  // Should check if there are other types of add_to_locations which need to be updated (e.g. make sure the "sprites" array in "create" is okay.)
+  for (var p in oldProgram){
+    if (oldProgram.hasOwnProperty(p) && typeof oldProgram[p]!=="function") {
+      if (p!="l" && p!="relation" && p!="r"){
+        // For each content property specified in the function (e.g. "vars"),
+        for (var c in oldProgram[p]) {
+          if (oldProgram[p].hasOwnProperty(c)) {
+            // For each assertion in the list of assertions,
+            for (var a in oldProgram[p][c]){
+              var curAssert = oldProgram[p][c][a];
+              if (exports.isRelationType(curAssert,"causes")){
+                var rightSide = curAssert["r"];
+                for (var i=0; i<rightSide.length;i++){
+                  if (exports.isRelationType(rightSide[i],"add_to_location")){
+                    // Find matching assertion in the brain.
+                    // Look for "listener": p
+                    var matchID = brain.getAssertionsWith({"listener":p})[0];
+                    if (matchID!=undefined){
+                      var match = brain.getAssertionByID(matchID);
+                      var xCoord = match["r"][i]["x"];
+                      var yCoord = match["r"][i]["y"];
+                      // We want to add x and y to rightSide[i]
+                      newProgram[p][c][a]["r"][i]["x"] = xCoord;
+                      newProgram[p][c][a]["r"][i]["y"] = yCoord;
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // Update the program assertion.
+  newBrain.assertions[pID] = newProgram;
+
+  return newBrain;
+}
 
 var addSprites=function(pID, brain){
   var newBrain = brain.clone();
@@ -161,6 +212,18 @@ var initSpriteCoordinates = function(brain){
           var y = brain.getAssertionByID(coordID)["y"];
           newBrain.assertions[i]["x"] = x;
           newBrain.assertions[i]["y"] = y;
+        }
+      }
+    }
+    // Rightahere trying to get the listener outcome
+    else if (exports.isRelationType(brain.assertions[i],"causes")){
+      var rightSide = brain.assertions[i]["r"];
+      for (var k=0;k<rightSide.length;k++){
+        var rightRelation = rightSide[k]["relation"];
+        console.log(rightRelation);
+        if (rightRelation=="add_to_location"){
+          newBrain.assertions[i]["r"][k]["x"] = Math.round(Math.random() * canvasSize[0]);
+          newBrain.assertions[i]["r"][k]["y"] = Math.round(Math.random() * canvasSize[1]);
         }
       }
     }
@@ -300,6 +363,8 @@ var mergeInitialWithCygnus = function(pID, initialBrain, cygnusBrain){
           "relation":"causes",
           "r": newRight
         });
+        // Push the old assertion into the brain anyway.  This lets us update coordinates.
+        newBrain.addAssertion(cygnusBrain.assertions[i]);
       }
       else{
         newLeft = getNewHypotheses(newLeft, cygnusBrain.assertions[i]["l"]);
@@ -359,6 +424,7 @@ var getNewHypotheses = function(newLeft, assert){
 };
 
 // assert = cygnusBrain.assertions[i]["r"];
+// Again TODO: Need to push all properties, not just l, relation, right...
 var getNewConclusions = function(newRight, assert){
   // Update each element in right array.
   // > increase, decrease --> set_value.
@@ -378,6 +444,10 @@ var getNewConclusions = function(newRight, assert){
     else if (oldRelation=="decrease"){
       newRightA["relation"]="set_value";
       newRightA["r"]=[newRightA["l"][0]+"-"+oldRight];
+    }
+    else {
+      newRightA["relation"]=oldRelation;
+      newRightA["r"]=oldRight;
     }
     newRight.push(newRightA);
   }

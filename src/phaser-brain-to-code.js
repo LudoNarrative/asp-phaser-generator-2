@@ -36,7 +36,7 @@ exports.writePhaserProgram = function(brain){
                     programText += "\n\t" + translateVariableAssertion(brain, brain.assertions[j][p][c][a]);
                   }
                   else if (ctp.isConditionalAssertion(brain.assertions[j][p][c][a])){
-                    programText += "\n\t" + translateConditionalAssertion(brain.assertions[j][p][c][a]);
+                    programText += "\n\t" + translateConditionalAssertion(brain, brain.assertions[j][p][c][a]);
                   }
                   else if (ctp.isRelationType(brain.assertions[j][p][c][a], "has_sprite")){
                     programText += "\n\t" + translateHasSpriteAssertion(brain, brain.assertions[j][p][c][a]);
@@ -96,7 +96,7 @@ var translateSetValue = function(a){
 }
 
 // Convert an assertion containing a conditional to string.
-var translateConditionalAssertion = function(a){
+var translateConditionalAssertion = function(b,a){
   var str="";
 
   var emptyHypothesis = false;
@@ -140,6 +140,9 @@ var translateConditionalAssertion = function(a){
     if (!emptyHypothesis){str+="\t\t";}
     if (a["r"][j]["relation"]=="set_value"){
       str+=translateSetValue(a["r"][j]);
+    }
+    else if (a["r"][j]["relation"]=="add_to_location"){
+      str+=translateAddSpriteAssertion(b,a["r"][j]);
     }
   }
   if (!emptyHypothesis){

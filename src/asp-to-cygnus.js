@@ -35,6 +35,18 @@ function translateSimpleRelation(str){
   return null;
 }
 
+// helper, deals with statements like add(e2, random)
+var translateAdd=function(str, addCommand){
+  var b = str.substring(addCommand+4);
+  var hypStart2 = b.indexOf("(");
+  var hypMid = b.indexOf(",");
+  var hypEnd = b.indexOf(")).");
+  if (hypStart2 != -1 && hypMid != -1 && hypEnd != -1){
+    var y = b.substring(hypStart2+1,hypMid);
+    var z = b.substring(hypMid+1,hypEnd);
+    return {"l":[translateNested(y)], "relation":"add_to_location", "r":[translateNested(z)], "tags":["create"]};
+  }
+}
 // initialize(set_X(Y,Z)). --> Y has_X Z
 // Example: initialize(set_value(confidence,5)).
 function translateInitialize(str){
@@ -44,15 +56,7 @@ function translateInitialize(str){
 
   // Check for add command.
   if (addCommand != -1){
-    var b = str.substring(addCommand+4);
-    var hypStart2 = b.indexOf("(");
-    var hypMid = b.indexOf(",");
-    var hypEnd = b.indexOf(")).");
-    if (hypStart != -1 && hypStart2 != -1 && hypMid != -1 && hypEnd != -1){
-      var y = b.substring(hypStart2+1,hypMid);
-      var z = b.substring(hypMid+1,hypEnd);
-      return {"l":[translateNested(y)], "relation":"add_to_location", "r":[translateNested(z)], "tags":["create"]};
-    }
+    return translateAdd(str, addCommand);
   }
 
   // Check for set_sprite command.
@@ -165,8 +169,7 @@ var translateClickPrecondition = function(preconds,results){
       }
     }
   }
-  rs = addNormalResult(rs, results);
-  console.log(rs);
+  rs = addNormalResult(rs, results);  
 
   // If we have valid preconditions and results,
   if (ps.length > 0 && rs.length > 0){
@@ -257,6 +260,9 @@ var addNormalResult = function(rs, results){
         var e = r.substring(0,firstParen);
         var fList = r.substring(firstParen+1,lastParen).split(",");
 
+        if (e=="add"){
+          e="add_to_location";
+        }
         // Push this result into our final array of all results.
         if (fList.length==2){ // F = fList[0], G = fList[1]
           rs.push({"l":[translateNested(fList[0])],"relation":e,"r":[fList[1]]});
