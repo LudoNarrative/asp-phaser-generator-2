@@ -208,10 +208,10 @@ var translateHasSpriteAssertion=function(b, a){
   return str;
 }
 
-// Example: player = game.add.sprite(playerX, playerY, 'playerSpriteName');
+// Example: e1=addAtRandomPoint('e1');
 var translateAddSpriteAssertion=function(b,a){
   var str="";
-  str+=a["l"][0]+"=game.add.sprite(" + a["x"]+","+a["y"]+ ","+ "'"+a["l"][0]+"');";
+  str+=a["l"][0]+"=addAtRandomPoint('"+a["l"][0]+"');"
   if (addWhitespace){str+="\n";}
   return str;
 }
