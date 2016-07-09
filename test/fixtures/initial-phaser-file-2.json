@@ -87,6 +87,12 @@
     "r":["function"],
     "params":["varName"],
     "lines":["return variables[varName];"]
+  },
+  {
+    "l":["getRandomPoint"],
+    "relation":"is_a",
+    "r":["function"],
+    "params":[],
+    "lines":["var x = game.rnd.integerInRange(0, game.world.width-1);","var y = game.rnd.integerInRange(0, game.world.height-1);","return new Phaser.Point(x,y);"]
   }
-
 ]
