@@ -15,11 +15,15 @@ exports.writePhaserProgram = function(brain){
       programText += translateVariableAssertion(brain, brain.assertions[i]);
     }
   }
-  // Now write code related to the program assertion.
+  // Now write functions.
   for (var j in brain.assertions){
+    /* DEFINED FUNCTIONS */
+    if (ctp.isFunctionAssertion(brain.assertions[j])){
+      programText += translateFunctionAssertion(brain.assertions[j]);
+    }
     /* WRITING A PROGRAM FROM A PROGRAM ASSERTION CONTAINING PHASER ABSTRACT SYNTAX */
     // We assume, for now, there is only one "program" assertion.
-    if (brain.assertions[j]["relation"]=="is_a" && brain.assertions[j]["r"].indexOf("program")>=0){
+    else if (brain.assertions[j]["relation"]=="is_a" && brain.assertions[j]["r"].indexOf("program")>=0){
       // For each function property specified in the object (e.g. "create"),
       for (var p in brain.assertions[j]) {
         if (brain.assertions[j].hasOwnProperty(p) && typeof brain.assertions[j][p]!=="function") {
@@ -78,6 +82,7 @@ var translateVariableAssertion = function(b, a){
     // and also make sure that e1 is a defined variable.
     var parent = a["l"][0].substring(0,a["l"][0].indexOf("."))
     if (a.hasOwnProperty("value") && b.getAssertionsWith({"l":[parent],"relation":"is_a","r":["variable"]}).length>0){
+      // TODO deal with hash
       str += a["l"][0]+"="+a["value"]+";";
       if (addWhitespace){str+="\n";}
     }
@@ -87,7 +92,24 @@ var translateVariableAssertion = function(b, a){
     str += "var "+a["l"][0];
     // Set variable equal to value, if specified.
     if (a.hasOwnProperty("value")){
-      str += "="+a["value"];
+      // if value is a {}, set appropriately
+      if (!(a["value"] instanceof Array) && typeof a["value"]  === "object"){
+        var size = Object.keys(a["value"]).length;
+        str += "={";
+        var count = 0;
+        for (var k in a["value"]){
+          if (a["value"].hasOwnProperty(k)){
+            str += "'" + k + "':'" + a["value"][k] + "'";
+            count+=1;
+            if (count<size){str+=",";}
+          }
+        }
+        str +="}"
+      }
+      // Otherwise,
+      else{
+          str += "="+a["value"];
+      }
     }
     str += ";";
     if (addWhitespace){str+="\n";}
@@ -198,9 +220,35 @@ var translateAddSpriteAssertion=function(b,a){
 //  >> e1.events.onInputDown.add(e1ClickListener, this);
 var translateListenerAssertion=function(a){
   var str="";
-  str += a["l"][0]+".inputEnabled = true;";
+  str += a["l"][0]+".inputEnabled=true;";
   if (addWhitespace){str+="\n\t";}
   str+=a["l"][0]+".events.onInputDown.add("+a["r"][0]+",this);";
   if (addWhitespace){str+="\n";}
+  return str;
+}
+
+// We assume the function has a single name.
+var translateFunctionAssertion=function(a){
+  var str="";
+  str += "function " + a["l"][0] + "("
+  count = 0;
+  for (var i=0;i<a.params.length;i++){
+    str+=a.params[i]
+    count+=1;
+    if (count<a.params.length){
+      str+=","
+    }
+  }
+  str += "){";
+  if (a["lines"]!=undefined && a["lines"]!=""){
+    for (var j=0;j<a["lines"].length;j++){
+      if (addWhitespace){str+="\n\t";}
+      str+=a.lines[j];
+    }
+    if (addWhitespace){str+="\n";}
+  }
+
+  str += "};";
+  if (addWhitespace){str +="\n\n";}
   return str;
 }

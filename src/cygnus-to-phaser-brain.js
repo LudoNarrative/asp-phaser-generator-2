@@ -482,3 +482,7 @@ exports.isConditionalAssertion = function(a){
 exports.isCallbackAssertion = function(a){
   return exports.isRelationType(a,"triggers");
 }
+
+exports.isFunctionAssertion = function(a){
+  return a["relation"]=="is_a" && (a["r"].indexOf("function")>=0);;
+}

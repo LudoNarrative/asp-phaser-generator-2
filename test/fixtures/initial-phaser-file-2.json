@@ -14,6 +14,12 @@
     "r":[320,440]
   },
   {
+    "l":["variables"],
+    "relation":"is_a",
+    "r":["variable"],
+    "value":{"confidence":5,"optimism":2,"difficulty":3}
+  },
+  {
     "l":["low"],
     "relation":"is_a",
     "r":["variable"],
@@ -67,5 +73,20 @@
     "r":["location"],
     "x":160,
     "y":220
+  },
+  {
+    "l":["setVariable"],
+    "relation":"is_a",
+    "r":["function"],
+    "params":["varName","value"],
+    "lines":["variables[varName]=value;","State.set(varName, value);","State.refreshNarrative();"]
+  },
+  {
+    "l":["getVariable"],
+    "relation":"is_a",
+    "r":["function"],
+    "params":["varName"],
+    "lines":["return variables[varName];"]
   }
+
 ]
