@@ -23,7 +23,7 @@
     "l":["gridLinesHorizontal"],
     "relation":"is_a",
     "r":["variable"],
-    "value":10
+    "value":14
   },
   {
     "l":["gridLinesVertical"],
@@ -35,7 +35,7 @@
     "l":["gridSize"],
     "relation":"is_a",
     "r":["variable"],
-    "value":30
+    "value":60
   },
   {
     "l":["grid"],
