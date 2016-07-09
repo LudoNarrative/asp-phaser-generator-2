@@ -9,11 +9,6 @@
     "render":{}
   },
   {
-    "l":["canvasSize"],
-    "relation":"has_value",
-    "r":[320,440]
-  },
-  {
     "l":["variables"],
     "relation":"is_a",
     "r":["variable"],
