@@ -1,7 +1,7 @@
 var fs = require('fs');
 var AspPhaserGenerator = require('./index');
-var aspGame = fs.readFileSync('./test/fixtures/asp-game-2.lp', 'utf8');
-var initialPhaserFile = fs.readFileSync('./test/fixtures/initial-phaser-file-2.json', 'utf8');
+var aspGame = fs.readFileSync('./test/fixtures/asp-game-3.lp', 'utf8');
+var initialPhaserFile = fs.readFileSync('./test/fixtures/initial-phaser-file-3.json', 'utf8');
 
 var generator = new AspPhaserGenerator(aspGame, initialPhaserFile);
 var phaserProgram = generator.generate(true);

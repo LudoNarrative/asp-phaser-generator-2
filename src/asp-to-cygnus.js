@@ -20,7 +20,11 @@ function translateIsA(str){
 
 // X(Y,Z). --> Y X Z
 // Note: this means physicsLogic --> hasPhysicsLogic
-// Example: hasPhysicsLogic(ball,spring).
+// Examples:
+//    hasPhysicsLogic(ball,spring).
+//    move_toward(entity, other)
+//    move_away(entity, other)
+//    move(entity, dir) where dir = north, south, east, west, northeast, etc.
 function translateSimpleRelation(str){
   var hypStart = str.indexOf("(");
   var hypMid = str.indexOf(",");
@@ -47,6 +51,7 @@ var translateAdd=function(str, addCommand){
     return {"l":[translateNested(y)], "relation":"add_to_location", "r":[translateNested(z)], "tags":["create"]};
   }
 }
+
 // initialize(set_X(Y,Z)). --> Y has_X Z
 // Example: initialize(set_value(confidence,5)).
 function translateInitialize(str){
@@ -169,7 +174,7 @@ var translateClickPrecondition = function(preconds,results){
       }
     }
   }
-  rs = addNormalResult(rs, results);  
+  rs = addNormalResult(rs, results);
 
   // If we have valid preconditions and results,
   if (ps.length > 0 && rs.length > 0){

@@ -2,7 +2,9 @@
  This file generates a string containing a complete Phaser program, giving a
  brain that contains Phaser abstract syntax.
 */
+// Change to false to remove whitespace from output.
 var addWhitespace = false;
+
 var ctp = require('./cygnus-to-phaser-brain');
 // Input: Phaser abstract syntax (brain).
 // Output: Phaser program (string).
@@ -39,18 +41,56 @@ exports.writePhaserProgram = function(brain){
             // If this is the create function, assign any initial variable values.
             // (We assign variable values here, because outside the functions, variables like
             // game.width have not been correctly assigned yet.)
-            if (p=="create"){
+            // Also, add default values for arcade physics (like velocity), unless they have been initialized already.
+            if (p==="create"){
+              // Define initial values.
               if(addWhitespace){programText+="\n"};
               for (var z=0; z<variableValues.length;z++){
                 var curAssert = variableValues[z];
                 if (curAssert.hasOwnProperty("value")){
                   if (curAssert["value"]!==""){
-                    programText += translateVariableAssertion(brain, curAssert, false);
+                    // if(addWhitespace){programText+="\n"};
+                    programText += translateVariableAssertion(brain, curAssert, false);                                  }
+                }
+              }
+              // Add any entities to the canvas.
+              // For each content property specified in the function (e.g. "vars"),
+              for (var d in brain.assertions[j][p]) {
+                if (brain.assertions[j][p].hasOwnProperty(d)) {
+                  // For each assertion in the list of assertions,
+                  for (var b in brain.assertions[j][p][d]){
+                    if (ctp.isRelationType(brain.assertions[j][p][d][b], "add_to_location")){
+                      if (addWhitespace){programText+="\n\t";}
+                      programText += translateAddSpriteAssertion(brain, brain.assertions[j][p][d][b]);
+                    }
+                  }
+                }
+              }
+              for (var z=0; z<variableValues.length;z++){
+                var curAssert = variableValues[z];
+                // If it's an entity, set default arcade values.
+                if (curAssert.hasOwnProperty("variableType")){
+
+                  if (curAssert["variableType"].indexOf("entity")>=0){
+                    if(addWhitespace){programText+="\n\t"};
+                    programText += "game.physics.arcade.enable("+curAssert["l"]+");";
+                    if(addWhitespace){programText+="\n\t"};
+                    programText += curAssert["l"] + ".body.collideWorldBounds = true;";
+                    if(addWhitespace){programText+="\n\t"};
+                    programText += "if (!"+curAssert["l"]+".body.velocity.hasOwnProperty('x')){"+curAssert["l"]+".body.velocity.x=0;}";
+                    if(addWhitespace){programText+="\n\t"};
+                    programText += "if (!"+curAssert["l"]+".body.velocity.hasOwnProperty('y')){"+curAssert["l"]+".body.velocity.y=0;}";
+                    if(addWhitespace){programText+="\n\t"};
+                    programText += "if (!"+curAssert["l"]+".body.hasOwnProperty('angularVelocity')){"+curAssert["l"]+".body.angularVelocity=0;}";
+                    // TODO waiting to hear back about team decision for scaling
+                    if(addWhitespace){programText+="\n\t"};
+                    programText += curAssert["l"]+".scale.setTo(0.2,0.2);";
                   }
                 }
               }
             }
 
+            // Add all remaining statements.
             // For each content property specified in the function (e.g. "vars"),
             for (var c in brain.assertions[j][p]) {
               if (brain.assertions[j][p].hasOwnProperty(c)) {
@@ -67,8 +107,7 @@ exports.writePhaserProgram = function(brain){
                   else if (ctp.isRelationType(brain.assertions[j][p][c][a], "has_sprite")){
                     programText += translateHasSpriteAssertion(brain, brain.assertions[j][p][c][a]);
                   }
-                  else if (ctp.isRelationType(brain.assertions[j][p][c][a], "add_to_location")){
-
+                  else if (ctp.isRelationType(brain.assertions[j][p][c][a], "add_to_location") && p!=="create"){
                     programText += translateAddSpriteAssertion(brain, brain.assertions[j][p][c][a]);
                   }
                   // TODO: might need isListenerAssertion at some point.
@@ -90,8 +129,12 @@ exports.writePhaserProgram = function(brain){
 };
 
 var defineVariable = function(b,a){
-  str = "var " + a["l"][0] + ";";
-  if (addWhitespace){str+="\n";}
+  str = "";
+  // If variable is a property, don't define it.
+  if (a["l"][0].indexOf(".")<0){
+    str = "var " + a["l"][0] + ";";
+    if (addWhitespace){str+="\n";}
+  }
   return str;
 }
 
@@ -198,11 +241,14 @@ var translateConditionalAssertion = function(b,a){
   // Add each assertion in the conclusion.
   if (!emptyHypothesis && addWhitespace){str+="\t\t";}
   for (var j=0; j<a["r"].length;j++){
-    if (a["r"][j]["relation"]=="set_value"){
+    if (a["r"][j]["relation"]==="set_value"){
       str+=translateSetValue(a["r"][j]);
     }
-    else if (a["r"][j]["relation"]=="add_to_location"){
+    else if (a["r"][j]["relation"]==="add_to_location"){
       str+=translateAddSpriteAssertion(b,a["r"][j]);
+    }
+    else if (a["r"][j]["relation"]==="move_toward" || a["r"][j]["relation"]==="move_away"){
+      str += translateMove(a["r"][j],a["r"][j]["relation"]);
     }
     if (addWhitespace){str+="\t";}
   }
@@ -278,5 +324,21 @@ var translateFunctionAssertion=function(a){
 
   str += "};";
   if (addWhitespace){str +="\n\n";}
+  return str;
+}
+
+
+// tempPoint.x = other.x-entity.x;
+// tempPoint.y = other.y-entity.y;
+// tempPoint.normalize();
+// entity.movementProfile(entity, tempPoint)
+var translateMove = function(a, move_type){
+  str = "";
+  str += "var tempPoint = new Phaser.Point("+a["r"][0]+".x-"+a["l"][0]+".x,"+a["r"][0]+".y-"+a["l"][0]+".y);";
+  if (addWhitespace){str+="\n\t";}
+  str+="tempPoint.normalize();"
+  if (addWhitespace){str+="\n\t";}
+  str+=move_type+"("+a["l"][0]+", tempPoint);";
+  if (addWhitespace){str+="\n";}
   return str;
 }
