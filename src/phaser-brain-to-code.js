@@ -44,7 +44,7 @@ exports.writePhaserProgram = function(brain){
               for (var z=0; z<variableValues.length;z++){
                 var curAssert = variableValues[z];
                 if (curAssert.hasOwnProperty("value")){
-                  if (curAssert["value"]!=""){
+                  if (curAssert["value"]!==""){
                     programText += translateVariableAssertion(brain, curAssert, false);
                   }
                 }
