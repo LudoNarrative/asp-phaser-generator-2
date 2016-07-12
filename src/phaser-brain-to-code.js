@@ -8,11 +8,16 @@ var ctp = require('./cygnus-to-phaser-brain');
 // Output: Phaser program (string).
 exports.writePhaserProgram = function(brain){
   var programText = "";
+
+  // Grab variable assertions so we can store their values in create.
+  var variableValues = [];
+
   // Output variable initializations first.
   for (var i in brain.assertions){
     /* VARIABLE INSTANTIATIONS */
     if (ctp.isVariableAssertion(brain.assertions[i])){
-      programText += translateVariableAssertion(brain, brain.assertions[i]);
+      programText += defineVariable(brain, brain.assertions[i]);
+      variableValues.push(brain.assertions[i]);
     }
   }
   // Now write functions.
@@ -31,6 +36,21 @@ exports.writePhaserProgram = function(brain){
             // Write the content for that function.
             programText += "function " + p + "(){";
 
+            // If this is the create function, assign any initial variable values.
+            // (We assign variable values here, because outside the functions, variables like
+            // game.width have not been correctly assigned yet.)
+            if (p=="create"){
+              if(addWhitespace){programText+="\n"};
+              for (var z=0; z<variableValues.length;z++){
+                var curAssert = variableValues[z];
+                if (curAssert.hasOwnProperty("value")){
+                  if (curAssert["value"]!=""){
+                    programText += translateVariableAssertion(brain, curAssert, false);
+                  }
+                }
+              }
+            }
+
             // For each content property specified in the function (e.g. "vars"),
             for (var c in brain.assertions[j][p]) {
               if (brain.assertions[j][p].hasOwnProperty(c)) {
@@ -39,7 +59,7 @@ exports.writePhaserProgram = function(brain){
                   if (addWhitespace){programText+="\n\t";}
                   // Declare / change value of variables.
                   if (ctp.isVariableAssertion(brain.assertions[j][p][c][a])){
-                    programText += translateVariableAssertion(brain, brain.assertions[j][p][c][a]);
+                    programText += translateVariableAssertion(brain, brain.assertions[j][p][c][a], true);
                   }
                   else if (ctp.isConditionalAssertion(brain.assertions[j][p][c][a])){
                     programText += translateConditionalAssertion(brain, brain.assertions[j][p][c][a]);
@@ -69,13 +89,19 @@ exports.writePhaserProgram = function(brain){
   return programText;
 };
 
+var defineVariable = function(b,a){
+  str = "var " + a["l"][0] + ";";
+  if (addWhitespace){str+="\n";}
+  return str;
+}
 
 // Input: assertion to convert ("a"), brain that contains that assertion ("b")
 // Convert an assertion containing a variable declaration to string.
 // We're assuming here, like in most other places, that there is only one
 // element in the list.
-var translateVariableAssertion = function(b, a){
+var translateVariableAssertion = function(b, a, isNewVar){
   var str="";
+  if (addWhitespace){str+="\t";}
   // If this is an attribute (e.g. "e1.health")
   if (a["l"][0].indexOf(".")>=0){
     // Make sure there is a value defined (for e.g. "e1.health"),
@@ -89,7 +115,8 @@ var translateVariableAssertion = function(b, a){
   }
   // If this isn't an attribute (e.g. "e1")
   else{
-    str += "var "+a["l"][0];
+    if (isNewVar){str += "var ";}
+    str+=a["l"][0];
     // Set variable equal to value, if specified.
     if (a.hasOwnProperty("value")){
       // if value is a {}, set appropriately
