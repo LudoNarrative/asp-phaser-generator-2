@@ -104,8 +104,8 @@
     "relation":"is_a",
     "r":["function"],
     "params":["varName","value"],
-    "lines":["variables[varName]=value;","State.set(varName, value);","State.refreshNarrative();"]
-  },
+    "lines":["variables[varName]=value;","State.set(varName, value);","StoryAssembler.refreshNarrative();","Display.setAvatar(State);"]
+  },  
   {
     "l":["getVariable"],
     "relation":"is_a",
