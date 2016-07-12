@@ -217,7 +217,7 @@ var translateConditionalAssertion = function(b,a){
 // Example:
 // > player has_sprite sprite1
 // > sprite1 is_a sprite with image: someImageName
-// > game.load.image('"'+player+'"', 'assets/' + someImageName);
+// > game.load.image('"'+player+'"', 'assets/sprites/' + someImageName);
 var translateHasSpriteAssertion=function(b, a){
   var str = "";
 
@@ -228,7 +228,7 @@ var translateHasSpriteAssertion=function(b, a){
   if (spriteImgID!=undefined && b.assertions[spriteImgID]!=undefined){
     if (b.assertions[spriteImgID]["image"]){
       var img = b.assertions[spriteImgID]["image"];
-      str+= "game.load.image('" + a["l"][0] + "','assets/"+img+"');"
+      str+= "game.load.image('" + a["l"][0] + "','assets/sprites/"+img+"');"
       if (addWhitespace){str+="\n";}
     }
   }
