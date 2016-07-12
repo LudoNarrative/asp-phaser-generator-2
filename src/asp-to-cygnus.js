@@ -19,9 +19,7 @@ function translateIsA(str){
 }
 
 // X(Y,Z). --> Y X Z
-// Note: this means physicsLogic --> hasPhysicsLogic
 // Examples:
-//    hasPhysicsLogic(ball,spring).
 //    move_toward(entity, other)
 //    move_away(entity, other)
 //    move(entity, dir) where dir = north, south, east, west, northeast, etc.
@@ -349,6 +347,10 @@ function translateASP(lines){
         }
       }
     }
+    else if (isSimpleRelation(lines[i])){      
+      assertionsToAdd = [translateSimpleRelation(lines[i])];
+      doneLines.push(lines[i]);
+    }
 
     // Add new assertion to final list of all assertions.
     if (assertionsToAdd != null){
@@ -374,6 +376,10 @@ function isPrecondition(str){
 }
 function isResult(str){
   return str.indexOf("result") != -1;
+}
+// X(Y,Z).
+function isSimpleRelation(str){
+  return /\w+\(\w+\,\w+\)\./.test(str);
 }
 
 function containsObj(obj, list) {

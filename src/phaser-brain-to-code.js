@@ -110,6 +110,9 @@ exports.writePhaserProgram = function(brain){
                   else if (ctp.isRelationType(brain.assertions[j][p][c][a], "add_to_location") && p!=="create"){
                     programText += translateAddSpriteAssertion(brain, brain.assertions[j][p][c][a]);
                   }
+                  else if (ctp.isRelationType(brain.assertions[j][p][c][a], "move_toward") || ctp.isRelationType(brain.assertions[j][p][c][a], "move_away")){
+                    programText += translateMove(brain.assertions[j][p][c][a],brain.assertions[j][p][c][a]["relation"]);
+                  }
                   // TODO: might need isListenerAssertion at some point.
                   else if (ctp.isCallbackAssertion(brain.assertions[j][p][c][a])){
                     programText += translateListenerAssertion(brain.assertions[j][p][c][a]);

@@ -4,7 +4,7 @@
     "relation": "is_a",
     "r":["program"],
     "preload": {"images":[]},
-    "create":{"vars":[],"sprites":[],"listeners":[],"buttons":[]},
+    "create":{"vars":[],"sprites":[],"listeners":[],"buttons":[],"motion":[]},
     "update":{"functions":[],"outcomes":[]},
     "render":{}
   },
