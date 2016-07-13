@@ -101,7 +101,7 @@ exports.writePhaserProgram = function(brain){
                   else if (ctp.isRelationType(brain.assertions[j][p][c][a], "add_to_location") && p!=="create"){
                     programText += translateAddSpriteAssertion(brain, brain.assertions[j][p][c][a]);
                   }
-                  else if (ctp.isRelationType(brain.assertions[j][p][c][a], "move_toward") || ctp.isRelationType(brain.assertions[j][p][c][a], "move_away")|| ctp.isRelationType(brain.assertions[j][p][c][a], "move")){
+                  else if (ctp.isRelationType(brain.assertions[j][p][c][a], "move_towards") || ctp.isRelationType(brain.assertions[j][p][c][a], "move_away")|| ctp.isRelationType(brain.assertions[j][p][c][a], "move")){
                     programText += translateMove(brain.assertions[j][p][c][a],brain.assertions[j][p][c][a]["relation"]);
                   }
                   // TODO: might need isListenerAssertion at some point.
@@ -241,7 +241,7 @@ var translateConditionalAssertion = function(b,a){
     else if (a["r"][j]["relation"]==="add_to_location"){
       str+=translateAddSpriteAssertion(b,a["r"][j]);
     }
-    else if (a["r"][j]["relation"]==="move_toward" || a["r"][j]["relation"]==="move_away" || a["r"][j]["relation"]==="move"){
+    else if (a["r"][j]["relation"]==="move_towards" || a["r"][j]["relation"]==="move_away" || a["r"][j]["relation"]==="move"){
       str += translateMove(a["r"][j],a["r"][j]["relation"]);
     }
     if (addWhitespace){str+="\t";}
@@ -342,8 +342,8 @@ var translateFunctionAssertion=function(a){
 // entity.movementProfile(entity, tempPoint)
 var translateMove = function(a, move_type){
   str = "";
-  // if move_toward(entity, other) or move_away(entity, other)
-  if (move_type==="move_toward" || move_type==="move_away"){
+  // if move_towards(entity, other) or move_away(entity, other)
+  if (move_type==="move_towards" || move_type==="move_away"){
     str += "var tempPoint = new Phaser.Point("+a["r"][0]+".x-"+a["l"][0]+".x,"+a["r"][0]+".y-"+a["l"][0]+".y);";
     if (addWhitespace){str+="\n\t";}
     str+="tempPoint.normalize();"

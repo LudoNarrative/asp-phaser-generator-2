@@ -20,7 +20,7 @@ function translateIsA(str){
 
 // X(Y,Z). --> Y X Z
 // Examples:
-//    move_toward(entity, other)
+//    move_towards(entity, other)
 //    move_away(entity, other)
 //    move(entity, dir) where dir = north, south, east, west, northeast, etc.
 function translateSimpleRelation(str){
@@ -347,7 +347,7 @@ function translateASP(lines){
         }
       }
     }
-    else if (isSimpleRelation(lines[i])){      
+    else if (isSimpleRelation(lines[i])){
       assertionsToAdd = [translateSimpleRelation(lines[i])];
       doneLines.push(lines[i]);
     }
