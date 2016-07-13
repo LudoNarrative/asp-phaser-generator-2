@@ -45,6 +45,12 @@
     "value":0
   },
   {
+    "l":["addedEntities"],
+    "relation":"is_a",
+    "r":["variable"],
+    "value":["{}"]
+  },
+  {
     "l":["low"],
     "relation":"is_a",
     "r":["variable"],
@@ -168,6 +174,13 @@
     "r":["function"],
     "params":["e","x","y"],
     "lines":["e.directionChange = new Phaser.Point(x,y);"]
+  },
+  {
+    "l":["initEntityProperties"],
+    "relation":"is_a",
+    "r":["function"],
+    "params":["eName"],
+    "lines":["game.physics.arcade.enable(addedEntities[eName]);","addedEntities[eName].body.collideWorldBounds = true;","if (!addedEntities[eName].body.velocity.hasOwnProperty('x')){addedEntities[eName].body.velocity.x=0;}","if (!addedEntities[eName].body.velocity.hasOwnProperty('y')){addedEntities[eName].body.velocity.y=0;}","if (!addedEntities[eName].body.hasOwnProperty('angularVelocity')){addedEntities[eName].body.angularVelocity=0;}","if (!addedEntities[eName].hasOwnProperty('directionChange')){addedEntities[eName].directionChange=new Phaser.Point(0,0);}","addedEntities[eName].scale.setTo(0.2,0.2);"]
   }
 
 ]

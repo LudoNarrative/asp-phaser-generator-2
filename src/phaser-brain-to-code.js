@@ -66,44 +66,19 @@ exports.writePhaserProgram = function(brain){
                   }
                 }
               }
-              for (var z=0; z<variableValues.length;z++){
-                var curAssert = variableValues[z];
-                // If it's an entity, set default arcade values.
-                if (curAssert.hasOwnProperty("variableType")){
-
-                  if (curAssert["variableType"].indexOf("entity")>=0){
-                    if(addWhitespace){programText+="\n\t"};
-                    programText += "game.physics.arcade.enable("+curAssert["l"]+");";
-                    if(addWhitespace){programText+="\n\t"};
-                    programText += curAssert["l"] + ".body.collideWorldBounds = true;";
-                    if(addWhitespace){programText+="\n\t"};
-                    programText += "if (!"+curAssert["l"]+".body.velocity.hasOwnProperty('x')){"+curAssert["l"]+".body.velocity.x=0;}";
-                    if(addWhitespace){programText+="\n\t"};
-                    programText += "if (!"+curAssert["l"]+".body.velocity.hasOwnProperty('y')){"+curAssert["l"]+".body.velocity.y=0;}";
-                    if(addWhitespace){programText+="\n\t"};
-                    programText += "if (!"+curAssert["l"]+".body.hasOwnProperty('angularVelocity')){"+curAssert["l"]+".body.angularVelocity=0;}";
-                    if(addWhitespace){programText+="\n\t"};
-                    programText += "if (!"+curAssert["l"]+".hasOwnProperty('directionChange')){"+curAssert["l"]+".directionChange = new Phaser.Point(0,0);}";
-                    // TODO waiting to hear back about team decision for scaling
-                    if(addWhitespace){programText+="\n\t"};
-                    programText += curAssert["l"]+".scale.setTo(0.2,0.2);";
-                  }
-                }
-              }
             }
             // Add direction changes in the update function.
             else if (p==="update"){
-              for (var z=0; z<variableValues.length;z++){
-                var curAssert = variableValues[z];
-                if (curAssert.hasOwnProperty("variableType")){
-                  if (curAssert["variableType"].indexOf("entity")>=0){
-                    if(addWhitespace){programText+="\n\t"};
-                    programText += curAssert["l"]+".x+="+curAssert["l"]+".directionChange.x;";
-                    if(addWhitespace){programText+="\n\t"};
-                    programText += curAssert["l"]+".y+="+curAssert["l"]+".directionChange.y;";
-                  }
-                }
-              }
+              if(addWhitespace){programText+="\n\t"};
+              programText += "for(var k in addedEntities) {if (addedEntities.hasOwnProperty(k)) {"
+              if(addWhitespace){programText+="\n\t\t"};
+              programText += "var entity = addedEntities[k];";
+              if(addWhitespace){programText+="\n\t\t"};
+              programText += "entity.x+=entity.directionChange.x;";
+              if(addWhitespace){programText+="\n\t\t"};
+              programText += "entity.y+=entity.directionChange.y;";
+              if(addWhitespace){programText+="\n\t"};
+              programText += "}}\n";
             }
 
             // Add all remaining statements.
@@ -305,6 +280,20 @@ var translateAddSpriteAssertion=function(b,a){
   var str="";
   str+=a["l"][0]+"=addAtRandomPoint('"+a["l"][0]+"');"
   if (addWhitespace){str+="\n";}
+  // If it's an entity, set default arcade values.
+  var isVariableID = b.getAssertionsWith({"l":a["l"],"relation":"is_a","r":["variable"]})[0];
+  if (isVariableID!=undefined){
+    var curAssert = b.getAssertionByID(isVariableID);
+    if (curAssert.hasOwnProperty("variableType")){
+      if (curAssert["variableType"].indexOf("entity")>=0){
+        if(addWhitespace){str+="\n\t"};
+        str += "addedEntities['"+a['l'][0]+"']="+a['l'][0]+";";
+        if(addWhitespace){str+="\n\t"};
+        str+="initEntityProperties('"+a['l'][0]+"');"
+      }
+    }
+  }
+  if(addWhitespace){str+="\n\t"};
   return str;
 }
 
