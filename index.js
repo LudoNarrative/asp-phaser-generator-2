@@ -6,9 +6,13 @@ var translatePhaserBrain = require('./src/phaser-brain-to-code');
 function AspPhaserGenerator(generatedAsp, initialPhaserFile) {
   // Read each line of the ASP game.
   var lines = generatedAsp.split('\n');
-  // For each line read, remove any extra spaces.
+  // For each line read, remove any extra spaces,
+  //  and add a period at the end if there isn't one.
   for (var i=0; i<lines.length;i++){
     lines[i] = lines[i].replace(/\s+/g, '');
+    if (lines[i]!="" && lines[i].slice(-1)!="."){
+      lines[i] = lines[i]+".";
+    }    
   }
   // Store the ASP game.
   this.aspGame = lines;
