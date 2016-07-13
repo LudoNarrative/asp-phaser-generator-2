@@ -196,7 +196,7 @@ var mergeInitialWithCygnus = function(pID, initialBrain, cygnusBrain){
         });
       }
     }
-    else if (exports.isRelationType(cygnusBrain.assertions[i],"move_toward") || exports.isRelationType(cygnusBrain.assertions[i],"move_away")){
+    else if (exports.isRelationType(cygnusBrain.assertions[i],"move_toward") || exports.isRelationType(cygnusBrain.assertions[i],"move_away")|| exports.isRelationType(cygnusBrain.assertions[i],"move")){
       newProgram["create"]["motion"].push(cygnusBrain.assertions[i]);
     }
     else{

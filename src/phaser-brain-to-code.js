@@ -82,9 +82,25 @@ exports.writePhaserProgram = function(brain){
                     programText += "if (!"+curAssert["l"]+".body.velocity.hasOwnProperty('y')){"+curAssert["l"]+".body.velocity.y=0;}";
                     if(addWhitespace){programText+="\n\t"};
                     programText += "if (!"+curAssert["l"]+".body.hasOwnProperty('angularVelocity')){"+curAssert["l"]+".body.angularVelocity=0;}";
+                    if(addWhitespace){programText+="\n\t"};
+                    programText += "if (!"+curAssert["l"]+".hasOwnProperty('directionChange')){"+curAssert["l"]+".directionChange = new Phaser.Point(0,0);}";
                     // TODO waiting to hear back about team decision for scaling
                     if(addWhitespace){programText+="\n\t"};
                     programText += curAssert["l"]+".scale.setTo(0.2,0.2);";
+                  }
+                }
+              }
+            }
+            // Add direction changes in the update function.
+            else if (p==="update"){
+              for (var z=0; z<variableValues.length;z++){
+                var curAssert = variableValues[z];
+                if (curAssert.hasOwnProperty("variableType")){
+                  if (curAssert["variableType"].indexOf("entity")>=0){
+                    if(addWhitespace){programText+="\n\t"};
+                    programText += curAssert["l"]+".x+="+curAssert["l"]+".directionChange.x;";
+                    if(addWhitespace){programText+="\n\t"};
+                    programText += curAssert["l"]+".y+="+curAssert["l"]+".directionChange.y;";
                   }
                 }
               }
@@ -110,7 +126,7 @@ exports.writePhaserProgram = function(brain){
                   else if (ctp.isRelationType(brain.assertions[j][p][c][a], "add_to_location") && p!=="create"){
                     programText += translateAddSpriteAssertion(brain, brain.assertions[j][p][c][a]);
                   }
-                  else if (ctp.isRelationType(brain.assertions[j][p][c][a], "move_toward") || ctp.isRelationType(brain.assertions[j][p][c][a], "move_away")){
+                  else if (ctp.isRelationType(brain.assertions[j][p][c][a], "move_toward") || ctp.isRelationType(brain.assertions[j][p][c][a], "move_away")|| ctp.isRelationType(brain.assertions[j][p][c][a], "move")){
                     programText += translateMove(brain.assertions[j][p][c][a],brain.assertions[j][p][c][a]["relation"]);
                   }
                   // TODO: might need isListenerAssertion at some point.
@@ -250,7 +266,7 @@ var translateConditionalAssertion = function(b,a){
     else if (a["r"][j]["relation"]==="add_to_location"){
       str+=translateAddSpriteAssertion(b,a["r"][j]);
     }
-    else if (a["r"][j]["relation"]==="move_toward" || a["r"][j]["relation"]==="move_away"){
+    else if (a["r"][j]["relation"]==="move_toward" || a["r"][j]["relation"]==="move_away" || a["r"][j]["relation"]==="move"){
       str += translateMove(a["r"][j],a["r"][j]["relation"]);
     }
     if (addWhitespace){str+="\t";}
@@ -337,11 +353,46 @@ var translateFunctionAssertion=function(a){
 // entity.movementProfile(entity, tempPoint)
 var translateMove = function(a, move_type){
   str = "";
-  str += "var tempPoint = new Phaser.Point("+a["r"][0]+".x-"+a["l"][0]+".x,"+a["r"][0]+".y-"+a["l"][0]+".y);";
-  if (addWhitespace){str+="\n\t";}
-  str+="tempPoint.normalize();"
-  if (addWhitespace){str+="\n\t";}
-  str+=move_type+"("+a["l"][0]+", tempPoint);";
-  if (addWhitespace){str+="\n";}
+  // if move_toward(entity, other) or move_away(entity, other)
+  if (move_type==="move_toward" || move_type==="move_away"){
+    str += "var tempPoint = new Phaser.Point("+a["r"][0]+".x-"+a["l"][0]+".x,"+a["r"][0]+".y-"+a["l"][0]+".y);";
+    if (addWhitespace){str+="\n\t";}
+    str+="tempPoint.normalize();"
+    if (addWhitespace){str+="\n\t";}
+    str+=move_type+"("+a["l"][0]+", tempPoint);";
+    if (addWhitespace){str+="\n";}
+  }
+  // Otherwise, assume move(entity, direction)
+  else{
+    str+="move(";
+    if (a["r"][0]==="north"){
+      // move(entity, 0, -1);
+      str += a["l"][0]+",0,-1);"
+    }
+    else if (a["r"][0]==="south"){
+      str += a["l"][0]+",0,1);"
+    }
+    else if (a["r"][0]==="east"){
+      str += a["l"][0]+",1,0);"
+    }
+    else if (a["r"][0]==="west"){
+      str += a["l"][0]+",-1,0);"
+    }
+    else if (a["r"][0]==="northeast"){
+      // move(entity, 0, -1);
+      str += a["l"][0]+",1,-1);"
+    }
+    else if (a["r"][0]==="northwest"){
+      str += a["l"][0]+",-1,-1);"
+    }
+    else if (a["r"][0]==="southeast"){
+      str += a["l"][0]+",1,1);"
+    }
+    else if (a["r"][0]==="southwest"){
+      str += a["l"][0]+",-1,1);"
+    }
+    if (addWhitespace){str+="\n";}
+  }
+
   return str;
 }

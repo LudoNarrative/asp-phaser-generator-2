@@ -299,16 +299,19 @@ Assertion.prototype.clone = function(){
 // Helper for Assertion.prototype.equals.
 // Determines if two arrays are equal.
 exports.arraysEqual=function(a, b) {
-  if (a === b) return true;
-  if (a == null || b == null) return false;
-  if (a.length != b.length) return false;
+  if (a.constructor === Array && b.constructor === Array){
+    if (a === b) return true;
+    if (a == null || b == null) return false;
+    if (a.length != b.length) return false;
 
-  a = a.sort();
-  b = b.sort();
-  for (var i = 0; i < a.length; ++i) {
-    if (a[i] !== b[i]) return false;
+    a = a.sort();
+    b = b.sort();
+    for (var i = 0; i < a.length; ++i) {
+      if (a[i] !== b[i]) return false;
+    }
+    return true;
   }
-  return true;
+  return false;
 };
 
 // Helper function for assigning mandatory attributes.

@@ -5,7 +5,7 @@
     "r":["program"],
     "preload": {"images":[]},
     "create":{"vars":[],"sprites":[],"listeners":[],"buttons":[],"motion":[]},
-    "update":{"functions":[],"outcomes":[]},
+    "update":{"functions":[],"outcomes":[],"motion":[]},
     "render":{}
   },
   {
@@ -153,14 +153,21 @@
     "relation":"is_a",
     "r":["function"],
     "params":["e","dir"],
-    "lines":["e.body.velocity.x = 10*dir.x;","e.body.velocity.y = 10*dir.y;"]
+    "lines":["e.directionChange = new Phaser.Point(dir.x,dir.y);"]
   },
   {
     "l":["move_away"],
     "relation":"is_a",
     "r":["function"],
     "params":["e","dir"],
-    "lines":["e.body.velocity.x = -10*dir.x;","e.body.velocity.y = -10*dir.y;"]
+    "lines":["e.directionChange = new Phaser.Point(-dir.x,-dir.y);"]
+  },
+  {
+    "l":["move"],
+    "relation":"is_a",
+    "r":["function"],
+    "params":["e","x","y"],
+    "lines":["e.directionChange = new Phaser.Point(x,y);"]
   }
 
 ]
