@@ -130,7 +130,7 @@ var mergeInitialWithCygnus = function(pID, initialBrain, cygnusBrain){
     if (isVariableTypeAssertion(cygnusBrain.assertions[i])){
       tempVarTypes[cygnusBrain.assertions[i]["l"]] = cygnusBrain.assertions[i]["r"];
     }
-    else if (isSetValueAssertion(cygnusBrain.assertions[i])){
+    else if (exports.isSetValueAssertion(cygnusBrain.assertions[i])){
       tempVarValues[cygnusBrain.assertions[i]["l"]] = cygnusBrain.assertions[i]["r"];
     }
     else if (exports.isConditionalAssertion(cygnusBrain.assertions[i])){
@@ -197,7 +197,30 @@ var mergeInitialWithCygnus = function(pID, initialBrain, cygnusBrain){
       }
     }
     else if (exports.isRelationType(cygnusBrain.assertions[i],"move_towards") || exports.isRelationType(cygnusBrain.assertions[i],"move_away")|| exports.isRelationType(cygnusBrain.assertions[i],"move")){
-      newProgram["create"]["motion"].push(cygnusBrain.assertions[i]);
+      if (cygnusBrain.assertions[i].hasOwnProperty("tags")){
+        if (cygnusBrain.assertions[i]["tags"].indexOf("update")>=0){
+          newProgram["update"]["motion"].push(cygnusBrain.assertions[i]);
+        }
+        else{
+          newProgram["create"]["motion"].push(cygnusBrain.assertions[i]);
+        }
+      }
+      else{
+        newProgram["create"]["motion"].push(cygnusBrain.assertions[i]);
+      }
+    }
+    else if (cygnusBrain.assertions[i].hasOwnProperty("tags")){
+      if (cygnusBrain.assertions[i]["tags"].indexOf("update")>=0){
+        if (exports.isRelationType(cygnusBrain.assertions[i],"increase") || exports.isRelationType(cygnusBrain.assertions[i],"decrease")){
+            newProgram["update"]["vars"].push(changeToSetValue(cygnusBrain.assertions[i]));
+        }
+        else {
+          newProgram["update"]["misc"].push(cygnusBrain.assertions[i]);
+        }
+      }
+      else{
+        newBrain.addAssertion(cygnusBrain.assertions[i]);
+      }
     }
     else{
       newBrain.addAssertion(cygnusBrain.assertions[i]);
@@ -246,35 +269,39 @@ var getNewHypotheses = function(newLeft, assert){
 
 // assert = cygnusBrain.assertions[i]["r"];
 // Again TODO: Need to push all properties, not just l, relation, right...
-var getNewConclusions = function(newRight, assert){
+var getNewConclusions = function(newRight, asserts){
   // Update each element in right array.
   // > increase, decrease --> set_value.
-  for (var n in assert){
-    var newRightA ={};
-    newRightA["l"]=assert[n]["l"];
-
-    // Here are the "old" values from the cygnus brain corresponding to the right attribute.
-    var oldRelation = assert[n]["relation"];
-    var oldRight = assert[n]["r"];
-
-    if (oldRelation=="increase"){
-      newRightA["relation"]="set_value";
-      // TODO fix so not assuming newRightA["l"] consists of one element
-      newRightA["r"]=[newRightA["l"][0]+"+"+oldRight];
-    }
-    else if (oldRelation=="decrease"){
-      newRightA["relation"]="set_value";
-      newRightA["r"]=[newRightA["l"][0]+"-"+oldRight];
-    }
-    else {
-      newRightA["relation"]=oldRelation;
-      newRightA["r"]=oldRight;
-    }
+  for (var n in asserts){
+    var newRightA = changeToSetValue(asserts[n]);
     newRight.push(newRightA);
   }
   return newRight;
 };
 
+var changeToSetValue = function(assert){
+  var newRightA ={};
+  newRightA["l"]=assert["l"];
+
+  // Here are the "old" values from the cygnus brain corresponding to the right attribute.
+  var oldRelation = assert["relation"];
+  var oldRight = assert["r"];
+
+  if (oldRelation=="increase"){
+    newRightA["relation"]="set_value";
+    // TODO fix so not assuming newRightA["l"] consists of one element
+    newRightA["r"]=[newRightA["l"][0]+"+"+oldRight];
+  }
+  else if (oldRelation=="decrease"){
+    newRightA["relation"]="set_value";
+    newRightA["r"]=[newRightA["l"][0]+"-"+oldRight];
+  }
+  else {
+    newRightA["relation"]=oldRelation;
+    newRightA["r"]=oldRight;
+  }
+  return newRightA;
+}
 
 // Check if an assertion is a variable declaration in Phaser Abstract Syntax.
 exports.isVariableAssertion=function(a){
@@ -291,7 +318,7 @@ exports.isRelationType=function(a,relationType){
 };
 
 // Check if an assertion is setting the value of one or more concepts.
-var isSetValueAssertion=function(a){
+exports.isSetValueAssertion=function(a){
   return exports.isRelationType(a,"set_value");
 };
 

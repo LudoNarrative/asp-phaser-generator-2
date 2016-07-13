@@ -5,7 +5,7 @@
     "r":["program"],
     "preload": {"images":[]},
     "create":{"vars":[],"sprites":[],"listeners":[],"buttons":[],"motion":[]},
-    "update":{"functions":[],"outcomes":[],"motion":[]},
+    "update":{"vars":[],"functions":[],"outcomes":[],"motion":[],"misc":[]},
     "render":{}
   },
   {
@@ -55,6 +55,12 @@
     "relation":"is_a",
     "r":["variable"],
     "value":1
+  },
+  {
+    "l":["high"],
+    "relation":"is_a",
+    "r":["variable"],
+    "value":10
   },
   {
     "l":["circle"],

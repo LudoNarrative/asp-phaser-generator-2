@@ -67,19 +67,6 @@ exports.writePhaserProgram = function(brain){
                 }
               }
             }
-            // Add direction changes in the update function.
-            else if (p==="update"){
-              if(addWhitespace){programText+="\n\t"};
-              programText += "for(var k in addedEntities) {if (addedEntities.hasOwnProperty(k)) {"
-              if(addWhitespace){programText+="\n\t\t"};
-              programText += "var entity = addedEntities[k];";
-              if(addWhitespace){programText+="\n\t\t"};
-              programText += "entity.x+=entity.directionChange.x;";
-              if(addWhitespace){programText+="\n\t\t"};
-              programText += "entity.y+=entity.directionChange.y;";
-              if(addWhitespace){programText+="\n\t"};
-              programText += "}}\n";
-            }
 
             // Add all remaining statements.
             // For each content property specified in the function (e.g. "vars"),
@@ -95,13 +82,16 @@ exports.writePhaserProgram = function(brain){
                   else if (ctp.isConditionalAssertion(brain.assertions[j][p][c][a])){
                     programText += translateConditionalAssertion(brain, brain.assertions[j][p][c][a]);
                   }
+                  else if (ctp.isSetValueAssertion(brain.assertions[j][p][c][a])){
+                    programText += translateSetValue(brain.assertions[j][p][c][a]);
+                  }
                   else if (ctp.isRelationType(brain.assertions[j][p][c][a], "has_sprite")){
                     programText += translateHasSpriteAssertion(brain, brain.assertions[j][p][c][a]);
                   }
                   else if (ctp.isRelationType(brain.assertions[j][p][c][a], "add_to_location") && p!=="create"){
                     programText += translateAddSpriteAssertion(brain, brain.assertions[j][p][c][a]);
                   }
-                  else if (ctp.isRelationType(brain.assertions[j][p][c][a], "move_towards") || ctp.isRelationType(brain.assertions[j][p][c][a], "move_away")|| ctp.isRelationType(brain.assertions[j][p][c][a], "move")){
+                  else if (ctp.isRelationType(brain.assertions[j][p][c][a], "move_toward") || ctp.isRelationType(brain.assertions[j][p][c][a], "move_away")|| ctp.isRelationType(brain.assertions[j][p][c][a], "move")){
                     programText += translateMove(brain.assertions[j][p][c][a],brain.assertions[j][p][c][a]["relation"]);
                   }
                   // TODO: might need isListenerAssertion at some point.
@@ -110,6 +100,20 @@ exports.writePhaserProgram = function(brain){
                   }
                 }
               }
+            }
+
+            // Add direction changes in the update function.
+            if (p==="update"){
+              if(addWhitespace){programText+="\n\t"};
+              programText += "for(var k in addedEntities) {if (addedEntities.hasOwnProperty(k)) {"
+              if(addWhitespace){programText+="\n\t\t"};
+              programText += "var entity = addedEntities[k];";
+              if(addWhitespace){programText+="\n\t\t"};
+              programText += "entity.x+=entity.directionChange.x;";
+              if(addWhitespace){programText+="\n\t\t"};
+              programText += "entity.y+=entity.directionChange.y;";
+              if(addWhitespace){programText+="\n\t"};
+              programText += "}}\n";
             }
 
             programText += "};";
@@ -184,10 +188,10 @@ var translateVariableAssertion = function(b, a, isNewVar){
 // Convert an assertion that changes the value of a variable to string.
 var translateSetValue = function(a){
   if (addWhitespace){
-    return a["l"] + "=" + a["r"] + ";\n";
+    return a["l"][0] + "=" + a["r"][0] + ";\n";
   }
   else{
-    return a["l"] + "=" + a["r"] + ";";
+    return a["l"][0] + "=" + a["r"][0] + ";";
   }
 }
 
@@ -241,7 +245,7 @@ var translateConditionalAssertion = function(b,a){
     else if (a["r"][j]["relation"]==="add_to_location"){
       str+=translateAddSpriteAssertion(b,a["r"][j]);
     }
-    else if (a["r"][j]["relation"]==="move_towards" || a["r"][j]["relation"]==="move_away" || a["r"][j]["relation"]==="move"){
+    else if (a["r"][j]["relation"]==="move_toward" || a["r"][j]["relation"]==="move_away" || a["r"][j]["relation"]==="move"){
       str += translateMove(a["r"][j],a["r"][j]["relation"]);
     }
     if (addWhitespace){str+="\t";}
@@ -342,9 +346,14 @@ var translateFunctionAssertion=function(a){
 // entity.movementProfile(entity, tempPoint)
 var translateMove = function(a, move_type){
   str = "";
-  // if move_towards(entity, other) or move_away(entity, other)
-  if (move_type==="move_towards" || move_type==="move_away"){
-    str += "var tempPoint = new Phaser.Point("+a["r"][0]+".x-"+a["l"][0]+".x,"+a["r"][0]+".y-"+a["l"][0]+".y);";
+  // if move_toward(entity, other) or move_away(entity, other)
+  if (move_type==="move_toward" || move_type==="move_away"){
+    // if a["r"][0]==="cursor", change it to to "game.input.mousePointer"
+    var other = a["r"][0];
+    if (other==="cursor"){
+      other="game.input.mousePointer";
+    }
+    str += "var tempPoint = new Phaser.Point("+other+".x-"+a["l"][0]+".x,"+other+".y-"+a["l"][0]+".y);";
     if (addWhitespace){str+="\n\t";}
     str+="tempPoint.normalize();"
     if (addWhitespace){str+="\n\t";}

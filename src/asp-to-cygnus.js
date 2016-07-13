@@ -91,7 +91,24 @@ function translateInitialize(str){
   return null;
 }
 
+var translateTickPrecondition = function(results){
+  var assertionsToAdd = [];
+  var rs = [];
+  rs = addNormalResult(rs, results);
 
+  // Add each result to the brain with an update tag.
+  for (var i=0; i<rs.length;i++){
+    var result = rs[i];
+    if (result.hasOwnProperty("tags")){
+      result["tags"] = result["tags"].push("update");
+    }
+    else{
+      result["tags"] = ["update"];
+    }
+    assertionsToAdd.push(result);
+  }
+  return assertionsToAdd;
+}
 /*
   Takes in a list of precondition statements and another list of the results they cause.
   Returns a list of assertions to add.
@@ -331,9 +348,23 @@ function translateASP(lines){
           preconds = findPreconds(lines, keyword);
           results = findResults(lines, keyword);
 
-          // Make and add assertion.
-          assertionsToAdd = translatePrecondition(preconds, results);
-
+          // Check if this is a "tick" precondition.
+          var isTick = false;
+          for (i in preconds){
+            if (preconds[i].indexOf("tick")>=0){
+              isTick=true;
+            }
+          }
+          //If this is a "tick" precondition, it means all of the results should simply be put in the update function.
+          // At this time, if a tick precondition occurs, there are no other preconditions in the group.  If this changes, we will need to alter how this works.
+          if (isTick){
+            assertionsToAdd = translateTickPrecondition(results);
+          }
+          // If this isn't a tick precondition,
+          else{
+            // Make and add assertion.
+            assertionsToAdd = translatePrecondition(preconds, results);
+          }
           // Add keyword to the list that shows we've already addressed it.
           doneKeywords.push(keyword);
 
