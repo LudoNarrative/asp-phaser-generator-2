@@ -181,6 +181,19 @@
     "r":["function"],
     "params":["eName"],
     "lines":["game.physics.arcade.enable(addedEntities[eName]);","addedEntities[eName].body.collideWorldBounds = true;","if (!addedEntities[eName].body.velocity.hasOwnProperty('x')){addedEntities[eName].body.velocity.x=0;}","if (!addedEntities[eName].body.velocity.hasOwnProperty('y')){addedEntities[eName].body.velocity.y=0;}","if (!addedEntities[eName].body.hasOwnProperty('angularVelocity')){addedEntities[eName].body.angularVelocity=0;}","if (!addedEntities[eName].hasOwnProperty('directionChange')){addedEntities[eName].directionChange=new Phaser.Point(0,0);}","addedEntities[eName].scale.setTo(0.2,0.2);"]
+  },
+  {
+    "l":["changeMode"],
+    "relation":"is_a",
+    "r":["function"],
+    "params":["newMode"],
+    "lines":["if(newMode==='game_win'){mode = 'win'; game.world.removeAll(); displayText('CLEARED');}","else if(newMode==='game_loss'){mode='loss'; game.world.removeAll(); displayText('GAME OVER');}"]
+  },
+  {
+    "l":["displayText"],
+    "relation":"is_a",
+    "r":["function"],
+    "params":["t"],
+    "lines":["var style = { font: 'bold 32px Arial', fill: '#fff', boundsAlignH: 'center', boundsAlignV: 'middle'};","text = game.add.text(0, 0, t, style);"]
   }
-
 ]
