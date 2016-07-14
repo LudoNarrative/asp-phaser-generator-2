@@ -341,7 +341,7 @@ function translateASP(lines){
     // If precondition / result
     else if (isPrecondition(lines[i])){
       if (!containsObj(lines[i], doneLines)){
-        var keyword = lines[i].substring(lines[i].lastIndexOf(",")+1,lines[i].lastIndexOf(")."));
+        var keyword = getKeyword(lines[i]);
         // If we haven't addressed this keyword,
         if (doneKeywords.indexOf(keyword)==-1){
           // Find all related preconditions and results.
@@ -445,6 +445,11 @@ function findResults(lines, keyword){
     }
   }
   return arr;
+}
+
+var getKeyword = function(line){
+  var keyword = line.substring(line.lastIndexOf(",")+1,line.lastIndexOf(")."));  
+  return keyword;
 }
 
 module.exports = translateASP;
