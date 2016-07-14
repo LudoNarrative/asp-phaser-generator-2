@@ -212,23 +212,39 @@ var translateConditionalAssertion = function(b,a){
     str += "if(";
     // Add each assertion in the hypothesis.
     for (var i=0; i< a["l"].length;i++){
-      str += a["l"][i]["l"];
       if (a["l"][i]["relation"]=="gt"){
+        str += a["l"][i]["l"];
         str += ">";
+        str+=a["l"][i]["r"];
       }
       else if (a["l"][i]["relation"]=="ge"){
+        str += a["l"][i]["l"];
         str += ">=";
+        str+=a["l"][i]["r"];
       }
       else if (a["l"][i]["relation"]=="lt"){
+        str += a["l"][i]["l"];
         str += "<";
+        str+=a["l"][i]["r"];
       }
       else if (a["l"][i]["relation"]=="le"){
+        str += a["l"][i]["l"];
         str += "<=";
+        str+=a["l"][i]["r"];
+      }
+      else if (a["l"][i]["relation"]=="near"){
+        // str+= |entity2.location - entity1.location| < screen.width*0.1
+        var left = a["l"][i]["l"];
+        var right = a["l"][i]["r"];
+        // var leftLoc = new Phaser.Point(left.x, left.y);
+        // var rightLoc = new Phaser.Point(right.x, right.y);
+        // var distance = Phaser.Point.distance(leftLoc,rightLoc);
+        str+="Phaser.Point.distance(new Phaser.Point("+left+".x,"+left+".y),new Phaser.Point("+right+".x,"+right+".y)) < game.width*0.1";
       }
       else{
         console.log("Error: unrecognized relation " + a["relation"] + " for conditional assertion.  \n\tFile: PhaserInterpreter.  Function: translateConditionalAssertion.");
       }
-      str+=a["l"][i]["r"];
+
 
       if (i <a["l"].length-1){
         str+=" " + a["l"][i+1]["logicalOp"] + " ";
