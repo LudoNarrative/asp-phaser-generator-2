@@ -99,6 +99,22 @@
     "height":40
   },
   {
+    "l":["glowing_rainbow"],
+    "relation":"is_a",
+    "r":["sprite"],
+    "image":"glowing_rainbow.png",
+    "width":40,
+    "height":40
+  },
+  {
+    "l":["melon"],
+    "relation":"is_a",
+    "r":["sprite"],
+    "image":"melon.png",
+    "width":40,
+    "height":40
+  },
+  {
     "l":["glowing_radio"],
     "relation":"is_a",
     "r":["sprite"],
