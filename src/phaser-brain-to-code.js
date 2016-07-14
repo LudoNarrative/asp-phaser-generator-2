@@ -94,6 +94,9 @@ exports.writePhaserProgram = function(brain){
                   else if (ctp.isRelationType(brain.assertions[j][p][c][a], "move_toward") || ctp.isRelationType(brain.assertions[j][p][c][a], "move_away")|| ctp.isRelationType(brain.assertions[j][p][c][a], "move")){
                     programText += translateMove(brain.assertions[j][p][c][a],brain.assertions[j][p][c][a]["relation"]);
                   }
+                  else if (ctp.isRelationType(brain.assertions[j][p][c][a], "apply_force")){
+                    programText += translateGravity(brain.assertions[j][p][c][a]);
+                  }
                   // TODO: might need isListenerAssertion at some point.
                   else if (ctp.isCallbackAssertion(brain.assertions[j][p][c][a])){
                     programText += translateListenerAssertion(brain.assertions[j][p][c][a]);
@@ -392,5 +395,15 @@ var translateMove = function(a, move_type){
     if (addWhitespace){str+="\n";}
   }
 
+  return str;
+}
+
+// TODO: there are no examples beyond setting gravity to -mid at this
+// time, but we should really store gravity value in the Cygnus brain.
+var translateGravity = function(a){
+  var str="";
+  var entity = a["l"][0];
+  str+= entity+".body.gravity.y = mid;"
+  if (addWhitespace){str+="\n";}
   return str;
 }
