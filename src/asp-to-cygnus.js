@@ -288,6 +288,15 @@ var addNormalResult = function(rs, results){
         if (e=="add"){
           e="add_to_location";
         }
+
+        if (fList.length==1){
+          if (e=="mode_change"){
+              rs.push({"l":["game"],"relation":"set_mode","r":[fList[0]]});
+          }
+          else if(e=="delete"){            
+            rs.push({"l":[fList[0]],"relation":"action","r":["delete"]});
+          }
+        }
         // Push this result into our final array of all results.
         if (fList.length==2){ // F = fList[0], G = fList[1]
           rs.push({"l":[translateNested(fList[0])],"relation":e,"r":[fList[1]]});
