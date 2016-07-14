@@ -249,6 +249,11 @@ var translateUpdatePrecondition = function(preconds,results){
 // Helper for translateUpdatePrecondition and translateClickPrecondition.
 // Populates the list of precondition assertions.
 var addNormalPrecond = function(ps, bList,a){
+  // check for mouse press
+  if (translateNested(bList[0])==="button(.button"){
+    bList[0]="mouse_button";
+    bList[1]=bList[1].replace(/\(|\)/g,'')
+  }
   if (bList.length==2){ // B = bList[0], C = bList[1]
     ps.push({"l":[translateNested(bList[0])],"relation":a,"r":[bList[1]]});
   }
@@ -448,7 +453,7 @@ function findResults(lines, keyword){
 }
 
 var getKeyword = function(line){
-  var keyword = line.substring(line.lastIndexOf(",")+1,line.lastIndexOf(")."));  
+  var keyword = line.substring(line.lastIndexOf(",")+1,line.lastIndexOf(")."));
   return keyword;
 }
 
