@@ -83,6 +83,22 @@
     "height":40
   },
   {
+    "l":["glowing_panda"],
+    "relation":"is_a",
+    "r":["sprite"],
+    "image":"glowing_panda.png",
+    "width":40,
+    "height":40
+  },
+  {
+    "l":["plane"],
+    "relation":"is_a",
+    "r":["sprite"],
+    "image":"plane.png",
+    "width":40,
+    "height":40
+  },
+  {
     "l":["glowing_radio"],
     "relation":"is_a",
     "r":["sprite"],
@@ -120,6 +136,20 @@
     "r":["location"],
     "x":160,
     "y":220
+  },
+  {
+    "l":["lower_left"],
+    "relation":"is_a",
+    "r":["location"],
+    "x":100,
+    "y":300
+  },
+  {
+    "l":["upper_right"],
+    "relation":"is_a",
+    "r":["location"],
+    "x":300,
+    "y":100
   },
   {
     "l":["setVariable"],
