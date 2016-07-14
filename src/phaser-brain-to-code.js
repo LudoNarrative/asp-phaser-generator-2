@@ -94,6 +94,9 @@ exports.writePhaserProgram = function(brain){
                   else if (ctp.isRelationType(brain.assertions[j][p][c][a], "action")&& brain.assertions[j][p][c][a]["r"][0].indexOf("delete")>=0){
                     programText += translateDeleteSpriteAssertion(brain, brain.assertions[j][p][c][a]);
                   }
+                  else if (ctp.isRelationType(brain.assertions[j][p][c][a], "set_mode")){
+                    programText += translateSetMode(brain, brain.assertions[j][p][c][a]);
+                  }
                   else if (ctp.isRelationType(brain.assertions[j][p][c][a], "move_toward") || ctp.isRelationType(brain.assertions[j][p][c][a], "move_away")|| ctp.isRelationType(brain.assertions[j][p][c][a], "move")){
                     programText += translateMove(brain.assertions[j][p][c][a],brain.assertions[j][p][c][a]["relation"]);
                   }
@@ -276,6 +279,9 @@ var translateConditionalAssertion = function(b,a){
     else if (a["r"][j]["relation"]==="action" && a["r"][j]["r"].indexOf("delete")>=0){
       str+=translateDeleteSpriteAssertion(b,a["r"][j]);
     }
+    else if (a["r"][j]["relation"]==="set_mode"){
+      str+=translateSetMode(b,a["r"][j]);
+    }
     else if (a["r"][j]["relation"]==="move_toward" || a["r"][j]["relation"]==="move_away" || a["r"][j]["relation"]==="move"){
       str += translateMove(a["r"][j],a["r"][j]["relation"]);
     }
@@ -441,6 +447,14 @@ var translateDeleteSpriteAssertion = function(b, a){
   var str ="";
   var entity = a["l"][0];
   str+= entity+".destroy();"
+  if (addWhitespace){str+="\n";}
+  return str;
+}
+
+var translateSetMode = function(b,a){
+  var str="";
+  var newMode = a["r"][0];
+  str+="changeMode('" + newMode +"');"
   if (addWhitespace){str+="\n";}
   return str;
 }
