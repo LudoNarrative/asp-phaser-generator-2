@@ -275,8 +275,9 @@ var translateConditionalAssertion = function(b,a){
     }
     if (addWhitespace){str+="\t";}
   }
-  if (!emptyHypothesis && addWhitespace){
-    str+="\t}"
+  if (addWhitespace){str+="\t";}
+  if (!emptyHypothesis){
+    str+="}"
   }
   if (addWhitespace){str+="\n";}
   return str;
