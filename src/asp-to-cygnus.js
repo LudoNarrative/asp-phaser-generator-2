@@ -91,7 +91,7 @@ function translateInitialize(str){
   return null;
 }
 
-var translateTickPrecondition = function(results){
+var translateTickPrecondition = function(results,keyword){
   var assertionsToAdd = [];
   var rs = [];
   rs = addNormalResult(rs, results);
@@ -105,6 +105,7 @@ var translateTickPrecondition = function(results){
     else{
       result["tags"] = ["update"];
     }
+    result["goal_keyword"]=keyword;
     assertionsToAdd.push(result);
   }
   return assertionsToAdd;
@@ -125,7 +126,7 @@ var translateTickPrecondition = function(results){
  3) precondition(le(r1, med), o1).
     result(o1, increase(r1, low)).
 */
-function translatePrecondition(preconds, results){
+function translatePrecondition(preconds, results, keyword){
   // If this is a click control_event precondition-result pair, we'll need to initialize the listener for the mouse in the "create" function, and create a new function for the listener's callback.
   var isClickEvent = false;
   // For every precondition in preconds,
@@ -135,11 +136,11 @@ function translatePrecondition(preconds, results){
     }
   }
   if (isClickEvent){
-    return translateClickPrecondition(preconds,results);
+    return translateClickPrecondition(preconds,results,keyword);
   }
   // Otherwise, assume the precondition should be fed into the update function ([“update”][“outcomes”]).
    else{
-     return translateUpdatePrecondition(preconds,results);
+     return translateUpdatePrecondition(preconds,results,keyword);
    }
 };
 
@@ -151,7 +152,7 @@ function translatePrecondition(preconds, results){
     result(o1, add(e2, random)).
     result(o1, increase(r1, low)).
 */
-var translateClickPrecondition = function(preconds,results){
+var translateClickPrecondition = function(preconds,results,keyword){
   // List of assertions to push.
   assertionsToAdd = [];
 
@@ -178,7 +179,7 @@ var translateClickPrecondition = function(preconds,results){
         // Grab the argument of the click. (Assume bList has one element).
         var argument = bList[0].substring(bList[0].indexOf("(")+1,bList[0].indexOf(")"));
         listenerName = argument+"ClickListener";
-        var clickAssertion = {"l":[listenerName],"relation":"is_a","r":["click_listener"],"for":[argument],"tags":["create"]};
+        var clickAssertion = {"l":[listenerName],"relation":"is_a","r":["click_listener"],"for":[argument],"tags":["create"],"goal_keyword":keyword};
         assertionsToAdd.push(clickAssertion);
         ps.push(clickAssertion);
 
@@ -199,7 +200,7 @@ var translateClickPrecondition = function(preconds,results){
               execute each result in rs.
             }
     */
-    assertionsToAdd.push({"l": ps,"relation":"causes","r":rs, "listener":listenerName});
+    assertionsToAdd.push({"l": ps,"relation":"causes","r":rs, "listener":listenerName, "goal_keyword":keyword});
   }
   return assertionsToAdd;
 };
@@ -215,7 +216,7 @@ var translateClickPrecondition = function(preconds,results){
      result(o2, increase(r1, low)).
      result(o2, decrease(health(e1), 1)).
 */
-var translateUpdatePrecondition = function(preconds,results){
+var translateUpdatePrecondition = function(preconds,results,keyword){
   // List of precond and result dictionaries to be added to left
   // and right concepts.
   var ps = [];
@@ -241,7 +242,7 @@ var translateUpdatePrecondition = function(preconds,results){
   // If we have valid preconditions and results,
   if (ps.length > 0 && rs.length > 0){
     // Form the final assertion.
-    return [{"l": ps,"relation":"causes","r":rs}];
+    return [{"l": ps,"relation":"causes","r":rs,"goal_keyword":keyword}];
   }
   return null;
 };
@@ -293,7 +294,7 @@ var addNormalResult = function(rs, results){
           if (e=="mode_change"){
               rs.push({"l":["game"],"relation":"set_mode","r":[fList[0]]});
           }
-          else if(e=="delete"){            
+          else if(e=="delete"){
             rs.push({"l":[fList[0]],"relation":"action","r":["delete"]});
           }
         }
@@ -372,12 +373,12 @@ function translateASP(lines){
           //If this is a "tick" precondition, it means all of the results should simply be put in the update function.
           // At this time, if a tick precondition occurs, there are no other preconditions in the group.  If this changes, we will need to alter how this works.
           if (isTick){
-            assertionsToAdd = translateTickPrecondition(results);
+            assertionsToAdd = translateTickPrecondition(results, keyword);
           }
           // If this isn't a tick precondition,
           else{
             // Make and add assertion.
-            assertionsToAdd = translatePrecondition(preconds, results);
+            assertionsToAdd = translatePrecondition(preconds, results, keyword);
           }
           // Add keyword to the list that shows we've already addressed it.
           doneKeywords.push(keyword);
