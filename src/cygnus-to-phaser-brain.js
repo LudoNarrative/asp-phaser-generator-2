@@ -135,9 +135,11 @@ var mergeInitialWithCygnus = function(pID, initialBrain, cygnusBrain){
     }
     else if (exports.isConditionalAssertion(cygnusBrain.assertions[i])){
       // We are going to add a new assertion based on the current "old" assertion in the cygnus brain (cygnusBrain.assertions[i]).
+
       var newAssertion = cygnusBrain.assertions[i].clone();
       var newLeft = [];
       var newRight = [];
+      var goal_keyword = newAssertion["goal_keyword"];
 
       // Check if one of the preconditions (elements in the left array) is a click listener.
       var isClickConditional=false;
@@ -157,11 +159,15 @@ var mergeInitialWithCygnus = function(pID, initialBrain, cygnusBrain){
         var clicked = clickListenFn.substring(0,clickListenFn.indexOf("ClickListener"));
         // Add listener to create method.
         // i.e., in create: e1.events.onInputDown.add(e1ClickListener, this);
-        newProgram["create"]["listeners"].push({
+        var newAssert = {
           "l": [clicked],
           "relation":"triggers",
           "r": [clickListenFn]
-        });
+        };
+        if (goal_keyword != undefined){
+          newAssert["goal_keyword"]=goal_keyword;
+        }
+        newProgram["create"]["listeners"].push(newAssert);
         /*
           Add new function to the brain that contains all other preconditions (besides the click listener) and the results.
           i.e.,
@@ -176,11 +182,16 @@ var mergeInitialWithCygnus = function(pID, initialBrain, cygnusBrain){
 
         newProgram[clickListenFn] = {};
         newProgram[clickListenFn]["outcomes"] = [];
-        newProgram[clickListenFn]["outcomes"].push({
+
+        var newAssert2 = {
           "l": newLeft,
           "relation":"causes",
           "r": newRight
-        });
+        };
+        if (goal_keyword != undefined){
+          newAssert2["goal_keyword"]=goal_keyword;
+        }
+        newProgram[clickListenFn]["outcomes"].push(newAssert2);
         // Push the old assertion into the brain anyway.  This lets us update coordinates.
         newBrain.addAssertion(cygnusBrain.assertions[i]);
       }
@@ -188,12 +199,16 @@ var mergeInitialWithCygnus = function(pID, initialBrain, cygnusBrain){
         newLeft = getNewHypotheses(newLeft, cygnusBrain.assertions[i]["l"]);
         newRight = getNewConclusions(newRight,cygnusBrain.assertions[i]["r"]);
 
-        // Push the new assertion into the outcomes list.
-        newProgram["update"]["outcomes"].push({
+        var newAssert3 = {
           "l": newLeft,
           "relation":"causes",
           "r": newRight
-        });
+        };
+        if (goal_keyword != undefined){
+          newAssert3["goal_keyword"]=goal_keyword;
+        }
+        // Push the new assertion into the outcomes list.
+        newProgram["update"]["outcomes"].push(newAssert3);
       }
     }
     else if (exports.isRelationType(cygnusBrain.assertions[i],"move_towards") || exports.isRelationType(cygnusBrain.assertions[i],"move_away")|| exports.isRelationType(cygnusBrain.assertions[i],"move")){
@@ -332,5 +347,9 @@ exports.isCallbackAssertion = function(a){
 }
 
 exports.isFunctionAssertion = function(a){
-  return a["relation"]=="is_a" && (a["r"].indexOf("function")>=0);;
+  return a["relation"]=="is_a" && (a["r"].indexOf("function")>=0);
+}
+
+exports.isGoalAssertion = function(a){
+  return exports.isRelationType(a,"is_a") && (a["r"].indexOf("goal")>=0);
 }

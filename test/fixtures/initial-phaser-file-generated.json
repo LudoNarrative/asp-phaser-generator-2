@@ -257,5 +257,18 @@
     "r":["function"],
     "params":["t"],
     "lines":["var style = { font: 'bold 32px Arial', fill: '#fff', boundsAlignH: 'center', boundsAlignV: 'middle'};","text = game.add.text(0, 0, t, style);"]
+  },
+  {
+    "l":["goals"],
+    "relation":"is_a",
+    "r":["variable"],
+    "value":["[]"]
+  },
+  {
+    "l":["getAspGoals"],
+    "relation":"is_a",
+    "r":["function"],
+    "params":[],
+    "lines":["if (goals === undefined || goals.length == 0){return ['No ASP goals.'];}","else{return goals;}"]
   }
 ]

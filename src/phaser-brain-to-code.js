@@ -1,11 +1,15 @@
 /*
- This file generates a string containing a complete Phaser program, giving a
- brain that contains Phaser abstract syntax.
+ This file generates a string containing a complete Phaser program, giving a brain that contains Phaser abstract syntax.
 */
 // Change to false to remove whitespace from output.
 var addWhitespace = false;
 
+// Contains realized goals from the ASP code.
+var goals = [];
+
 var ctp = require('./cygnus-to-phaser-brain');
+var rensa = require('./brain');
+
 // Input: Phaser abstract syntax (brain).
 // Output: Phaser program (string).
 exports.writePhaserProgram = function(brain){
@@ -20,6 +24,10 @@ exports.writePhaserProgram = function(brain){
     if (ctp.isVariableAssertion(brain.assertions[i])){
       programText += defineVariable(brain, brain.assertions[i]);
       variableValues.push(brain.assertions[i]);
+    }
+    /* REALIZING GOALS */
+    if (ctp.isGoalAssertion(brain.assertions[i])){
+      updateAspGoals(brain, brain.assertions[i]);
     }
   }
   // Now write functions.
@@ -103,6 +111,9 @@ exports.writePhaserProgram = function(brain){
                   else if (ctp.isRelationType(brain.assertions[j][p][c][a], "apply_force")){
                     programText += translateGravity(brain.assertions[j][p][c][a]);
                   }
+                  else if (ctp.isGoalAssertion(brain.assertions[j][p][c][a])){
+                    updateAspGoals(brain, brain.assertions[j][p][c][a]);
+                  }
                   // TODO: might need isListenerAssertion at some point.
                   else if (ctp.isCallbackAssertion(brain.assertions[j][p][c][a])){
                     programText += translateListenerAssertion(brain.assertions[j][p][c][a]);
@@ -131,6 +142,17 @@ exports.writePhaserProgram = function(brain){
         }
       }
     }
+  }
+  // Set goals variable.
+  if (goals !== undefined && goals.length != 0){
+    programText += "goals=[";
+    for (var y=0;y<goals.length;y++){
+      programText += "'"+goals[y]+"'";
+      if (y<goals.length-1){
+        programText+=",";
+      }
+    }
+    programText+="];";
   }
   return programText;
 };
@@ -457,4 +479,80 @@ var translateSetMode = function(b,a){
   str+="changeMode('" + newMode +"');"
   if (addWhitespace){str+="\n";}
   return str;
+}
+
+var updateAspGoals = function(b, a){
+  // For each element of left...
+  for (var i=0;i<a["l"].length;i++){
+    // This is the natural text translation of the ASP goal.
+    var realizedGoal = "";
+    // This is the string that specifies the ASP goal.
+    var left = a["l"][i];
+    // Goal types: "achieve", "prevent", "maintain"
+    var goalType = left.substring(left.indexOf(".")+1);
+    // Goal objects are resources (e.g. "r1") or precondition keywords (e.g. "o1").
+    var goalObj = left.substring(0,left.indexOf("."));
+    // If it's a precondition keyword, we have to find the preconditions.
+    if (goalObj.indexOf("o")===0){
+      var goalObjIDsOne = b.getAssertionsWith({"goal_keyword":goalObj});
+      var goalObjsOne = [];
+      for (var z=0; z<goalObjIDsOne.length;z++){
+        goalObjsOne.push(b.getAssertionByID(goalObjIDsOne[z]))
+      }
+
+      /* Now we need to get any preconditions in the program assertion... */
+      var goalObjsTwo = [];
+      // First, retrieve the program assertion.  There can only be one!
+      var pID = b.getAssertionsWith({"relation":"is_a","r":["program"]})[0];
+      var pAssert = b.getAssertionByID(pID);
+      // For each assertion in pAssert,
+      for (var p in pAssert) {
+          if (pAssert.hasOwnProperty(p) && typeof pAssert[p]!=="function") {
+            if (p!="l" && p!="relation" && p!="r"){
+            for (var c in pAssert[p]) {
+              if (pAssert[p].hasOwnProperty(c)) {
+
+                for (var e=0;e<pAssert[p][c].length;e++){
+                  if (pAssert[p][c][e].hasOwnProperty("goal_keyword")){                                        if (pAssert[p][c][e]["goal_keyword"]===goalObj){
+                      goalObjsTwo.push(pAssert[p][c][e]);
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+
+      // var goalObjIDsTwo = b.getAssertionsWith({"goal_keyword":goalObj});
+      // merge one and two
+      var goalObjs = goalObjsOne.concat(goalObjsTwo);
+
+      for (var j=0;j<goalObjs.length;j++){
+        var assert = goalObjs[j];
+
+        preconds = assert["l"];
+        realizedGoal = goalType.charAt(0).toUpperCase() + goalType.substr(1).toLowerCase() + ":"
+        for (var k=0; k<preconds.length; k++){
+          var pre = rensa.prettyprint(preconds[k],false);
+          pre = pre.replace(/['"]+/g, '');
+          realizedGoal += pre;
+          if (k<preconds.length-1){
+            realizedGoal+=",";
+          }
+        }
+      }
+    }
+    // Otherwise, if it's a resource, simply state the resource.
+    else if (goalObj.indexOf("r")===0){
+      realizedGoal = goalType.charAt(0).toUpperCase() + goalType.substr(1).toLowerCase() + " " + goalObj;
+    }
+    else {
+      console.log("ERROR: Unrecognized goal object.")
+    }
+    // Add the realized goal to the "goals" array.
+    if (realizedGoal !== ""){
+      goals.push(realizedGoal);
+    }
+  }
 }

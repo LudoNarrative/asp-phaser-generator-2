@@ -235,18 +235,26 @@ Brain.prototype.print = function(){
 
 // Print all known assertions, prettily.
 Brain.prototype.prettyprint = function(){
-  var flag=false;
   for (var i in this.assertions){
-    console.log(JSON.stringify(this.assertions[i]["l"]) +" "+ this.assertions[i]["relation"] +" "+ JSON.stringify(this.assertions[i]["r"]));
-    for (var p in this.assertions[i]) {
-      if (this.assertions[i].hasOwnProperty(p) && p!="l" && p!="relation" && p!="r" && typeof this.assertions[i][p]!=="function") {
-        flag=true;
-        console.log("\t"+p+": " + JSON.stringify(this.assertions[i][p]));
-      }
-    }
-    if (flag){console.log("");}
+    exports.prettyprint(this.assertions[i], true);
   }
 };
+
+
+exports.prettyprint = function(a, printAllProperties){
+  var flag=false;
+  console.log(JSON.stringify(a["l"]) +" "+ a["relation"] +" "+ JSON.stringify(a["r"]));
+  if (printAllProperties){
+    for (var p in a) {
+      if (a.hasOwnProperty(p) && p!="l" && p!="relation" && p!="r" && typeof a[p]!=="function") {
+        flag=true;
+        console.log("\t"+p+": " + JSON.stringify(a[p]));
+      }
+    }
+  }
+  if (flag){console.log("");}
+  return JSON.stringify(a["l"]) +" "+ a["relation"] +" "+ JSON.stringify(a["r"]);
+}
 
 // Return a clone of a brain.
 Brain.prototype.clone = function(){
