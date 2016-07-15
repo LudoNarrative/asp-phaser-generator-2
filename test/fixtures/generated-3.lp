@@ -10,8 +10,8 @@ many(e1)
 
 initialize(add(e1,upper_left))
 initialize(add(e2,center))
-initialize(set_sprite(e1,pink_square))
-initialize(set_sprite(e2,yellow_ball))
+initialize(set_sprite(e1,square))
+initialize(set_sprite(e2,circle))
 initialize(set(r1,low))
 initialize(set(r2,high))
 

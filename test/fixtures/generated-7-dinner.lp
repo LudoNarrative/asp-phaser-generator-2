@@ -11,9 +11,9 @@ many(e3).
 initialize(add(e1,upper_left)).
 initialize(add(e2,lower_left)).
 initialize(add(e3,upper_right)).
-initialize(set_sprite(e1,glowing_smiley)).
-initialize(set_sprite(e2,mushroom)).
-initialize(set_sprite(e3,purple_square)).
+initialize(set_sprite(e1,circle)).
+initialize(set_sprite(e2,pentagon)).
+initialize(set_sprite(e3,square)).
 initialize(set(r1,medium)).
 
 precondition(le(r1,0),o3).

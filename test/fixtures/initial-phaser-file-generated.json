@@ -75,76 +75,44 @@
     "value":11
   },
   {
-    "l":["yellow_ball"],
+    "l":["circle"],
     "relation":"is_a",
     "r":["sprite"],
-    "image":"yellow_ball.png",
+    "image":"circle.png",
     "width":40,
     "height":40
   },
   {
-    "l":["glowing_panda"],
+    "l":["pentagon"],
     "relation":"is_a",
     "r":["sprite"],
-    "image":"glowing_panda.png",
+    "image":"pentagon.png",
     "width":40,
     "height":40
   },
   {
-    "l":["plane"],
+    "l":["triangle"],
     "relation":"is_a",
     "r":["sprite"],
-    "image":"plane.png",
+    "image":"triangle.png",
     "width":40,
     "height":40
   },
   {
-    "l":["glowing_rainbow"],
+    "l":["star"],
     "relation":"is_a",
     "r":["sprite"],
-    "image":"glowing_rainbow.png",
+    "image":"star.png",
     "width":40,
     "height":40
   },
   {
-    "l":["melon"],
+    "l":["square"],
     "relation":"is_a",
     "r":["sprite"],
-    "image":"melon.png",
+    "image":"square.png",
     "width":40,
     "height":40
-  },
-  {
-    "l":["glowing_radio"],
-    "relation":"is_a",
-    "r":["sprite"],
-    "image":"glowing_radio.png",
-    "width":60,
-    "height":60
-  },
-  {
-    "l":["pink_square"],
-    "relation":"is_a",
-    "r":["sprite"],
-    "image":"pink_square.png",
-    "width":30,
-    "height":30
-  },
-  {
-    "l":["glowing_unicorn"],
-    "relation":"is_a",
-    "r":["sprite"],
-    "image":"glowing_unicorn.png",
-    "width":130,
-    "height":100
-  },
-  {
-    "l":["pineapple"],
-    "relation":"is_a",
-    "r":["sprite"],
-    "image":"pineapple.png",
-    "width":30,
-    "height":60
   },
   {
     "l":["center"],

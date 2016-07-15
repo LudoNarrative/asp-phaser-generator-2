@@ -9,8 +9,8 @@ many(e2)
 
 initialize(add(e1,upper_right))
 initialize(add(e2,upper_right))
-initialize(set_sprite(e1,melon))
-initialize(set_sprite(e2,glowing_rainbow))
+initialize(set_sprite(e1,circle))
+initialize(set_sprite(e2,pentagon))
 initialize(set(r1,medium))
 initialize(set(r2,0))
 

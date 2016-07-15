@@ -10,8 +10,8 @@ many(e2)
 
 initialize(add(e1,center))
 initialize(add(e2,random))
-initialize(set_sprite(e1,yellow_ball))
-initialize(set_sprite(e2,glowing_radio))
+initialize(set_sprite(e1,circle))
+initialize(set_sprite(e2,square))
 initialize(set(r1,low))
 initialize(set(r2,low))
 

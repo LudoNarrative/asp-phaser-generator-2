@@ -9,8 +9,8 @@ initialize(add(e2, random)).
 
 move(e1, southwest).
 
-initialize(set_sprite(e1, glowing_unicorn)).
-initialize(set_sprite(e2, pineapple)).
+initialize(set_sprite(e1, star)).
+initialize(set_sprite(e2, circle)).
 
 precondition(control_event(click(e1)), o1).
 result(o1, move_away(e2, e1)).

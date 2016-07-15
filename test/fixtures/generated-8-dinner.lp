@@ -8,8 +8,8 @@ many(e2).
 
 initialize(add(e1,random)).
 initialize(add(e2,random)).
-initialize(set_sprite(e1,glowing_panda)).
-initialize(set_sprite(e2,green_ball)).
+initialize(set_sprite(e1,pentagon)).
+initialize(set_sprite(e2,circle)).
 initialize(set(r1,high)).
 
 precondition(timerElapsed(t4),o3).

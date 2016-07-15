@@ -10,8 +10,8 @@ many(e2)
 
 initialize(add(e1,center))
 initialize(add(e2,random))
-initialize(set_sprite(e1,glowing_panda))
-initialize(set_sprite(e2,plane))
+initialize(set_sprite(e1,pentagon))
+initialize(set_sprite(e2,triangle))
 initialize(set(r1,medium))
 initialize(set(r2,medium))
 

@@ -5,7 +5,7 @@ entity(e1).
 
 resource(health(e1)).
 initialize(set(health(e1), 100)).
-initialize(set_sprite(e1, pink_square)).
+initialize(set_sprite(e1, square)).
 
 precondition(le(r1, med), o1).
 precondition(gt(health(e1), 0), o1).
