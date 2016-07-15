@@ -221,21 +221,21 @@
     "relation":"is_a",
     "r":["function"],
     "params":["e","dir"],
-    "lines":["e.directionChange = new Phaser.Point(dir.x,dir.y);"]
+    "lines":["e.directionChange = new Phaser.Point(Phaser.Math.average(e.directionChange.x,dir.x),Phaser.Math.average(e.directionChange.y,dir.y));"]
   },
   {
     "l":["move_away"],
     "relation":"is_a",
     "r":["function"],
     "params":["e","dir"],
-    "lines":["e.directionChange = new Phaser.Point(-dir.x,-dir.y);"]
+    "lines":["e.directionChange = new Phaser.Point(Phaser.Math.average(e.directionChange.x,-dir.x),Phaser.Math.average(e.directionChange.y,-dir.y));"]
   },
   {
     "l":["move"],
     "relation":"is_a",
     "r":["function"],
     "params":["e","x","y"],
-    "lines":["e.directionChange = new Phaser.Point(x,y);"]
+    "lines":["e.directionChange = new Phaser.Point(Phaser.Math.average(e.directionChange.x,x),Phaser.Math.average(e.directionChange.y,y));"]
   },
   {
     "l":["initEntityProperties"],

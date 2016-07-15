@@ -133,6 +133,8 @@ exports.writePhaserProgram = function(brain){
               if(addWhitespace){programText+="\n\t\t"};
               programText += "entity.y+=entity.directionChange.y;";
               if(addWhitespace){programText+="\n\t"};
+              programText += "if(entity.x>game.width){entity.x=game.width;}if (entity.x<0){entity.x=0;} if (entity.y>game.height){entity.y=game.height;}if (entity.y<0){entity.y=0;}"
+              if(addWhitespace){programText+="\n\t"};
               programText += "}}\n";
             }
 
