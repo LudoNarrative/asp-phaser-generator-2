@@ -224,6 +224,9 @@ var mergeInitialWithCygnus = function(pID, initialBrain, cygnusBrain){
         newProgram["create"]["motion"].push(cygnusBrain.assertions[i]);
       }
     }
+    else if (exports.isDraggableAssertion(cygnusBrain.assertions[i])){
+      newProgram["create"]["vars"].push(cygnusBrain.assertions[i]);
+    }
     else if (cygnusBrain.assertions[i].hasOwnProperty("tags")){
       if (cygnusBrain.assertions[i]["tags"].indexOf("update")>=0){
         if (exports.isRelationType(cygnusBrain.assertions[i],"increase") || exports.isRelationType(cygnusBrain.assertions[i],"decrease")){
@@ -344,6 +347,10 @@ exports.isConditionalAssertion = function(a){
 
 exports.isCallbackAssertion = function(a){
   return exports.isRelationType(a,"triggers");
+}
+
+exports.isDraggableAssertion = function(a){  
+  return exports.isRelationType(a,"is_a") && (a["r"].indexOf("draggable")>=0);
 }
 
 exports.isFunctionAssertion = function(a){

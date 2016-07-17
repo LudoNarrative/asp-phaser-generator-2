@@ -118,6 +118,9 @@ exports.writePhaserProgram = function(brain){
                   else if (ctp.isCallbackAssertion(brain.assertions[j][p][c][a])){
                     programText += translateListenerAssertion(brain.assertions[j][p][c][a]);
                   }
+                  else if (ctp.isDraggableAssertion(brain.assertions[j][p][c][a])){
+                    programText += translateDraggableAssertion(brain.assertions[j][p][c][a]);
+                  }
                 }
               }
             }
@@ -372,6 +375,18 @@ var translateListenerAssertion=function(a){
   str += a["l"][0]+".inputEnabled=true;";
   if (addWhitespace){str+="\n\t";}
   str+=a["l"][0]+".events.onInputDown.add("+a["r"][0]+",this);";
+  if (addWhitespace){str+="\n";}
+  return str;
+}
+
+// Example: controlLogic(draggable(e1)). --> e1 is_a draggable -->
+// >>e1.inputEnabled = true;
+// >>e1.input.enableDrag(true);
+var translateDraggableAssertion=function(a){
+  var str="";
+  str += a["l"][0]+".inputEnabled=true;";
+  if (addWhitespace){str+="\n\t";}
+  str += a["l"][0]+".input.enableDrag(true);";
   if (addWhitespace){str+="\n";}
   return str;
 }

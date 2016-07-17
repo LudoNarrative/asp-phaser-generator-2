@@ -13,7 +13,13 @@ function translateIsA(str){
   if (hypStart != -1 && hypEnd != -1){
     var x = str.substring(0,hypStart);
     var y = str.substring(hypStart+1,hypEnd);
-    return {"l":[translateNested(y)], "relation":"is_a", "r":[x], "tags":["global"]};
+    if (translateNested(y).substring(translateNested(y).indexOf(".")+1)=="draggable"){
+      var entity = translateNested(y).substring(0,translateNested(y).indexOf("."));
+      return {"l":[entity], "relation":"is_a", "r":["draggable"], "tags":["global"]};
+    }else{
+      return {"l":[translateNested(y)], "relation":"is_a", "r":[x], "tags":["global"]};
+    }
+
   }
   return null;
 }
