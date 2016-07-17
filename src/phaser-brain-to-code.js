@@ -128,7 +128,7 @@ exports.writePhaserProgram = function(brain){
               if(addWhitespace){programText+="\n\t\t"};
               programText += "var entity = addedEntities[k];";
               if(addWhitespace){programText+="\n\t\t"};
-              programText += "entity.directionChange.clamp(0,10);";
+              programText += "entity.directionChange.clamp(0,1);";
               if(addWhitespace){programText+="\n\t\t"};
               programText += "entity.x+=entity.directionChange.x;";
               if(addWhitespace){programText+="\n\t\t"};

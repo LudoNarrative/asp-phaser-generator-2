@@ -189,14 +189,14 @@
     "relation":"is_a",
     "r":["function"],
     "params":["e","dir"],
-    "lines":["e.directionChange.x += dir.x","e.directionChange.y += dir.y"]
+    "lines":["e.directionChange.x += dir.x;","e.directionChange.y += dir.y;"]
   },
   {
     "l":["move_away"],
     "relation":"is_a",
     "r":["function"],
     "params":["e","dir"],
-    "lines":["e.directionChange.x -= dir.x","e.directionChange.y -= dir.y"]
+    "lines":["e.directionChange.x -= dir.x;","e.directionChange.y -= dir.y;"]
   },
   {
     "l":["move"],
