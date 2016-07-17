@@ -124,10 +124,11 @@ exports.writePhaserProgram = function(brain){
 
             // Add direction changes in the update function.
             if (p==="update"){
-              if(addWhitespace){programText+="\n\t"};
-              programText += "for(var k in addedEntities) {if (addedEntities.hasOwnProperty(k)) {"
+              if(addWhitespace){programText+="\n\t"};              programText += "for(var k in addedEntities) {if (addedEntities.hasOwnProperty(k)) {"
               if(addWhitespace){programText+="\n\t\t"};
               programText += "var entity = addedEntities[k];";
+              if(addWhitespace){programText+="\n\t\t"};
+              programText += "entity.directionChange.clamp(0,10);";
               if(addWhitespace){programText+="\n\t\t"};
               programText += "entity.x+=entity.directionChange.x;";
               if(addWhitespace){programText+="\n\t\t"};
