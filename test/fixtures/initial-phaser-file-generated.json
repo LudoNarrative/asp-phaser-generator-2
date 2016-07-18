@@ -206,6 +206,34 @@
     "lines":["e.directionChange.x += x;","e.directionChange.y += y;"]
   },
   {
+    "l":["move_forward"],
+    "relation":"is_a",
+    "r":["function"],
+    "params":["e","amount"],
+    "lines":["e.directionChange += Phaser.Physics.Arcade.velocityFromRotation(e.rotation, Amount);"]
+  },
+  {
+    "l":["move_left"],
+    "relation":"is_a",
+    "r":["function"],
+    "params":["e","amount"],
+    "lines":["e.directionChange += Phaser.Physics.Arcade.velocityFromRotation(e.rotation+Phaser.Math.PI*0.5, Amount);"]
+  },
+  {
+    "l":["move_right"],
+    "relation":"is_a",
+    "r":["function"],
+    "params":["e","amount"],
+    "lines":["e.directionChange += Phaser.Physics.Arcade.velocityFromRotation(e.rotation-Phaser.Math.PI*0.5, Amount);"]
+  },
+  {
+    "l":["move_backward"],
+    "relation":"is_a",
+    "r":["function"],
+    "params":["e","amount"],
+    "lines":["e.directionChange += Phaser.Physics.Arcade.velocityFromRotation(e.rotation-Phaser.Math.PI, Amount);"]
+  },
+  {
     "l":["initEntityProperties"],
     "relation":"is_a",
     "r":["function"],
