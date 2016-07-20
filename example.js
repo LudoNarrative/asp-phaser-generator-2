@@ -8,7 +8,7 @@ Travel: 5
 Lecture: 4
 */
 var aspGame = fs.readFileSync('./test/fixtures/generated-complete-1.lp', 'utf8');
-var initialPhaserFile = fs.readFileSync('./test/fixtures/initial-phaser-file-generated.json', 'utf8');
+var initialPhaserFile = fs.readFileSync('./test/fixtures/initial-phaser-file.json', 'utf8');
 
 var generator = new AspPhaserGenerator(aspGame, initialPhaserFile);
 var phaserProgram = generator.generate(true);
