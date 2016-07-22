@@ -58,7 +58,14 @@ exports.writePhaserProgram = function(brain){
                 if (curAssert.hasOwnProperty("value")){
                   if (curAssert["value"]!==""){
                     // if(addWhitespace){programText+="\n"};
-                    programText += translateVariableAssertion(brain, curAssert, false);                                  }
+                    programText += translateVariableAssertion(brain, curAssert, false);
+                  }
+                }
+                // If it's an entity, we need to initialize the entity as a group.
+                if (curAssert.hasOwnProperty("variableType")){
+                  if (curAssert["variableType"].indexOf("entity")>=0){
+                    programText += translateInitGroup(curAssert);
+                  }
                 }
               }
               // Add any entities to the canvas.
@@ -131,15 +138,16 @@ exports.writePhaserProgram = function(brain){
               if(addWhitespace){programText+="\n\t\t"};
               programText += "var entity = addedEntities[k];";
               if(addWhitespace){programText+="\n\t\t"};
-              programText += "entity.directionChange.clamp(-1,1);";
+              programText += "entity.forEach(function(item) {"
               if(addWhitespace){programText+="\n\t\t"};
-              programText += "entity.x+=entity.directionChange.x;";
+              programText += "item.body.velocity.clamp(-300,300);";
+              if(addWhitespace){programText+="\n\t\t\t"};
+              programText += "if(item.x>game.width){item.x=game.width;}if (item.x<0){item.x=0;} if (item.y>game.height){item.y=game.height;}if (item.y<0){item.y=0;}"
               if(addWhitespace){programText+="\n\t\t"};
-              programText += "entity.y+=entity.directionChange.y;";
+              programText+="}, this);"
               if(addWhitespace){programText+="\n\t"};
-              programText += "if(entity.x>game.width){entity.x=game.width;}if (entity.x<0){entity.x=0;} if (entity.y>game.height){entity.y=game.height;}if (entity.y<0){entity.y=0;}"
-              if(addWhitespace){programText+="\n\t"};
-              programText += "}}\n";
+              programText += "}}";
+              if(addWhitespace){programText+="\n"};
             }
 
             programText += "};";
@@ -345,36 +353,50 @@ var translateHasSpriteAssertion=function(b, a){
   return str;
 }
 
-// Example: e1=addAtRandomPoint('e1');
+/* Example: Init new group entity */
+// e1 = game.add.physicsGroup();
+// addedEntities['e1'] = e1;
+// initEntityProperties(e1);
+var translateInitGroup=function(a){
+  var str="";
+  if (addWhitespace){str+="\n\t";}
+  str+= a["l"][0]+"=game.add.physicsGroup();"
+  if (addWhitespace){str+="\n\t";}
+  str+= "addedEntities['"+a["l"][0]+"']="+a["l"][0]+";";
+  if (addWhitespace){str+="\n\t";}
+  str+="initEntityProperties("+a["l"][0]+");";
+  if (addWhitespace){str+="\n";}
+  return str;
+};
+
+/* Example: Add entity */
+// e1.create(grid[gridIdx].x,grid[gridIdx].y,'e1');
+// updateGrid();
+// initEntityProperties(e1);
 var translateAddSpriteAssertion=function(b,a){
   var str="";
-  str+=a["l"][0]+"=addAtRandomPoint('"+a["l"][0]+"');"
-  if (addWhitespace){str+="\n";}
-  // If it's an entity, set default arcade values.
-  var isVariableID = b.getAssertionsWith({"l":a["l"],"relation":"is_a","r":["variable"]})[0];
-  if (isVariableID!=undefined){
-    var curAssert = b.getAssertionByID(isVariableID);
-    if (curAssert.hasOwnProperty("variableType")){
-      if (curAssert["variableType"].indexOf("entity")>=0){
-        if(addWhitespace){str+="\n\t"};
-        str += "addedEntities['"+a['l'][0]+"']="+a['l'][0]+";";
-        if(addWhitespace){str+="\n\t"};
-        str+="initEntityProperties('"+a['l'][0]+"');"
-      }
-    }
-  }
-  if(addWhitespace){str+="\n\t"};
+  str+= a["l"][0]+".create(grid[gridIdx].x,grid[gridIdx].y,'"+a["l"][0]+"');"
+  if (addWhitespace){str+="\n\t";}
+  str+= "updateGrid();";
+  if (addWhitespace){str+="\n\t";}
+  str+="initEntityProperties("+a['l'][0]+");"
   return str;
 }
 
 // Example: {"l":["e1"],"relation":"triggers","r":["e1ClickListener"]}
-//  >> e1.inputEnabled = true;
-//  >> e1.events.onInputDown.add(e1ClickListener, this);
+//  >> addedEntities['e1'].forEach(function(item) {
+//  >> item.inputEnabled = true;
+//  >> item.events.onInputDown.add(e1ClickListener, this);
+//  >> }, this);
 var translateListenerAssertion=function(a){
   var str="";
-  str += a["l"][0]+".inputEnabled=true;";
+  str += "addedEntities['"+a["l"][0]+"'].forEach(function(item){";
+  if (addWhitespace){str+="\n\t\t";}
+  str +="item.inputEnabled=true;";
+  if (addWhitespace){str+="\n\t\t";}
+  str+="item.events.onInputDown.add("+a["r"][0]+",this);";
   if (addWhitespace){str+="\n\t";}
-  str+=a["l"][0]+".events.onInputDown.add("+a["r"][0]+",this);";
+  str+="}, this);"
   if (addWhitespace){str+="\n";}
   return str;
 }
@@ -384,9 +406,13 @@ var translateListenerAssertion=function(a){
 // >>e1.input.enableDrag(true);
 var translateDraggableAssertion=function(a){
   var str="";
-  str += a["l"][0]+".inputEnabled=true;";
+  str += "addedEntities['"+a["l"][0]+"'].forEach(function(item){";
+  if (addWhitespace){str+="\n\t\t";}
+  str += "item.inputEnabled=true;";
+  if (addWhitespace){str+="\n\t\t";}
+  str += "item.input.enableDrag(true);";
   if (addWhitespace){str+="\n\t";}
-  str += a["l"][0]+".input.enableDrag(true);";
+  str+="}, this);"
   if (addWhitespace){str+="\n";}
   return str;
 }
@@ -417,13 +443,18 @@ var translateFunctionAssertion=function(a){
   return str;
 }
 
-
 // tempPoint.x = other.x-entity.x;
 // tempPoint.y = other.y-entity.y;
 // tempPoint.normalize();
+// tempPoint.x *= 100;
+// tempPoint.y *= 100;
+// entity.body.velocity.x *= 0.1;
+// entity.body.velocity.y *= 0.1;
 // entity.movementProfile(entity, tempPoint)
 var translateMove = function(a, move_type){
   str = "";
+  str+= "addedEntities['"+a["l"][0]+"'].forEach(function(item) {";
+  if (addWhitespace){str+="\n\t\t";}
   // if move_toward(entity, other) or move_away(entity, other)
   if (move_type==="move_towards" || move_type==="move_away"){
     // if a["r"][0]==="cursor", change it to to "game.input.mousePointer"
@@ -431,45 +462,64 @@ var translateMove = function(a, move_type){
     if (other==="cursor"){
       other="game.input.mousePointer";
     }
-    str += "var tempPoint = new Phaser.Point("+other+".x-"+a["l"][0]+".x,"+other+".y-"+a["l"][0]+".y);";
-    if (addWhitespace){str+="\n\t";}
+    else{
+      str+= "addedEntities['"+other+"'].forEach(function(item2) {";
+      other="item2";
+      if (addWhitespace){str+="\n\t\t";}
+    }
+    str += "var tempPoint = new Phaser.Point("+other+".x-item.x,"+other+".y-item.y);";
+    if (addWhitespace){str+="\n\t\t";}
     str+="tempPoint.normalize();"
-    if (addWhitespace){str+="\n\t";}
-    str+=move_type+"("+a["l"][0]+", tempPoint);";
+    if (addWhitespace){str+="\n\t\t";}
+    str+="tempPoint.x *= 100;"
+    if (addWhitespace){str+="\n\t\t";}
+    str+="tempPoint.y *= 100;"
+    if (addWhitespace){str+="\n\t\t";}
+    str+="item.body.velocity.x *= 0.1;";
+    if (addWhitespace){str+="\n\t\t";}
+    str+="item.body.velocity.y *= 0.1;"
+    if (addWhitespace){str+="\n\t\t";}
+    str+=move_type+"(item, tempPoint);";
     if (addWhitespace){str+="\n";}
+    if (other=="item2"){
+      str+="}, this);"
+      if (addWhitespace){str+="\n";}
+    }
   }
   // Otherwise, assume move(entity, direction)
   else{
     str+="move(";
     if (a["r"][0]==="north"){
       // move(entity, 0, -1);
-      str += a["l"][0]+",0,-1);"
+      str += "item,0,-1);"
     }
     else if (a["r"][0]==="south"){
-      str += a["l"][0]+",0,1);"
+      str += "item,0,1);"
     }
     else if (a["r"][0]==="east"){
-      str += a["l"][0]+",1,0);"
+      str += "item,1,0);"
     }
     else if (a["r"][0]==="west"){
-      str += a["l"][0]+",-1,0);"
+      str += "item,-1,0);"
     }
     else if (a["r"][0]==="northeast"){
       // move(entity, 0, -1);
-      str += a["l"][0]+",1,-1);"
+      str += "item,1,-1);"
     }
     else if (a["r"][0]==="northwest"){
-      str += a["l"][0]+",-1,-1);"
+      str += "item,-1,-1);"
     }
     else if (a["r"][0]==="southeast"){
-      str += a["l"][0]+",1,1);"
+      str += "item,1,1);"
     }
     else if (a["r"][0]==="southwest"){
-      str += a["l"][0]+",-1,1);"
+      str += "item,-1,1);"
     }
     if (addWhitespace){str+="\n";}
   }
 
+  str+="}, this);"
+  if (addWhitespace){str+="\n";}
   return str;
 }
 
@@ -478,7 +528,7 @@ var translateMove = function(a, move_type){
 var translateGravity = function(a){
   var str="";
   var entity = a["l"][0];
-  str+= entity+".body.gravity.y = mid;"
+  str+= entity+".forEach(function(item){item.body.gravity.y = mid;}, this);"
   if (addWhitespace){str+="\n";}
   return str;
 }

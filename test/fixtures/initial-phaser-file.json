@@ -164,18 +164,11 @@
     "lines":["grid=[];","for(var i=0;i<gridLinesHorizontal;i++){for(var j=0;j<gridLinesVertical;j++){grid.push(new Phaser.Point(i*gridSize,j*gridSize));}}","shuffle(grid);","return grid;"]
   },
   {
-    "l":["addAtRandomPoint"],
+    "l":["updateGrid"],
     "relation":"is_a",
     "r":["function"],
     "params":["sprite"],
-    "lines":["var spawned=addAtPos(grid[gridIdx], sprite);","gridIdx++;","if(gridIdx===grid.length){gridIdx=0;shuffle(grid);}","return spawned;"]
-  },
-  {
-    "l":["addAtPos"],
-    "relation":"is_a",
-    "r":["function"],
-    "params":["point","sprite"],
-    "lines":["return game.add.sprite(point.x,point.y,sprite);"]
+    "lines":["gridIdx++;","if(gridIdx===grid.length){gridIdx=0;shuffle(grid);}"]
   },
   {
     "l":["shuffle"],
@@ -189,56 +182,56 @@
     "relation":"is_a",
     "r":["function"],
     "params":["e","dir"],
-    "lines":["e.directionChange.x += dir.x;","e.directionChange.y += dir.y;"]
+    "lines":["e.body.velocity.x += dir.x;","e.body.velocity.y += dir.y;"]
   },
   {
     "l":["move_away"],
     "relation":"is_a",
     "r":["function"],
     "params":["e","dir"],
-    "lines":["e.directionChange.x -= dir.x;","e.directionChange.y -= dir.y;"]
+    "lines":["e.body.velocity.x -= dir.x;","e.body.velocity.y -= dir.y;"]
   },
   {
     "l":["move"],
     "relation":"is_a",
     "r":["function"],
     "params":["e","x","y"],
-    "lines":["e.directionChange.x += x;","e.directionChange.y += y;"]
+    "lines":["e.body.velocity.x += x;","e.body.velocity.y += y;"]
   },
   {
     "l":["move_forward"],
     "relation":"is_a",
     "r":["function"],
     "params":["e","amount"],
-    "lines":["e.directionChange += Phaser.Physics.Arcade.velocityFromRotation(e.rotation, Amount);"]
+    "lines":["e.body.velocity += Phaser.Physics.Arcade.velocityFromRotation(e.rotation, Amount);"]
   },
   {
     "l":["move_left"],
     "relation":"is_a",
     "r":["function"],
     "params":["e","amount"],
-    "lines":["e.directionChange += Phaser.Physics.Arcade.velocityFromRotation(e.rotation+Phaser.Math.PI*0.5, Amount);"]
+    "lines":["e.body.velocity += Phaser.Physics.Arcade.velocityFromRotation(e.rotation+Phaser.Math.PI*0.5, Amount);"]
   },
   {
     "l":["move_right"],
     "relation":"is_a",
     "r":["function"],
     "params":["e","amount"],
-    "lines":["e.directionChange += Phaser.Physics.Arcade.velocityFromRotation(e.rotation-Phaser.Math.PI*0.5, Amount);"]
+    "lines":["e.body.velocity += Phaser.Physics.Arcade.velocityFromRotation(e.rotation-Phaser.Math.PI*0.5, Amount);"]
   },
   {
     "l":["move_backward"],
     "relation":"is_a",
     "r":["function"],
     "params":["e","amount"],
-    "lines":["e.directionChange += Phaser.Physics.Arcade.velocityFromRotation(e.rotation-Phaser.Math.PI, Amount);"]
+    "lines":["e.body.velocity += Phaser.Physics.Arcade.velocityFromRotation(e.rotation-Phaser.Math.PI, Amount);"]
   },
   {
     "l":["initEntityProperties"],
     "relation":"is_a",
     "r":["function"],
-    "params":["eName"],
-    "lines":["game.physics.arcade.enable(addedEntities[eName]);","addedEntities[eName].body.collideWorldBounds = true;","if (!addedEntities[eName].body.velocity.hasOwnProperty('x')){addedEntities[eName].body.velocity.x=0;}","if (!addedEntities[eName].body.velocity.hasOwnProperty('y')){addedEntities[eName].body.velocity.y=0;}","if (!addedEntities[eName].body.hasOwnProperty('angularVelocity')){addedEntities[eName].body.angularVelocity=0;}","if (!addedEntities[eName].hasOwnProperty('directionChange')){addedEntities[eName].directionChange=new Phaser.Point(0,0);}"]
+    "params":["group"],
+    "lines":["group.forEach(function(item) {","item.body.collideWorldBounds = true;","item.pivot.x = 16;","item.pivot.y = 16;","if (!item.body.velocity.hasOwnProperty('x')){item.body.velocity.x=0;}","if (!item.body.velocity.hasOwnProperty('y')){item.body.velocity.y=0;}","if (!item.body.hasOwnProperty('angularVelocity')){item.body.angularVelocity=0;}","}, this);"]
   },
   {
     "l":["changeMode"],
