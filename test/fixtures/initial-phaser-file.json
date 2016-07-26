@@ -231,7 +231,7 @@
     "relation":"is_a",
     "r":["function"],
     "params":["group"],
-    "lines":["group.forEach(function(item) {","item.body.collideWorldBounds = true;","item.pivot.x = 16;","item.pivot.y = 16;","item.rotation = 0;","if (!item.body.velocity.hasOwnProperty('x')){item.body.velocity.x=0;}","if (!item.body.velocity.hasOwnProperty('y')){item.body.velocity.y=0;}","if (!item.body.hasOwnProperty('angularVelocity')){item.body.angularVelocity=0;}","}, this);"]
+    "lines":["group.forEach(function(item) {","item.body.collideWorldBounds = true;","item.anchor.x = 0.5;","item.anchor.y = 0.5;","item.rotation = 0;","if (!item.body.velocity.hasOwnProperty('x')){item.body.velocity.x=0;}","if (!item.body.velocity.hasOwnProperty('y')){item.body.velocity.y=0;}","if (!item.body.hasOwnProperty('angularVelocity')){item.body.angularVelocity=0;}","}, this);"]
   },
   {
     "l":["changeMode"],
