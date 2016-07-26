@@ -192,7 +192,7 @@
     "lines":["e.body.velocity.x -= dir.x;","e.body.velocity.y -= dir.y;"]
   },
   {
-    "l":["move"],
+    "l":["moves"],
     "relation":"is_a",
     "r":["function"],
     "params":["e","x","y"],
@@ -203,35 +203,35 @@
     "relation":"is_a",
     "r":["function"],
     "params":["e","amount"],
-    "lines":["e.body.velocity += Phaser.Physics.Arcade.velocityFromRotation(e.rotation, Amount);"]
+    "lines":["var newV = game.physics.arcade.velocityFromRotation(e.rotation,amount);","e.body.velocity.x += newV.x;","e.body.velocity.y += newV.y;"]
   },
   {
     "l":["move_left"],
     "relation":"is_a",
     "r":["function"],
     "params":["e","amount"],
-    "lines":["e.body.velocity += Phaser.Physics.Arcade.velocityFromRotation(e.rotation+Phaser.Math.PI*0.5, Amount);"]
+    "lines":["var newV = game.physics.arcade.velocityFromRotation(e.rotation-Math.PI*0.5,amount);","e.body.velocity.x += newV.x;","e.body.velocity.y += newV.y;"]
   },
   {
     "l":["move_right"],
     "relation":"is_a",
     "r":["function"],
     "params":["e","amount"],
-    "lines":["e.body.velocity += Phaser.Physics.Arcade.velocityFromRotation(e.rotation-Phaser.Math.PI*0.5, Amount);"]
+    "lines":["var newV = game.physics.arcade.velocityFromRotation(e.rotation+Math.PI*0.5,amount);","e.body.velocity.x += newV.x;","e.body.velocity.y += newV.y;"]
   },
   {
     "l":["move_backward"],
     "relation":"is_a",
     "r":["function"],
     "params":["e","amount"],
-    "lines":["e.body.velocity += Phaser.Physics.Arcade.velocityFromRotation(e.rotation-Phaser.Math.PI, Amount);"]
+    "lines":["var newV = game.physics.arcade.velocityFromRotation(e.rotation-Math.PI,amount);","e.body.velocity.x += newV.x;","e.body.velocity.y += newV.y;"]
   },
   {
     "l":["initEntityProperties"],
     "relation":"is_a",
     "r":["function"],
     "params":["group"],
-    "lines":["group.forEach(function(item) {","item.body.collideWorldBounds = true;","item.pivot.x = 16;","item.pivot.y = 16;","if (!item.body.velocity.hasOwnProperty('x')){item.body.velocity.x=0;}","if (!item.body.velocity.hasOwnProperty('y')){item.body.velocity.y=0;}","if (!item.body.hasOwnProperty('angularVelocity')){item.body.angularVelocity=0;}","}, this);"]
+    "lines":["group.forEach(function(item) {","item.body.collideWorldBounds = true;","item.pivot.x = 16;","item.pivot.y = 16;","item.rotation = 0;","if (!item.body.velocity.hasOwnProperty('x')){item.body.velocity.x=0;}","if (!item.body.velocity.hasOwnProperty('y')){item.body.velocity.y=0;}","if (!item.body.hasOwnProperty('angularVelocity')){item.body.angularVelocity=0;}","}, this);"]
   },
   {
     "l":["changeMode"],

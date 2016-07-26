@@ -112,7 +112,7 @@ exports.writePhaserProgram = function(brain){
                   else if (ctp.isRelationType(brain.assertions[j][p][c][a], "set_mode")){
                     programText += translateSetMode(brain, brain.assertions[j][p][c][a]);
                   }
-                  else if (ctp.isRelationType(brain.assertions[j][p][c][a], "move_towards") || ctp.isRelationType(brain.assertions[j][p][c][a], "move_away")|| ctp.isRelationType(brain.assertions[j][p][c][a], "move")){
+                  else if (ctp.isRelationType(brain.assertions[j][p][c][a], "move_towards") || ctp.isRelationType(brain.assertions[j][p][c][a], "move_away")|| ctp.isRelationType(brain.assertions[j][p][c][a], "moves")){
                     programText += translateMove(brain.assertions[j][p][c][a],brain.assertions[j][p][c][a]["relation"]);
                   }
                   else if (ctp.isRelationType(brain.assertions[j][p][c][a], "apply_force")){
@@ -318,7 +318,7 @@ var translateConditionalAssertion = function(b,a){
     else if (a["r"][j]["relation"]==="set_mode"){
       str+=translateSetMode(b,a["r"][j]);
     }
-    else if (a["r"][j]["relation"]==="move_towards" || a["r"][j]["relation"]==="move_away" || a["r"][j]["relation"]==="move"){
+    else if (a["r"][j]["relation"]==="move_towards" || a["r"][j]["relation"]==="move_away" || a["r"][j]["relation"]==="moves"){
       str += translateMove(a["r"][j],a["r"][j]["relation"]);
     }
     if (addWhitespace){str+="\t";}
@@ -488,32 +488,44 @@ var translateMove = function(a, move_type){
   }
   // Otherwise, assume move(entity, direction)
   else{
-    str+="move(";
+    // str+="moves(";
     if (a["r"][0]==="north"){
       // move(entity, 0, -1);
-      str += "item,0,-1);"
+      str += "moves(item,0,-1);"
     }
     else if (a["r"][0]==="south"){
-      str += "item,0,1);"
+      str += "moves(item,0,1);"
     }
     else if (a["r"][0]==="east"){
-      str += "item,1,0);"
+      str += "moves(item,1,0);"
     }
     else if (a["r"][0]==="west"){
-      str += "item,-1,0);"
+      str += "moves(item,-1,0);"
     }
     else if (a["r"][0]==="northeast"){
       // move(entity, 0, -1);
-      str += "item,1,-1);"
+      str += "moves(item,1,-1);"
     }
     else if (a["r"][0]==="northwest"){
-      str += "item,-1,-1);"
+      str += "moves(item,-1,-1);"
     }
     else if (a["r"][0]==="southeast"){
-      str += "item,1,1);"
+      str += "moves(item,1,1);"
     }
     else if (a["r"][0]==="southwest"){
-      str += "item,-1,1);"
+      str += "moves(item,-1,1);"
+    }
+    else if (a["r"][0]==="forward"){
+      str += "move_forward(item,1);"
+    }
+    else if (a["r"][0]==="backward"){
+      str += "move_backward(item,1);"
+    }
+    else if (a["r"][0]==="left"){
+      str += "move_left(item,1);"
+    }
+    else if (a["r"][0]==="right"){
+      str += "move_right(item,1);"
     }
     if (addWhitespace){str+="\n";}
   }
