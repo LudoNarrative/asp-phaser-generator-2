@@ -1,9 +1,6 @@
 /*
   This file translates the generated ASP logic into Rensa-flavored JSON. Useful for visualizing the generated ASP games, as well as for translating the generated games into Phaser code.
 */
-// A list of all keywords used in preconditions and results that
-// we have already addressed/translated.
-var doneKeywords = [];
 
 // X(Y). --> Y is_a X.
 // Example: entity(ball).
@@ -346,6 +343,10 @@ function translateNested(x){
 function translateASP(lines){
   var assertions = [];
   var doneLines = [];
+  // A list of all keywords used in preconditions and results that
+  // we have already addressed/translated.
+  var doneKeywords = [];
+
   // For each line,
   for (var i in lines){
     var assertionsToAdd = null;

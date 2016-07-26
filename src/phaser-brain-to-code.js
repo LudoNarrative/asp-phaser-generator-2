@@ -5,7 +5,7 @@
 var addWhitespace = false;
 
 // Contains realized goals from the ASP code.
-var goals = [];
+var goals;
 
 var ctp = require('./cygnus-to-phaser-brain');
 var rensa = require('./brain');
@@ -14,6 +14,8 @@ var rensa = require('./brain');
 // Output: Phaser program (string).
 exports.writePhaserProgram = function(brain){
   var programText = "";
+  
+   goals = [];
 
   // Grab variable assertions so we can store their values in create.
   var variableValues = [];
