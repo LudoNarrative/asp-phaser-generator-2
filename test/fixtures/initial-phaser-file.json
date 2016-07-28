@@ -5,7 +5,7 @@
     "r":["program"],
     "preload": {"images":[]},
     "create":{"vars":[],"sprites":[],"listeners":[],"buttons":[],"motion":[]},
-    "update":{"vars":[],"functions":[],"outcomes":[],"motion":[],"misc":[]},
+    "update":{"vars":[],"listeners":[],"outcomes":[],"motion":[],"misc":[]},
     "render":{}
   },
   {

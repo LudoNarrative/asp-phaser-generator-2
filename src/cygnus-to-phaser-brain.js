@@ -152,6 +152,19 @@ var mergeInitialWithCygnus = function(pID, initialBrain, cygnusBrain){
           clickAssertion = cygnusBrain.assertions[i]["l"][q];
         }
       }
+
+      // Check if one of the preconditions (elements in the left array) calls for an overlaps listener.
+      var isOverlapConditional=false;
+      // Get the overlaps assertion, if any.
+      var overlapAssertion = null;
+      for (var q in cygnusBrain.assertions[i]["l"]){
+        var oldHypRelation = cygnusBrain.assertions[i]["l"][q]["relation"];
+        if (oldHypRelation=="overlaps"){
+          isOverlapConditional=true;
+          overlapAssertion = cygnusBrain.assertions[i]["l"][q];
+        }
+      }
+      // TODO: if isClickConditional && if isOverlapConditional...
       if (isClickConditional && clickAssertion!=null){
         // Get the name of the click listener function.
         var clickListenFn = clickAssertion["l"][0];
@@ -194,6 +207,37 @@ var mergeInitialWithCygnus = function(pID, initialBrain, cygnusBrain){
         newProgram[clickListenFn]["outcomes"].push(newAssert2);
         // Push the old assertion into the brain anyway.  This lets us update coordinates.
         newBrain.addAssertion(cygnusBrain.assertions[i]);
+      }
+      else if (isOverlapConditional && overlapAssertion!=null){
+        // Move the overlap assertion to create.
+        if (goal_keyword != undefined){
+          overlapAssertion["goal_keyword"]=goal_keyword;
+        }
+        newProgram["update"]["listeners"].push(overlapAssertion);
+
+        // Add a new function to the brain called [goalKeyword]OverlapHandler, with e1 and e2 as params.  Inside that function go all of the remaining preconditions and conclusions.
+        var assertList = cygnusBrain.assertions[i]["l"];
+        // Remove overlapAssertion from assertList.
+        var overlapIdx = assertList.indexOf(overlapAssertion);
+        assertList.splice(overlapIdx,1);
+
+        newLeft = getNewHypotheses(newLeft, assertList);
+        newRight = getNewConclusions(newRight,cygnusBrain.assertions[i]["r"]);
+
+        var functionName = goal_keyword + "OverlapHandler"
+        newProgram[functionName] = {};
+        newProgram[functionName]["params"] = ["e1","e2"];
+        newProgram[functionName]["outcomes"] = [];
+
+        var newAssert2 = {
+          "l": newLeft,
+          "relation":"causes",
+          "r": newRight
+        };
+        if (goal_keyword != undefined){
+          newAssert2["goal_keyword"]=goal_keyword;
+        }
+        newProgram[functionName]["outcomes"].push(newAssert2);
       }
       else{
         newLeft = getNewHypotheses(newLeft, cygnusBrain.assertions[i]["l"]);
@@ -359,4 +403,8 @@ exports.isFunctionAssertion = function(a){
 
 exports.isGoalAssertion = function(a){
   return exports.isRelationType(a,"is_a") && (a["r"].indexOf("goal")>=0);
+}
+
+exports.isOverlapAssertion = function(a){
+  return exports.isRelationType(a,"overlaps");
 }

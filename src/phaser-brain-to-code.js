@@ -14,7 +14,7 @@ var rensa = require('./brain');
 // Output: Phaser program (string).
 exports.writePhaserProgram = function(brain){
   var programText = "";
-  
+
    goals = [];
 
   // Grab variable assertions so we can store their values in create.
@@ -46,7 +46,19 @@ exports.writePhaserProgram = function(brain){
         if (brain.assertions[j].hasOwnProperty(p) && typeof brain.assertions[j][p]!=="function") {
           if (p!="l" && p!="relation" && p!="r"){
             // Write the content for that function.
-            programText += "function " + p + "(){";
+            programText += "function " + p + "("
+
+            // If this function has parameters, list them.
+            if (brain.assertions[j][p].hasOwnProperty("params")){
+              var paramsList = brain.assertions[j][p]["params"];
+              for (var v=0; v<paramsList.length;v++){
+                programText += paramsList[v];
+                if (v<paramsList.length-1){
+                  programText+=",";
+                }
+              }
+            }
+            programText += "){";
 
             // If this is the create function, assign any initial variable values.
             // (We assign variable values here, because outside the functions, variables like
@@ -129,6 +141,9 @@ exports.writePhaserProgram = function(brain){
                   }
                   else if (ctp.isDraggableAssertion(brain.assertions[j][p][c][a])){
                     programText += translateDraggableAssertion(brain.assertions[j][p][c][a]);
+                  }
+                  else if (ctp.isOverlapAssertion(brain.assertions[j][p][c][a])){
+                    programText += translateOverlapAssertion(brain.assertions[j][p][c][a]);
                   }
                 }
               }
@@ -637,4 +652,15 @@ var updateAspGoals = function(b, a){
       goals.push(realizedGoal);
     }
   }
+}
+
+// e.g. {"l":["e1"],"relation":"overlaps","r":["e2"],"goal_keyword":"o3"}
+var translateOverlapAssertion = function(a){
+  var str="";
+  var e1 = a['l'][0];
+  var e2 = a['r'][0];
+  var callback = a['goal_keyword'] + "OverlapHandler";
+
+  str+="game.physics.arcade.overlap(addedEntities['"+e1+"'],addedEntities['"+e2+"'],"+callback+",null, this);"
+  return str;
 }
