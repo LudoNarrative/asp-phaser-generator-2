@@ -444,7 +444,7 @@ var mergeInitialWithCygnus = function(pID, initialBrain, cygnusBrain){
       }
     }
     else if (exports.isDraggableAssertion(cygnusBrain.assertions[i])){
-      newProgram["create"]["vars"].push(cygnusBrain.assertions[i]);
+      newProgram["update"]["vars"].push(cygnusBrain.assertions[i]);
     }
     else if (cygnusBrain.assertions[i].hasOwnProperty("tags")){
       if (cygnusBrain.assertions[i]["tags"].indexOf("update")>=0){
