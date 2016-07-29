@@ -181,7 +181,7 @@ var translateClickPrecondition = function(preconds,results,keyword){
       if (a=="control_event"){
         // Grab the argument of the click. (Assume bList has one element).
         var argument = bList[0].substring(bList[0].indexOf("(")+1,bList[0].indexOf(")"));
-        listenerName = argument+"ClickListener";
+        listenerName = keyword + "_"+ argument+"ClickListener";
         var clickAssertion = {"l":[listenerName],"relation":"is_a","r":["click_listener"],"for":[argument],"tags":["create"],"goal_keyword":keyword};
         assertionsToAdd.push(clickAssertion);
         ps.push(clickAssertion);

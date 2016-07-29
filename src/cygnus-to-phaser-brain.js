@@ -183,7 +183,7 @@ var mergeInitialWithCygnus = function(pID, initialBrain, cygnusBrain){
         // Get the name of the click listener function.
         var clickListenFn = clickAssertion["l"][0];
         // Get the entity/resource/etc. that is to be clicked.
-        var clicked = clickListenFn.substring(0,clickListenFn.indexOf("ClickListener"));
+        var clicked = clickAssertion["for"][0];
         // Add listener to create method.
         // i.e., in create: e1.events.onInputDown.add(e1ClickListener, this);
         var newAssert = {
@@ -312,7 +312,7 @@ var mergeInitialWithCygnus = function(pID, initialBrain, cygnusBrain){
         // Get the name of the click listener function.
         var clickListenFn = clickAssertion["l"][0];
         // Get the entity/resource/etc. that is to be clicked.
-        var clicked = clickListenFn.substring(0,clickListenFn.indexOf("ClickListener"));
+        var clicked = clickAssertion["for"][0];
         // Add listener to create method.
         // i.e., in create: e1.events.onInputDown.add(e1ClickListener, this);
         var newAssert = {
