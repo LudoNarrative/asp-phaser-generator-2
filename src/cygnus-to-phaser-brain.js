@@ -176,10 +176,10 @@ var mergeInitialWithCygnus = function(pID, initialBrain, cygnusBrain){
         }
       }
 
-      // TODO: if isClickConditional && if isOverlapConditional...
-
-      // e.g. e1ClickListener is_a click_listener
-      if (isClickConditional && clickAssertion!=null){
+      // if click and overlaps
+      if (isClickConditional && clickAssertion!=null && isOverlapConditional && overlapAssertion!=null)
+      {
+        /* Add isCallbackAssertion to create. */
         // Get the name of the click listener function.
         var clickListenFn = clickAssertion["l"][0];
         // Get the entity/resource/etc. that is to be clicked.
@@ -194,7 +194,82 @@ var mergeInitialWithCygnus = function(pID, initialBrain, cygnusBrain){
         if (goal_keyword != undefined){
           newAssert["goal_keyword"]=goal_keyword;
         }
-        newProgram["create"]["listeners"].push(newAssert);
+        newProgram["update"]["listeners"].push(newAssert);
+
+        /* Add click handler function with "params" of entity and "lines": call to overlap handler.
+        Example:
+          function o1ClickHandler(entity) {
+            game.physics.arcade.overlap(entity, e2, o1OverlapHandler, null, this))
+          }*/
+
+          // Overlaps assertion is e.g. e1 overlaps e2
+          // We need to get e2
+          var rightSide = overlapAssertion["r"][0];
+
+          // We also need the name of the overlap handler.
+          var functionName = goal_keyword + "OverlapHandler"
+
+        var clickHandlerAssert = {
+          "l": [clickListenFn],
+          "relation": "is_a",
+          "r": ["function"],
+          "params": ["entity"],
+          "lines": ["game.physics.arcade.overlap(entity, addedEntities['" + rightSide+"'], "+ functionName + ", null, this);"]
+        };
+        newBrain.addAssertion(clickHandlerAssert);
+
+        /* Add overlap handler with remaining results.
+        Example: function o1OverlapHandler(E1,E2){r1 += low;}
+        */
+        // Add a new function to the brain called [goalKeyword]OverlapHandler, with e1 and e2 as params.  Inside that function go all of the remaining preconditions and conclusions.
+        var assertList = cygnusBrain.assertions[i]["l"];
+        // Remove overlapAssertion from assertList.
+        var overlapIdx = assertList.indexOf(overlapAssertion);
+        assertList.splice(overlapIdx,1);
+        // Remove clickAssertion from assertList.
+        var clickIdx = assertList.indexOf(clickAssertion);
+        assertList.splice(clickIdx,1);
+
+        newLeft = getNewHypotheses(newLeft, assertList);
+        newRight = getNewConclusions(newRight,cygnusBrain.assertions[i]["r"]);
+
+        var functionName = goal_keyword + "OverlapHandler"
+        newProgram[functionName] = {};
+        newProgram[functionName]["params"] = ["e1","e2"];
+        newProgram[functionName]["outcomes"] = [];
+
+        var newAssert2 = {
+          "l": newLeft,
+          "relation":"causes",
+          "r": newRight
+        };
+        if (goal_keyword != undefined){
+          newAssert2["goal_keyword"]=goal_keyword;
+        }
+        newProgram[functionName]["outcomes"].push(newAssert2);
+      }
+      // if pressed and overlaps
+      else if (isPressedConditional && pressedAssertion!=null && isOverlapConditional && overlapAssertion!=null)
+      {
+        // TODO
+      }
+      // e.g. e1ClickListener is_a click_listener
+      else if (isClickConditional && clickAssertion!=null){
+        // Get the name of the click listener function.
+        var clickListenFn = clickAssertion["l"][0];
+        // Get the entity/resource/etc. that is to be clicked.
+        var clicked = clickListenFn.substring(0,clickListenFn.indexOf("ClickListener"));
+        // Add listener to create method.
+        // i.e., in create: e1.events.onInputDown.add(e1ClickListener, this);
+        var newAssert = {
+          "l": [clicked],
+          "relation":"triggers",
+          "r": [clickListenFn]
+        };
+        if (goal_keyword != undefined){
+          newAssert["goal_keyword"]=goal_keyword;
+        }
+        newProgram["update"]["listeners"].push(newAssert);
         /*
           Add new function to the brain that contains all other preconditions (besides the click listener) and the results.
           i.e.,
