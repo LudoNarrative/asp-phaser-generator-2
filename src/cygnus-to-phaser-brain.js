@@ -207,7 +207,7 @@ var mergeInitialWithCygnus = function(pID, initialBrain, cygnusBrain){
           var rightSide = overlapAssertion["r"][0];
 
           // We also need the name of the overlap handler.
-          var functionName = goal_keyword + "OverlapHandler"
+          var functionName = goal_keyword + "OverlapHandler";
 
         var clickHandlerAssert = {
           "l": [clickListenFn],
@@ -251,7 +251,61 @@ var mergeInitialWithCygnus = function(pID, initialBrain, cygnusBrain){
       // if pressed and overlaps
       else if (isPressedConditional && pressedAssertion!=null && isOverlapConditional && overlapAssertion!=null)
       {
-        // TODO
+        // Move the pressed assertion to create.
+        if (goal_keyword != undefined){
+          pressedAssertion["goal_keyword"]=goal_keyword;
+        }
+        newProgram["create"]["listeners"].push(pressedAssertion);
+
+        // We need a name for the pressedHandler.
+        var pressfunc = goal_keyword + "PressedHandler";
+
+        // Overlaps assertion is e.g. e1 overlaps e2
+        // We need to get e1 and e2
+        var leftSide = overlapAssertion["l"][0];
+        var rightSide = overlapAssertion["r"][0];
+        // We also need the name of the overlap handler.
+        var overlapfunc = goal_keyword + "OverlapHandler";
+
+        // Add pressedhandler function directly.
+        var pressHandlerAssert = {
+          "l": [pressfunc],
+          "relation": "is_a",
+          "r": ["function"],
+          "params": [],
+          "lines": ["game.physics.arcade.overlap(addedEntities['" + leftSide+"'], addedEntities['" + rightSide+"'], "+ overlapfunc + ", null, this);"]
+        };
+        newBrain.addAssertion(pressHandlerAssert);
+
+        /* Add overlap handler with remaining results.
+        Example: function o1OverlapHandler(E1,E2){r1 += low;}
+        */
+        // Add a new function to the brain called [goalKeyword]OverlapHandler, with e1 and e2 as params.  Inside that function go all of the remaining preconditions and conclusions.
+        var assertList = cygnusBrain.assertions[i]["l"];
+        // Remove overlapAssertion from assertList.
+        var overlapIdx = assertList.indexOf(overlapAssertion);
+        assertList.splice(overlapIdx,1);
+        // Remove clickAssertion from assertList.
+        var pressIdx = assertList.indexOf(pressedAssertion);
+        assertList.splice(pressIdx,1);
+
+        newLeft = getNewHypotheses(newLeft, assertList);
+        newRight = getNewConclusions(newRight,cygnusBrain.assertions[i]["r"]);
+
+        var functionName = goal_keyword + "OverlapHandler"
+        newProgram[functionName] = {};
+        newProgram[functionName]["params"] = ["e1","e2"];
+        newProgram[functionName]["outcomes"] = [];
+
+        var newAssert2 = {
+          "l": newLeft,
+          "relation":"causes",
+          "r": newRight
+        };
+        if (goal_keyword != undefined){
+          newAssert2["goal_keyword"]=goal_keyword;
+        }
+        newProgram[functionName]["outcomes"].push(newAssert2);
       }
       // e.g. e1ClickListener is_a click_listener
       else if (isClickConditional && clickAssertion!=null){
@@ -346,7 +400,7 @@ var mergeInitialWithCygnus = function(pID, initialBrain, cygnusBrain){
         newLeft = getNewHypotheses(newLeft, assertList);
         newRight = getNewConclusions(newRight,cygnusBrain.assertions[i]["r"]);
 
-        var functionName = goal_keyword + "PressedHandler"
+        var functionName = goal_keyword + "PressedHandler";
         newProgram[functionName] = {};
         newProgram[functionName]["outcomes"] = [];
 
