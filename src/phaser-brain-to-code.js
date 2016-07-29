@@ -274,7 +274,12 @@ var translateConditionalAssertion = function(b,a){
     str += "if(";
     // Add each assertion in the hypothesis.
     for (var i=0; i< a["l"].length;i++){
-      if (a["l"][i]["relation"]=="gt"){
+      if (a["l"][i]["relation"]=="eq"){
+        str += a["l"][i]["l"];
+        str += "==";
+        str+=a["l"][i]["r"];
+      }
+      else if (a["l"][i]["relation"]=="gt"){
         str += a["l"][i]["l"];
         str += ">";
         str+=a["l"][i]["r"];
