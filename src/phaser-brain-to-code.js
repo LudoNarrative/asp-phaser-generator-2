@@ -139,6 +139,9 @@ exports.writePhaserProgram = function(brain){
                   else if (ctp.isCallbackAssertion(brain.assertions[j][p][c][a])){
                     programText += translateListenerAssertion(brain.assertions[j][p][c][a]);
                   }
+                  else if (ctp.isMousePressedAssertion(brain.assertions[j][p][c][a])){
+                    programText += translatePressedAssertion(brain.assertions[j][p][c][a]);
+                  }
                   else if (ctp.isDraggableAssertion(brain.assertions[j][p][c][a])){
                     programText += translateDraggableAssertion(brain.assertions[j][p][c][a]);
                   }
@@ -338,7 +341,7 @@ var translateConditionalAssertion = function(b,a){
     else if (a["r"][j]["relation"]==="move_towards" || a["r"][j]["relation"]==="move_away" || a["r"][j]["relation"]==="moves"){
       str += translateMove(a["r"][j],a["r"][j]["relation"]);
     }
-    if (addWhitespace){str+="\t";}
+    if (addWhitespace){str+="\n\t";}
   }
   if (addWhitespace){str+="\t";}
   if (!emptyHypothesis){
@@ -662,5 +665,12 @@ var translateOverlapAssertion = function(a){
   var callback = a['goal_keyword'] + "OverlapHandler";
 
   str+="game.physics.arcade.overlap(addedEntities['"+e1+"'],addedEntities['"+e2+"'],"+callback+",null, this);"
+  return str;
+}
+
+var translatePressedAssertion = function(a){
+  var str = "";
+  var callback = a['goal_keyword'] + "PressedHandler";
+  str += "game.input.onDown.add("+callback+", this);"
   return str;
 }
