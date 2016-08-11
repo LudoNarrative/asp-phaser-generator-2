@@ -448,7 +448,7 @@ var mergeInitialWithCygnus = function(pID, initialBrain, cygnusBrain){
     }
     else if (cygnusBrain.assertions[i].hasOwnProperty("tags")){
       if (cygnusBrain.assertions[i]["tags"].indexOf("update")>=0){
-        if (exports.isRelationType(cygnusBrain.assertions[i],"increase") || exports.isRelationType(cygnusBrain.assertions[i],"decrease")){
+        if (exports.isRelationType(cygnusBrain.assertions[i],"increase") || exports.isRelationType(cygnusBrain.assertions[i],"decrease")|| exports.isRelationType(cygnusBrain.assertions[i],"increase_over_time") || exports.isRelationType(cygnusBrain.assertions[i],"decrease_over_time")){
             newProgram["update"]["vars"].push(changeToSetValue(cygnusBrain.assertions[i]));
         }
         else {
@@ -532,6 +532,14 @@ var changeToSetValue = function(assert){
   else if (oldRelation=="decrease"){
     newRightA["relation"]="set_value";
     newRightA["r"]=[newRightA["l"][0]+"-"+oldRight];
+  }
+  else if (oldRelation=="increase_over_time"){
+    newRightA["relation"]="set_value";
+    newRightA["r"]=[newRightA["l"][0]+"+"+oldRight+"*this.game.time.elapsed/10000.0"];
+  }
+  else if (oldRelation=="decrease_over_time"){
+    newRightA["relation"]="set_value";
+    newRightA["r"]=[newRightA["l"][0]+"-"+oldRight+"*this.game.time.elapsed/10000.0"];
   }
   else {
     newRightA["relation"]=oldRelation;
