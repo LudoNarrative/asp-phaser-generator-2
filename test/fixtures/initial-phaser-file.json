@@ -145,12 +145,6 @@
     "value":"0x0000ff"
   },
   {
-    "l":["blue"],
-    "relation":"is_a",
-    "r":["color"],
-    "value":"0x0000ff"
-  },
-  {
     "l":["purple"],
     "relation":"is_a",
     "r":["color"],
