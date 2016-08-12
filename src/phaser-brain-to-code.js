@@ -154,6 +154,9 @@ exports.writePhaserProgram = function(brain){
                   else if (ctp.isStaticAssertion(brain.assertions[j][p][c][a])){
                     programText += translateStaticAssertion(brain.assertions[j][p][c][a], true);
                   }
+                  else if (ctp.isSetColorAssertion(brain.assertions[j][p][c][a])){
+                    programText += translateSetColorAssertion(brain, brain.assertions[j][p][c][a], true);
+                  }
                 }
               }
             }
@@ -353,7 +356,10 @@ var translateConditionalAssertion = function(b,a){
       str += translateMove(a["r"][j],a["r"][j]["relation"]);
     }
     else if (a["r"][j]["relation"]==="is_a" && a["r"][j]["r"].indexOf("static")>=0){
-      str+= "addedEntities['" + a["r"][j]["l"][0] + "'].immovable = true;"
+      str+=translateStaticAssertion(a["r"][j]);
+    }
+    else if (a["r"][j]["relation"]==="set_color"){
+      str+=translateSetColorAssertion(b,a["r"][j]);
     }
     if (addWhitespace){str+="\n\t";}
   }
@@ -719,5 +725,18 @@ var translateTimerElapsedAssertion = function(b,a){
 }
 
 var translateStaticAssertion = function(a){
-  return "addedEntities['" + a["l"][0] + "'].immovable = true;";
+  return "addedEntities['"+a["l"][0]+"'].forEach(function(item){item.immovable=true;}, this);";
+}
+
+var translateSetColorAssertion = function(b,a){
+  str = "";
+  var entityName = a["l"][0];
+  var colorName = a["r"][0];
+  // Find the hex code for the color.
+  var colorID = b.getAssertionsWith({"l":[colorName],"relation":"is_a","r":["color"]})[0];
+  if (colorID!=undefined){
+    var hexcode = b.getAssertionByID(colorID)["value"];
+    str+= "addedEntities['"+entityName+"'].forEach(function(item){item.tint="+hexcode+";}, this);";
+  }
+  return str;
 }

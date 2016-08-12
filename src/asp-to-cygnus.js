@@ -27,6 +27,7 @@ function translateIsA(str){
 //    move_towards(entity, other)
 //    move_away(entity, other)
 //    move(entity, dir) where dir = north, south, east, west, northeast, etc.
+//    set_color(entity,green)
 function translateSimpleRelation(str){
   var hypStart = str.indexOf("(");
   var hypMid = str.indexOf(",");

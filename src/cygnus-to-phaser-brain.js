@@ -137,6 +137,10 @@ var mergeInitialWithCygnus = function(pID, initialBrain, cygnusBrain){
       // Move to create.
       newProgram["create"]["misc"].push(cygnusBrain.assertions[i]);
     }
+    else if (exports.isSetColorAssertion(cygnusBrain.assertions[i])){
+      // Move to update.
+      newProgram["update"]["misc"].push(cygnusBrain.assertions[i]);
+    }
     else if (exports.isConditionalAssertion(cygnusBrain.assertions[i])){
       // We are going to add a new assertion based on the current "old" assertion in the cygnus brain (cygnusBrain.assertions[i]).
 
@@ -652,4 +656,8 @@ exports.isMousePressedAssertion = function(a){
 
 exports.isStaticAssertion = function(a){
   return exports.isRelationType(a,"is_a") && (a["r"].indexOf("static")>=0);
+}
+
+exports.isSetColorAssertion = function(a){
+  return exports.isRelationType(a,"set_color");
 }
