@@ -11,8 +11,8 @@ timerLogic(t1,3,single)
 
 initialize(add(e1,upper_left))
 initialize(add(e2,lower_left))
-initialize(set_sprite(e1,long_left_arrow))
-initialize(set_sprite(e2,mushroom))
+initialize(set_sprite(e1,circle))
+initialize(set_sprite(e2,triangle))
 initialize(set(r1,high))
 initialize(set(r2,0))
 
