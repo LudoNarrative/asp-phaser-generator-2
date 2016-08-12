@@ -151,6 +151,9 @@ exports.writePhaserProgram = function(brain){
                   else if (ctp.isOverlapAssertion(brain.assertions[j][p][c][a])){
                     programText += translateOverlapAssertion(brain.assertions[j][p][c][a]);
                   }
+                  else if (ctp.isStaticAssertion(brain.assertions[j][p][c][a])){
+                    programText += translateStaticAssertion(brain.assertions[j][p][c][a], true);
+                  }
                 }
               }
             }
@@ -348,6 +351,9 @@ var translateConditionalAssertion = function(b,a){
     }
     else if (a["r"][j]["relation"]==="move_towards" || a["r"][j]["relation"]==="move_away" || a["r"][j]["relation"]==="moves"){
       str += translateMove(a["r"][j],a["r"][j]["relation"]);
+    }
+    else if (a["r"][j]["relation"]==="is_a" && a["r"][j]["r"].indexOf("static")>=0){
+      str+= "addedEntities['" + a["r"][j]["l"][0] + "'].immovable = true;"
     }
     if (addWhitespace){str+="\n\t";}
   }
@@ -707,7 +713,11 @@ var translateTimerElapsedAssertion = function(b,a){
         str+="game.time.events.loop(Phaser.Timer.SECOND*"+duration+", "+callback+", this);";
       }
     }
-  }  
+  }
   if(addWhitespace){str+="\n"};
   return str;
+}
+
+var translateStaticAssertion = function(a){
+  return "addedEntities['" + a["l"][0] + "'].immovable = true;";
 }

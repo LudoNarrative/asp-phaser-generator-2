@@ -133,6 +133,10 @@ var mergeInitialWithCygnus = function(pID, initialBrain, cygnusBrain){
     else if (exports.isSetValueAssertion(cygnusBrain.assertions[i])){
       tempVarValues[cygnusBrain.assertions[i]["l"]] = cygnusBrain.assertions[i]["r"];
     }
+    else if (exports.isStaticAssertion(cygnusBrain.assertions[i])){
+      // Move to create.
+      newProgram["create"]["misc"].push(cygnusBrain.assertions[i]);
+    }
     else if (exports.isConditionalAssertion(cygnusBrain.assertions[i])){
       // We are going to add a new assertion based on the current "old" assertion in the cygnus brain (cygnusBrain.assertions[i]).
 
@@ -644,4 +648,8 @@ exports.isOverlapAssertion = function(a){
 
 exports.isMousePressedAssertion = function(a){
   return exports.isRelationType(a,"control_event") && (a["r"].indexOf("pressed")>=0);
+}
+
+exports.isStaticAssertion = function(a){
+  return exports.isRelationType(a,"is_a") && (a["r"].indexOf("static")>=0);
 }

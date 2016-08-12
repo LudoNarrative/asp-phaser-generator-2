@@ -4,6 +4,7 @@
 
 // X(Y). --> Y is_a X.
 // Example: entity(ball).
+// Example: static(e1).  (Entity e1 is immovable.)
 function translateIsA(str){
   var hypStart = str.indexOf("(");
   var hypEnd = str.indexOf(").");
@@ -329,6 +330,9 @@ var addNormalResult = function(rs, results){
           }
           else if(e=="delete"){
             rs.push({"l":[fList[0]],"relation":"action","r":["delete"]});
+          }
+          else if (e=="static"){
+            rs.push({"l":[fList[0]],"relation":"is_a","r":[e]})
           }
         }
         // Push this result into our final array of all results.
