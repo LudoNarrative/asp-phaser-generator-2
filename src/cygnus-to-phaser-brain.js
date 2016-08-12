@@ -153,6 +153,10 @@ var mergeInitialWithCygnus = function(pID, initialBrain, cygnusBrain){
       var isPressedConditional=false;
       var pressedAssertion = null;
 
+      // Check if one of the preconditions (elements in the left array) calls for a timer elapsed listener.
+      var isTimerLogicConditional = false;
+      var timerLogicAssertion = null;
+
       for (var q in cygnusBrain.assertions[i]["l"]){
         var oldHypRight = cygnusBrain.assertions[i]["l"][q]["r"];
         var oldHypRelation = cygnusBrain.assertions[i]["l"][q]["relation"];
@@ -173,6 +177,12 @@ var mergeInitialWithCygnus = function(pID, initialBrain, cygnusBrain){
         if (rensa.arraysEqual(oldHypRight,["pressed"])){
           isPressedConditional=true;
           pressedAssertion = cygnusBrain.assertions[i]["l"][q];
+        }
+
+        // Get the timerElapsed assertion, if any.
+        if (rensa.arraysEqual(oldHypRight,["timerElapsed"])){
+          isTimerLogicConditional=true;
+          timerLogicAssertion = cygnusBrain.assertions[i]["l"][q];
         }
       }
 
@@ -414,6 +424,43 @@ var mergeInitialWithCygnus = function(pID, initialBrain, cygnusBrain){
         }
         newProgram[functionName]["outcomes"].push(newAssert2);
       }
+      // Timer elapsed conditional.
+      // e.g. t1 has_state timerElapsed
+      else if (isTimerLogicConditional && timerLogicAssertion!=null){
+        // Get the name of the time elapsed listener function.
+        var timerListenFn = goal_keyword + "_" + timerLogicAssertion["l"][0] + "Listener";
+
+        // Move assertion to create.
+        var newAssert =  timerLogicAssertion;
+
+        if (goal_keyword != undefined){
+          newAssert["goal_keyword"]=goal_keyword;
+        }
+        newProgram["create"]["listeners"].push(newAssert);
+
+        // Add a new function to the brain called [goalKeyword]_[timerID]Listener.  Inside that function go all of the remaining preconditions and conclusions.
+        var assertList = cygnusBrain.assertions[i]["l"];
+        // Remove overlapAssertion from assertList.
+        var timerIdx = assertList.indexOf(timerLogicAssertion);
+        assertList.splice(timerIdx,1);
+
+        newLeft = getNewHypotheses(newLeft, assertList);
+        newRight = getNewConclusions(newRight,cygnusBrain.assertions[i]["r"]);
+
+        newProgram[timerListenFn] = {};
+        newProgram[timerListenFn]["params"] = [];
+        newProgram[timerListenFn]["outcomes"] = [];
+
+        var newAssert2 = {
+          "l": newLeft,
+          "relation":"causes",
+          "r": newRight
+        };
+        if (goal_keyword != undefined){
+          newAssert2["goal_keyword"]=goal_keyword;
+        }
+        newProgram[timerListenFn]["outcomes"].push(newAssert2);
+      }
       else{
         newLeft = getNewHypotheses(newLeft, cygnusBrain.assertions[i]["l"]);
         newRight = getNewConclusions(newRight,cygnusBrain.assertions[i]["r"]);
@@ -576,6 +623,9 @@ exports.isCallbackAssertion = function(a){
   return exports.isRelationType(a,"triggers");
 }
 
+exports.isTimerCallbackAssertion = function(a){
+  return exports.isRelationType(a,"has_state") && (a["r"].indexOf("timerElapsed")>=0);
+}
 exports.isDraggableAssertion = function(a){
   return exports.isRelationType(a,"is_a") && (a["r"].indexOf("draggable")>=0);
 }

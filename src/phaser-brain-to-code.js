@@ -139,6 +139,9 @@ exports.writePhaserProgram = function(brain){
                   else if (ctp.isCallbackAssertion(brain.assertions[j][p][c][a])){
                     programText += translateListenerAssertion(brain.assertions[j][p][c][a]);
                   }
+                  else if (ctp.isTimerCallbackAssertion(brain.assertions[j][p][c][a])){
+                    programText += translateTimerElapsedAssertion(brain, brain.assertions[j][p][c][a]);
+                  }
                   else if (ctp.isMousePressedAssertion(brain.assertions[j][p][c][a])){
                     programText += translatePressedAssertion(brain.assertions[j][p][c][a]);
                   }
@@ -677,5 +680,34 @@ var translatePressedAssertion = function(a){
   var str = "";
   var callback = a['goal_keyword'] + "PressedHandler";
   str += "game.input.onDown.add("+callback+", this);"
+  return str;
+}
+
+var translateTimerElapsedAssertion = function(b,a){
+  var str = "";
+  // Get timer id.
+  var timerID = a["l"][0];
+  // Find timer logic assertion ID.
+  var timerLogicID = b.getAssertionsWith({"l":[timerID],"relation":"has_timer_logic"})
+
+  if (timerLogicID != undefined){
+    // Get the timer logic assertion.
+    var timerLogicAssert = b.getAssertionByID(timerLogicID);
+    if (timerLogicAssert.hasOwnProperty("duration")){
+      var goal_keyword = a["goal_keyword"];
+      var callback = goal_keyword + "_" + timerID + "Listener";
+      var duration = timerLogicAssert["duration"];
+      var logicType = timerLogicAssert["r"][0];
+
+      // Add code based on timer logic assertion data.
+      if (logicType=="single"){
+          str+="game.time.events.add(Phaser.Timer.SECOND*"+duration+", "+callback+", this);";
+      }
+      else if (logicType=="loop"){
+        str+="game.time.events.loop(Phaser.Timer.SECOND*"+duration+", "+callback+", this);";
+      }
+    }
+  }  
+  if(addWhitespace){str+="\n"};
   return str;
 }

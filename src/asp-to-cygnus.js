@@ -94,6 +94,29 @@ function translateInitialize(str){
   return null;
 }
 
+// Examples:
+  //  - timerLogic(TIMER_ID,DURATION,single)
+//  - timerLogic(TIMER_ID,DURATION,loop)
+var translateTimerLogic = function(str){
+  var tidStart = str.indexOf("(");
+  var tidEnd = str.indexOf(",");
+  if (tidStart != -1 && tidEnd != -1)
+  {
+    var slice = str.substring(tidEnd+1);
+    var durEnd = slice.indexOf(",");
+    var ltEnd = slice.indexOf(")");
+
+    if (durEnd != -1){
+      var timerID = str.substring(tidStart+1,tidEnd);
+      var duration = slice.substring(0,durEnd);
+      var logicType = slice.substring(durEnd+1,ltEnd);
+
+      return {"l":[timerID], "relation":"has_timer_logic", "r":[logicType], "duration": duration};
+    }
+  }
+  return null;
+}
+
 var translateTickPrecondition = function(results,keyword){
   var assertionsToAdd = [];
   var rs = [];
@@ -258,7 +281,14 @@ var addNormalPrecond = function(ps, bList,a){
     bList[0]="mouse_button";
     bList[1]=bList[1].replace(/\(|\)/g,'')
   }
-  if (bList.length==2){ // B = bList[0], C = bList[1]
+
+  // rightahere
+  if (bList.length==1){
+    if (a=="timerElapsed"){
+        ps.push({"l":[translateNested(bList[0])],"relation":"has_state","r":[a]});
+    }
+  }
+  else if (bList.length==2){ // B = bList[0], C = bList[1]
     ps.push({"l":[translateNested(bList[0])],"relation":a,"r":[bList[1]]});
   }
   else if (bList.length==3){
@@ -360,6 +390,11 @@ function translateASP(lines){
       assertionsToAdd = [translateInitialize(lines[i])];
       doneLines.push(lines[i]);
     }
+    // If initializing timer logic,
+    else if (isTimerLogic(lines[i])){
+      assertionsToAdd = [translateTimerLogic(lines[i])];
+      doneLines.push(lines[i]);
+    }
     // If precondition / result
     else if (isPrecondition(lines[i])){
       if (!containsObj(lines[i], doneLines)){
@@ -433,6 +468,10 @@ function isResult(str){
 // X(Y,Z).
 function isSimpleRelation(str){
   return /\w+\(\w+\,\w+\)\./.test(str);
+}
+
+function isTimerLogic(str){
+  return str.indexOf("timerLogic") != -1;
 }
 
 function containsObj(obj, list) {
