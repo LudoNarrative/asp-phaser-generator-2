@@ -52,7 +52,7 @@ result(o2,delete(e1)).
 result(o2,increase(r2,high)).
 
 precondition(tick,tick).
-result(tick,moves(e1,forward,low)).
+result(tick,moves(e1,forward)).
 result(tick,move_towards(e1,cursor)).
 result(tick,move_towards(e1,e2)).
 result(tick,increase(r2,low)).

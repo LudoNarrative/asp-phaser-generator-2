@@ -53,7 +53,7 @@ precondition(control_event(click(e1)),o2).
 result(o2,delete(e1)).
 
 precondition(tick,tick).
-result(tick,moves(e2,forward,low)).
+result(tick,moves(e2,forward)).
 result(tick,move_towards(e2,cursor)).
 result(tick,decrease(r1,r2)).
 result(tick,decrease(r2,high)).
