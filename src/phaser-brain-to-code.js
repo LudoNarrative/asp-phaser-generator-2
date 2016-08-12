@@ -410,16 +410,16 @@ var translateInitGroup=function(a){
 };
 
 /* Example: Add entity */
-// e1.create(grid[gridIdx].x,grid[gridIdx].y,'e1');
+// addedEntities['e1'].create(grid[gridIdx].x,grid[gridIdx].y,'e1');
 // updateGrid();
-// initEntityProperties(e1);
+// initEntityProperties(addedEntities['e1']);
 var translateAddSpriteAssertion=function(b,a){
   var str="";
-  str+= a["l"][0]+".create(grid[gridIdx].x,grid[gridIdx].y,'"+a["l"][0]+"');"
+  str+= "addedEntities['"+a["l"][0]+"'].create(grid[gridIdx].x,grid[gridIdx].y,'"+a["l"][0]+"');"
   if (addWhitespace){str+="\n\t";}
   str+= "updateGrid();";
   if (addWhitespace){str+="\n\t";}
-  str+="initEntityProperties("+a['l'][0]+");"
+  str+="initEntityProperties(addedEntities['"+a['l'][0]+"']);"
   return str;
 }
 
