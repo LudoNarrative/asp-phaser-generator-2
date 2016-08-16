@@ -100,6 +100,34 @@ function translateInitialize(str){
   //  - timerLogic(TIMER_ID,DURATION,single)
 //  - timerLogic(TIMER_ID,DURATION,loop)
 var translateTimerLogic = function(str){
+  var triplet = translateTriplet(str);
+  var timerID = triplet[0];
+  var duration = triplet[1];
+  var logicType = triplet[2];
+  if (timerID!=null && duration!=null && logicType!=null){
+    return {"l":[timerID], "relation":"has_timer_logic", "r":[logicType], "duration": duration};
+  }
+  return null;
+}
+
+var translateRotates = function(str){
+  var triplet = translateTriplet(str);
+  var entity = triplet[0];
+  var direction = triplet[1];
+  var amount = triplet[2];
+  if (entity!=null && direction!=null && amount!=null){
+    if (direction=="ccw"){
+        return {"l":[entity], "relation":"rotates", "r":[-amount]};
+    }
+    else if (direction=="cw"){
+        return {"l":[entity], "relation":"rotates", "r":[amount]};
+    }
+  }
+  return null;
+}
+
+
+var translateTriplet = function(str){
   var tidStart = str.indexOf("(");
   var tidEnd = str.indexOf(",");
   if (tidStart != -1 && tidEnd != -1)
@@ -109,14 +137,13 @@ var translateTimerLogic = function(str){
     var ltEnd = slice.indexOf(")");
 
     if (durEnd != -1){
-      var timerID = str.substring(tidStart+1,tidEnd);
-      var duration = slice.substring(0,durEnd);
-      var logicType = slice.substring(durEnd+1,ltEnd);
-
-      return {"l":[timerID], "relation":"has_timer_logic", "r":[logicType], "duration": duration};
+      var one = str.substring(tidStart+1,tidEnd);
+      var two = slice.substring(0,durEnd);
+      var three = slice.substring(durEnd+1,ltEnd);
+      return [one, two, three];
     }
   }
-  return null;
+  return [null,null,null];
 }
 
 var translateTickPrecondition = function(results,keyword){
@@ -341,7 +368,16 @@ var addNormalResult = function(rs, results){
           rs.push({"l":[translateNested(fList[0])],"relation":e,"r":[fList[1]]});
         }
         else if (fList.length==3){
-          if (typeof fList[2]=="number"){
+          if (e=="rotates"){
+            if (fList[1]=="ccw"){
+              rs.push({"l":[translateNested(fList[0])], "relation":e, "r":[-fList[2]]})
+            }
+            else{
+              console.log({"l":[translateNested(fList[0])], "relation":e, "r":[-fList[2]]});
+              rs.push({"l":[translateNested(fList[0])], "relation":e, "r":[fList[2]]})
+            }
+          }
+          else if (typeof fList[2]=="number"){
             rs.push({"l":[translateNested(fList[0])],"relation":e,"r":[fList[1]],"num":fList[2]});
           }
           else{
@@ -398,6 +434,11 @@ function translateASP(lines){
     // If initializing timer logic,
     else if (isTimerLogic(lines[i])){
       assertionsToAdd = [translateTimerLogic(lines[i])];
+      doneLines.push(lines[i]);
+    }
+    // If rotates command,
+    else if (isRotates(lines[i])){
+      assertionsToAdd = [translateRotates(lines[i])];
       doneLines.push(lines[i]);
     }
     // If precondition / result
@@ -477,6 +518,10 @@ function isSimpleRelation(str){
 
 function isTimerLogic(str){
   return str.indexOf("timerLogic") != -1;
+}
+
+function isRotates(str){
+  return str.indexOf("rotates") != -1;
 }
 
 function containsObj(obj, list) {

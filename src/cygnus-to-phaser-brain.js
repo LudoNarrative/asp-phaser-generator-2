@@ -137,6 +137,10 @@ var mergeInitialWithCygnus = function(pID, initialBrain, cygnusBrain){
       // Move to create.
       newProgram["create"]["misc"].push(cygnusBrain.assertions[i]);
     }
+    else if (exports.isRotatesAssertion(cygnusBrain.assertions[i])){
+      // Move to create.
+      newProgram["create"]["misc"].push(cygnusBrain.assertions[i]);
+    }
     else if (exports.isSetColorAssertion(cygnusBrain.assertions[i])){
       // Move to update.
       newProgram["update"]["misc"].push(cygnusBrain.assertions[i]);
@@ -660,4 +664,8 @@ exports.isStaticAssertion = function(a){
 
 exports.isSetColorAssertion = function(a){
   return exports.isRelationType(a,"set_color");
+}
+
+exports.isRotatesAssertion = function(a){
+  return exports.isRelationType(a,"rotates");
 }

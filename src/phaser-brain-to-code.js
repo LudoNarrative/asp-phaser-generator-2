@@ -152,10 +152,13 @@ exports.writePhaserProgram = function(brain){
                     programText += translateOverlapAssertion(brain.assertions[j][p][c][a]);
                   }
                   else if (ctp.isStaticAssertion(brain.assertions[j][p][c][a])){
-                    programText += translateStaticAssertion(brain.assertions[j][p][c][a], true);
+                    programText += translateStaticAssertion(brain.assertions[j][p][c][a]);
                   }
                   else if (ctp.isSetColorAssertion(brain.assertions[j][p][c][a])){
-                    programText += translateSetColorAssertion(brain, brain.assertions[j][p][c][a], true);
+                    programText += translateSetColorAssertion(brain, brain.assertions[j][p][c][a]);
+                  }
+                  else if (ctp.isRotatesAssertion(brain.assertions[j][p][c][a])){
+                    programText += translateRotatesAssertion( brain.assertions[j][p][c][a]);
                   }
                 }
               }
@@ -360,6 +363,9 @@ var translateConditionalAssertion = function(b,a){
     }
     else if (a["r"][j]["relation"]==="set_color"){
       str+=translateSetColorAssertion(b,a["r"][j]);
+    }
+    else if (a["r"][j]["relation"]==="rotates"){
+      str+=translateRotatesAssertion(a["r"][j]);
     }
     if (addWhitespace){str+="\n\t";}
   }
@@ -739,4 +745,16 @@ var translateSetColorAssertion = function(b,a){
     str+= "addedEntities['"+entityName+"'].forEach(function(item){item.tint="+hexcode+";}, this);";
   }
   return str;
+}
+
+var translateRotatesAssertion = function(a){
+  str = "";
+  var entityName = a["l"][0];
+  var amount = a["r"][0];
+  str+="addedEntities['"+entityName+"'].forEach(function(item){item.angle += "+amount+";}, this);";
+  return str;
+
+  addedEntities['e1'].forEach(function(item){
+		item.angle += 23;
+	}, this);
 }
