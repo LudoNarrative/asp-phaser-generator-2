@@ -160,6 +160,9 @@ exports.writePhaserProgram = function(brain){
                   else if (ctp.isRotatesAssertion(brain.assertions[j][p][c][a])){
                     programText += translateRotatesAssertion( brain.assertions[j][p][c][a]);
                   }
+                  else if (ctp.isRotateToAssertion(brain.assertions[j][p][c][a])){
+                    programText += translateRotateToAssertion( brain.assertions[j][p][c][a]);
+                  }
                 }
               }
             }
@@ -366,6 +369,9 @@ var translateConditionalAssertion = function(b,a){
     }
     else if (a["r"][j]["relation"]==="rotates"){
       str+=translateRotatesAssertion(a["r"][j]);
+    }
+    else if (a["r"][j]["relation"]==="rotate_to"){
+      str+=translateRotateToAssertion(a["r"][j]);
     }
     if (addWhitespace){str+="\n\t";}
   }
@@ -753,8 +759,12 @@ var translateRotatesAssertion = function(a){
   var amount = a["r"][0];
   str+="addedEntities['"+entityName+"'].forEach(function(item){item.angle += "+amount+";}, this);";
   return str;
+}
 
-  addedEntities['e1'].forEach(function(item){
-		item.angle += 23;
-	}, this);
+var translateRotateToAssertion = function(a){
+  str = "";
+  var entityName = a["l"][0];
+  var range = a["r"];
+  str+="addedEntities['"+entityName+"'].forEach(function(item){item.angle = Math.random() * ("+range[1]+"-" + range[0] +") + "+range[0]+";}, this);";
+  return str;
 }

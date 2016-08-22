@@ -126,6 +126,24 @@ var translateRotates = function(str){
   return null;
 }
 
+var translateRotateTo = function(str){
+  var entityStart = str.indexOf("(")
+  var entityEnd = str.indexOf(",")
+  if (entityStart!=null && entityEnd != null){
+    var entity = str.substring(entityStart+1, entityEnd)
+    var nums = str.substring(entityEnd+1)
+    var num1Start = nums.indexOf("(")
+    var num1End = nums.indexOf(",")
+    var num2End = nums.indexOf(")")
+    if (num1Start!=null && num1End!=null && num2End!=null){
+      num1 = nums.substring(num1Start+1,num1End)
+      num2 = nums.substring(num1End+1,num2End)
+      var range = [parseInt(num1), parseInt(num2)]      
+      return {"l":[entity], "relation":"rotate_to", "r":range}
+    }
+  }
+  return null;
+}
 
 var translateTriplet = function(str){
   var tidStart = str.indexOf("(");
@@ -377,6 +395,14 @@ var addNormalResult = function(rs, results){
               rs.push({"l":[translateNested(fList[0])], "relation":e, "r":[fList[2]]})
             }
           }
+          else if (e=="rotate_to"){
+            var num1Start = fList[1].indexOf("(");
+            if (num1Start!=null){
+                var num1 = fList[1].substring(num1Start+1)
+                var right = [parseInt(num1),parseInt(fList[2])]
+                rs.push({"l":[fList[0]],"relation":e,"r":right});
+            }
+          }
           else if (typeof fList[2]=="number"){
             rs.push({"l":[translateNested(fList[0])],"relation":e,"r":[fList[1]],"num":fList[2]});
           }
@@ -436,11 +462,6 @@ function translateASP(lines){
       assertionsToAdd = [translateTimerLogic(lines[i])];
       doneLines.push(lines[i]);
     }
-    // If rotates command,
-    else if (isRotates(lines[i])){
-      assertionsToAdd = [translateRotates(lines[i])];
-      doneLines.push(lines[i]);
-    }
     // If precondition / result
     else if (isPrecondition(lines[i])){
       if (!containsObj(lines[i], doneLines)){
@@ -481,8 +502,18 @@ function translateASP(lines){
         }
       }
     }
-    else if (isSimpleRelation(lines[i])){
+    else if (isSimpleRelation(lines[i]) && !isResult(lines[i])){
       assertionsToAdd = [translateSimpleRelation(lines[i])];
+      doneLines.push(lines[i]);
+    }
+    // If rotates command,
+    else if (isRotates(lines[i]) && !isResult(lines[i])){
+      assertionsToAdd = [translateRotates(lines[i])];
+      doneLines.push(lines[i]);
+    }
+    // If rotate_to command,
+    else if (isRotateTo(lines[i]) && !isResult(lines[i])){
+      assertionsToAdd = [translateRotateTo(lines[i])];
       doneLines.push(lines[i]);
     }
 
@@ -522,6 +553,9 @@ function isTimerLogic(str){
 
 function isRotates(str){
   return str.indexOf("rotates") != -1;
+}
+function isRotateTo(str){
+  return str.indexOf("rotate_to") != -1;
 }
 
 function containsObj(obj, list) {
