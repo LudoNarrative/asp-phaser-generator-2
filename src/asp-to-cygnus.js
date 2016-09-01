@@ -138,7 +138,7 @@ var translateRotateTo = function(str){
     if (num1Start!=null && num1End!=null && num2End!=null){
       num1 = nums.substring(num1Start+1,num1End)
       num2 = nums.substring(num1End+1,num2End)
-      var range = [parseInt(num1), parseInt(num2)]      
+      var range = [parseInt(num1), parseInt(num2)]
       return {"l":[entity], "relation":"rotate_to", "r":range}
     }
   }
@@ -329,7 +329,6 @@ var addNormalPrecond = function(ps, bList,a){
     bList[1]=bList[1].replace(/\(|\)/g,'')
   }
 
-  // rightahere
   if (bList.length==1){
     if (a=="timerElapsed"){
         ps.push({"l":[translateNested(bList[0])],"relation":"has_state","r":[a]});
@@ -383,7 +382,10 @@ var addNormalResult = function(rs, results){
         }
         // Push this result into our final array of all results.
         if (fList.length==2){ // F = fList[0], G = fList[1]
-          rs.push({"l":[translateNested(fList[0])],"relation":e,"r":[fList[1]]});
+          if (e=="set"){
+            e="set_value";
+          }
+          rs.push({"l":[translateNested(fList[0])],"relation":e,"r":[translateNested(fList[1])]});
         }
         else if (fList.length==3){
           if (e=="rotates"){
@@ -407,7 +409,7 @@ var addNormalResult = function(rs, results){
             rs.push({"l":[translateNested(fList[0])],"relation":e,"r":[fList[1]],"num":fList[2]});
           }
           else{
-            rs.push({"l":[translateNested(fList[0])],"relation": e,"r":[fList[1]]});
+            rs.push({"l":[translateNested(fList[0])],"relation": e,"r":[translateNested(fList[1])]});
           }
         }
       }

@@ -267,12 +267,63 @@ var translateVariableAssertion = function(b, a, isNewVar){
 
 // Convert an assertion that changes the value of a variable to string.
 var translateSetValue = function(a){
-  if (addWhitespace){
-    return a["l"][0] + "=" + a["r"][0] + ";\n";
+  var str="";
+  // Check if dealing with properties
+  if (a["l"][0].indexOf(".")>0 || a["r"][0].indexOf(".")>0){
+    if (a["l"][0].indexOf(".")>0){
+      names = a["l"][0].split(".");
+      // Find entity1
+      entity1 = names[0];
+      // Find property1
+      property1 = names[1];
+
+      if (a["r"][0].indexOf(".")>0){
+        names = a["r"][0].split(".");
+        // Find entity2
+        entity2 = names[0];
+        // Find property2
+        property2 = names[1];
+
+        /* CASE 1: If e1.property = e2.property's value, */
+        str+="addedEntities['"+entity1+"'].forEach(function(item){";
+        if(addWhitespace){str+="\n"};
+        str+="addedEntities['"+entity2+"'].forEach(function(item2){";
+        if(addWhitespace){str+="\n"};
+        str+="item." + property1 + " =item2."+property2+";}, this);}, this);"
+      }
+      /* CASE 2: If e1.property = some_known_var_or_value, */
+      else{
+        entity2 = a["r"][0];
+        str="addedEntities['"+entity1+"'].forEach(function(item){item." + property1 + " = "+entity2+";}, this);";
+      }
+    }
+    /* CASE 3: If non-property variable = e2.property's value, */
+    else{
+      entity1 = a["l"][0];
+      names = a["r"][0].split(".");
+      // Find entity2
+      entity2 = names[0];
+      // Find property2
+      property2 = names[1];
+
+      str+="var propVal = "+a['r'][0]+";"
+      if(addWhitespace){str+="\n"};
+      // TODO There is probably a better way to access a group's item property.
+      str+="addedEntities['"+entity2+"'].forEach(function(item){propVal=item."+property2+";}, this);";
+      if(addWhitespace){str+="\n"};
+      str+=a["l"][0] + "= propVal;";
+    }
   }
+  // Simple set value.
   else{
-    return a["l"][0] + "=" + a["r"][0] + ";";
+    if (addWhitespace){
+      str=a["l"][0] + "=" + a["r"][0] + ";\n";
+    }
+    else{
+      str=a["l"][0] + "=" + a["r"][0] + ";";
+    }
   }
+  return str;
 }
 
 // Convert an assertion containing a conditional to string.

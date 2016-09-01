@@ -131,7 +131,14 @@ var mergeInitialWithCygnus = function(pID, initialBrain, cygnusBrain){
       tempVarTypes[cygnusBrain.assertions[i]["l"]] = cygnusBrain.assertions[i]["r"];
     }
     else if (exports.isSetValueAssertion(cygnusBrain.assertions[i])){
-      tempVarValues[cygnusBrain.assertions[i]["l"]] = cygnusBrain.assertions[i]["r"];
+      // Deal with properties (e.g. e1.angle set_value e2.angle)
+      if (cygnusBrain.assertions[i]["l"][0].indexOf(".")>0 || (cygnusBrain.assertions[i]["r"][0].indexOf(".")>0)){
+        newProgram["create"]["vars"].push(cygnusBrain.assertions[i]);
+      }
+      else{
+          tempVarValues[cygnusBrain.assertions[i]["l"]] = cygnusBrain.assertions[i]["r"];
+      }
+
     }
     else if (exports.isStaticAssertion(cygnusBrain.assertions[i])){
       // Move to create.
@@ -527,7 +534,7 @@ var mergeInitialWithCygnus = function(pID, initialBrain, cygnusBrain){
     }
   }
 
-  // Push all known variables (with/without values) into into newBrain's assertions.
+  // Push all known variables (with/without values) into into newBrain's assertions.  
   for (var k in tempVarTypes) {
     if (tempVarTypes.hasOwnProperty(k)) {
       // If we know what the value of the variable is,
