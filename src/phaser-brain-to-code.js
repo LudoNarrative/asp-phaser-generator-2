@@ -472,17 +472,118 @@ var translateInitGroup=function(a){
   return str;
 };
 
-/* Example: Add entity */
-// addedEntities['e1'].create(grid[gridIdx].x,grid[gridIdx].y,'e1');
+/* Example: Add single entity */
+// addedEntities['e1'].create(x, y,'e1');
 // updateGrid();
 // initEntityProperties(addedEntities['e1']);
+
+// Example 1:
+// initialize(add(e2,10,location(top,center))).
+// l: ["e2"]
+// relation: "add_to_location"
+// r: ["abstract"]
+// num: "10"
+// row: "top"
+// col: "center"
+
+// Example 2:
+// initialize (add(e1, 10, e2)).
+// l: ["e1"]
+// relation: "add_to_location"
+// r: ["e2"]
+// num: "10"
+
+
 var translateAddSpriteAssertion=function(b,a){
   var str="";
-  str+= "addedEntities['"+a["l"][0]+"'].create(grid[gridIdx].x,grid[gridIdx].y,'"+a["l"][0]+"');"
-  if (addWhitespace){str+="\n\t";}
+  var entityName = a["l"][0]; // e.g. e1
+  var num = a["num"];         // e.g. 10
+  var x = 0;
+  var y = 0;
+
+  // Example 1:
+  // initialize(add(e2,10,location(top,center))).
+  if (a["r"][0]=="abstract"){
+    // Rows: top, middle, bottom
+    // Cols: left, center, right
+    var row = a["row"];
+    var col = a["col"];
+
+    // x and y are based on row and col
+    // These values were quickly approximated and are not exact.
+    if (row=="top"){
+      y = 50;
+    }
+    else if (row=="middle"){
+      y = 160;
+    }
+    else if (row=="bottom"){
+      y = 250;
+    }
+    else{
+      console.log("Warning: keyword " + row + " is not a known row name.");
+    }
+
+    if (col=="left"){
+      x = 50;
+    }
+    else if (col=="center"){
+      x = 190;
+    }
+    else if (col=="right"){
+      x = 300;
+    }
+    else{
+      console.log("Warning: keyword " + col + " is not a known col name.");
+    }
+    str+="var x="+x+";";
+    str+="var y="+y+";";
+  }
+
+  // Example 2:
+  // initialize (add(e1, 10, e2)).
+  else{
+    // Find coordinates of entity with name a["r"][0].
+    str+="var x = 0;";
+    if (addWhitespace){str+="\n\t";}
+    str+="var y = 0;";
+    if (addWhitespace){str+="\n\t";}
+    // TODO There is probably a better way of finding group item coordinates.
+    str+="addedEntities['"+a["r"][0]+"'].forEach(function(item){x=item.x;y=item.y;}, this);";
+    if (addWhitespace){str+="\n\t";}
+
+    // // Create entity at location x,y.
+    // str+="for (var ii = 0; ii < "+num+"; ii++){";
+    // if (addWhitespace){str+="\n\t\t";}
+    // str+= "addedEntities['"+entityName+"'].create(x,y,'"+entityName+"');"
+    // if (addWhitespace){str+="\n\t\t";}
+    // str+= "updateGrid();";
+    // if (addWhitespace){str+="\n\t\t";}
+    // str+="initEntityProperties(addedEntities['"+entityName+"']);"
+    // if (addWhitespace){str+="\n\t";}
+    // str+="}";
+  }
+
+  // Create entity at location x,y.
+  str+="for (var ii = 0; ii < "+num+"; ii++){";
+  if (addWhitespace){str+="\n\t\t";}
+
+  // (Add some randomness.)
+  str+="x+=(Math.random() * 100)-50;";
+  if (addWhitespace){str+="\n\t\t";}
+  str+="y+=(Math.random() * 100)-50;";
+  if (addWhitespace){str+="\n\t\t";}
+
+  str+= "addedEntities['"+entityName+"'].create(x,y,'"+entityName+"');"
+  if (addWhitespace){str+="\n\t\t";}
   str+= "updateGrid();";
+  if (addWhitespace){str+="\n\t\t";}
+  str+="initEntityProperties(addedEntities['"+entityName+"']);"
   if (addWhitespace){str+="\n\t";}
-  str+="initEntityProperties(addedEntities['"+a['l'][0]+"']);"
+  str+="}";
+
+
+
   return str;
 }
 

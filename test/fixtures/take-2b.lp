@@ -7,8 +7,9 @@ resource(r2).
 many(e1).
 many(e2).
 
-initialize(add(e1,random)).
-initialize(add(e2,random)).
+initialize(add(e1,1,location(top,center))).
+initialize(add(e2,10,location(bottom,left))).
+initialize(add(e2,2,e1)).
 initialize(set_sprite(e1,square)).
 initialize(set_sprite(e2,star)).
 initialize(set(r1,low)).

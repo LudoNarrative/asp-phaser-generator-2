@@ -42,16 +42,54 @@ function translateSimpleRelation(str){
   return null;
 }
 
-// helper, deals with statements like add(e2, random)
+// New location spec:
+// add(e1,num,location(top,center))  > add num of e1 to location top center
+// add(e1,num,location(middle,left))  > add num of e1 to location middle left
+// add(e1,num,location(bottom,right))  > add num of e1 to location bottom right
 var translateAdd=function(str, addCommand){
   var b = str.substring(addCommand+4);
   var hypStart2 = b.indexOf("(");
-  var hypMid = b.indexOf(",");
-  var hypEnd = b.indexOf(")).");
-  if (hypStart2 != -1 && hypMid != -1 && hypEnd != -1){
-    var y = b.substring(hypStart2+1,hypMid);
-    var z = b.substring(hypMid+1,hypEnd);
-    return {"l":[translateNested(y)], "relation":"add_to_location", "r":[translateNested(z)], "tags":["create"]};
+  var hypMidOne = b.indexOf(",");
+  var next = b.substring(hypMidOne+1);
+  var hypMidTwo = next.indexOf(",")
+
+  if (hypStart2 != -1 && hypMidOne != -1 && next!=-1 && hypMidTwo!=-1){
+    var y = b.substring(hypStart2+1,hypMidOne);
+    var num = next.substring(0,hypMidTwo);
+
+    var loc = b.indexOf("location(");
+    if (loc!=-1){ // add(e1, num, location(top,center))
+      loc += 9;
+      var c = b.substring(loc);
+      var cMid = c.indexOf(",");
+      var cEnd = c.indexOf(")))");
+      if (cMid!=-1 && cEnd !=-1){
+        var row = c.substring(0,cMid);
+        var col = c.substring(cMid+1,cEnd);
+
+        return {
+            "l":[translateNested(y)],
+            "relation":"add_to_location",
+            "r":["abstract"],
+            "row": row,
+            "col": col,
+            "num": num, // how many of the entity to add
+            "tags":["create"]
+
+        };
+      }
+    }
+    else{ // add(e1, num, e2)
+      hypEnd = next.indexOf("))");
+      z = next.substring(hypMidTwo+1,hypEnd);
+      return {
+          "l":[translateNested(y)],
+          "relation":"add_to_location",
+          "r":[translateNested(z)],
+          "num": num,
+          "tags":["create"]
+      };
+    }
   }
 }
 
