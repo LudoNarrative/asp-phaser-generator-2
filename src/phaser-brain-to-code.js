@@ -157,6 +157,9 @@ exports.writePhaserProgram = function(brain){
                   else if (ctp.isSetColorAssertion(brain.assertions[j][p][c][a])){
                     programText += translateSetColorAssertion(brain, brain.assertions[j][p][c][a]);
                   }
+                  else if (ctp.isRestitutionAssertion(brain.assertions[j][p][c][a])){
+                    programText += translateRestitutionAssertion( brain.assertions[j][p][c][a]);
+                  }
                   else if (ctp.isRotatesAssertion(brain.assertions[j][p][c][a])){
                     programText += translateRotatesAssertion( brain.assertions[j][p][c][a]);
                   }
@@ -918,5 +921,13 @@ var translateRotateToAssertion = function(a){
   var entityName = a["l"][0];
   var range = a["r"];
   str+="addedEntities['"+entityName+"'].forEach(function(item){item.angle = Math.random() * ("+range[1]+"-" + range[0] +") + "+range[0]+";}, this);";
+  return str;
+}
+
+var translateRestitutionAssertion = function(a){
+  str = "";
+  var e1 = a["l"][0];
+  var e2 = a["r"][0];
+  str+="game.physics.arcade.collide("+e1+","+e2+",null,null,this);"  
   return str;
 }

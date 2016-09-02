@@ -156,6 +156,10 @@ var mergeInitialWithCygnus = function(pID, initialBrain, cygnusBrain){
       // Move to update.
       newProgram["update"]["misc"].push(cygnusBrain.assertions[i]);
     }
+    else if (exports.isRestitutionAssertion(cygnusBrain.assertions[i])){
+      // Move to update.
+      newProgram["update"]["misc"].push(cygnusBrain.assertions[i]);
+    }
     else if (exports.isConditionalAssertion(cygnusBrain.assertions[i])){
       // We are going to add a new assertion based on the current "old" assertion in the cygnus brain (cygnusBrain.assertions[i]).
 
@@ -534,7 +538,7 @@ var mergeInitialWithCygnus = function(pID, initialBrain, cygnusBrain){
     }
   }
 
-  // Push all known variables (with/without values) into into newBrain's assertions.  
+  // Push all known variables (with/without values) into into newBrain's assertions.
   for (var k in tempVarTypes) {
     if (tempVarTypes.hasOwnProperty(k)) {
       // If we know what the value of the variable is,
@@ -675,6 +679,10 @@ exports.isStaticAssertion = function(a){
 
 exports.isSetColorAssertion = function(a){
   return exports.isRelationType(a,"set_color");
+}
+
+exports.isRestitutionAssertion = function(a){
+  return exports.isRelationType(a,"apply_restitution")
 }
 
 exports.isRotatesAssertion = function(a){
