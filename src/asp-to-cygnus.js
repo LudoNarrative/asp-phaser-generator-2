@@ -99,6 +99,7 @@ function translateInitialize(str){
 
   var addCommand = str.indexOf("(add");
   var setSpriteStart = str.indexOf("(set_sprite");
+  var setColorStart = str.indexOf("(set_color");
 
   // Check for add command.
   if (addCommand != -1){
@@ -115,6 +116,18 @@ function translateInitialize(str){
       var y = b.substring(hypStart2+1,hypMid);
       var z = b.substring(hypMid+1,hypEnd);
       return {"l":[translateNested(y)], "relation":"has_sprite", "r":[translateNested(z)]};
+    }
+  }
+  // Check for set_color command.
+  else if (setColorStart != -1){
+    var b = str.substring(setColorStart+10);
+    var hypStart2 = b.indexOf("(");
+    var hypMid = b.indexOf(",");
+    var hypEnd = b.indexOf(")).");
+    if (hypStart2 != -1 && hypMid != -1 && hypEnd != -1){
+      var y = b.substring(hypStart2+1,hypMid);
+      var z = b.substring(hypMid+1,hypEnd);
+      return {"l":[translateNested(y)], "relation":"set_color", "r":[translateNested(z)]};
     }
   }
   // Otherwise, check for set command.

@@ -2,7 +2,7 @@
  This file generates a string containing a complete Phaser program, giving a brain that contains Phaser abstract syntax.
 */
 // Change to false to remove whitespace from output.
-var addWhitespace = false;
+var addWhitespace = true;
 
 // Contains realized goals from the ASP code.
 var goals;
@@ -269,7 +269,7 @@ var translateVariableAssertion = function(b, a, isNewVar){
 var translateSetValue = function(a){
   var str="";
   // Check if dealing with properties
-  if (a["l"][0].indexOf(".")>0 || a["r"][0].indexOf(".")>0){
+  if ((a["l"][0].indexOf(".")>0 || a["r"][0].indexOf(".")>0) && !(a["l"][0].indexOf("game.")>0) && !(a["r"][0].indexOf("game.")>0)){
     if (a["l"][0].indexOf(".")>0){
       names = a["l"][0].split(".");
       // Find entity1
