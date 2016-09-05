@@ -11,6 +11,8 @@ many(e3).
 goal(prevent(o2)).
 goal(maintain(r1)).
 
+timerLogic(t1, 2,loop).
+
 static(e3).
 
 initialize(set_sprite(e1,square)).
@@ -30,6 +32,9 @@ initialize(add(e3,10,location(bottom,center))).
 precondition(control_event(button(mouse_button,held)),o3).
 precondition(overlaps(e1,e2,true),o3).
 result(o3,increase_over_time(r1,medium)).
+
+precondition(timerElapsed(t1),t1).
+result(t1,rotate_to(e2,random_int(0,360))).
 
 precondition(tick,tick).
 result(tick,moves(e2,forward)).

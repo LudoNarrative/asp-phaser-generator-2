@@ -156,7 +156,7 @@ var translateTimerLogic = function(str){
   var duration = triplet[1];
   var logicType = triplet[2];
   if (timerID!=null && duration!=null && logicType!=null){
-    return {"l":[timerID], "relation":"has_timer_logic", "r":[logicType], "duration": duration};
+    return {"l":[translateNested2(timerID)], "relation":"has_timer_logic", "r":[logicType], "duration": duration};
   }
   return null;
 }
@@ -324,7 +324,7 @@ var translateClickPrecondition = function(preconds,results,keyword){
               execute each result in rs.
             }
     */
-    assertionsToAdd.push({"l": ps,"relation":"causes","r":rs, "listener":listenerName, "goal_keyword":keyword});
+    assertionsToAdd.push({"l": ps,"relation":"causes","r":rs, "listener":listenerName, "goal_keyword":translateNested2(keyword)});
   }
   return assertionsToAdd;
 };
@@ -382,7 +382,7 @@ var addNormalPrecond = function(ps, bList,a){
 
   if (bList.length==1){
     if (a=="timerElapsed"){
-        ps.push({"l":[translateNested(bList[0])],"relation":"has_state","r":[a]});
+        ps.push({"l":[translateNested2(bList[0])],"relation":"has_state","r":[a]});
     }
   }
   else if (bList.length==2){ // B = bList[0], C = bList[1]
@@ -484,6 +484,20 @@ function translateNested(x){
     var inside = x.substring(innerStart+1,innerEnd);
     var outside = x.substring(0,innerStart);
     newX = inside+"."+outside;
+  }
+  return newX;
+}
+
+// Translates e.g. "health(e1)" to "e1_health".
+function translateNested2(x){
+  var newX = x;
+  if (x.indexOf("(")>0){
+    // Find inner and outer terms.
+    var innerStart = x.indexOf("(");
+    var innerEnd = x.indexOf(")");
+    var inside = x.substring(innerStart+1,innerEnd);
+    var outside = x.substring(0,innerStart);
+    newX = inside+"_"+outside;
   }
   return newX;
 }
