@@ -892,7 +892,7 @@ var translateTimerElapsedAssertion = function(b,a){
 }
 
 var translateStaticAssertion = function(a){
-  return "addedEntities['"+a["l"][0]+"'].forEach(function(item){item.immovable=true;}, this);";
+  return "addedEntities['"+a["l"][0]+"'].forEach(function(item){item.body.immovable=true;}, this);";
 }
 
 var translateSetColorAssertion = function(b,a){
@@ -928,6 +928,6 @@ var translateRestitutionAssertion = function(a){
   str = "";
   var e1 = a["l"][0];
   var e2 = a["r"][0];
-  str+="game.physics.arcade.collide("+e1+","+e2+",null,null,this);"  
+  str+="game.physics.arcade.collide("+e1+","+e2+",null,null,this);"
   return str;
 }
