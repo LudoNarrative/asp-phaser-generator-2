@@ -16,7 +16,7 @@ timerLogic(t1, 2,loop).
 static(e3).
 
 initialize(set_sprite(e1,square)).
-initialize(set_sprite(e2,circle)).
+initialize(set_sprite(e2,triangle)).
 initialize(set_sprite(e3,square)).
 initialize(set_color(e1,green)).
 initialize(set_color(e2,blue)).
