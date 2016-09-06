@@ -96,7 +96,22 @@ exports.writePhaserProgram = function(brain){
                 }
               }
             }
-
+            else if (p==="update"){
+              if(addWhitespace){programText+="\n\t"};              programText += "for(var k in addedEntities) {if (addedEntities.hasOwnProperty(k)) {"
+              if(addWhitespace){programText+="\n\t\t"};
+              programText += "var entity = addedEntities[k];";
+              if(addWhitespace){programText+="\n\t\t"};
+              programText += "entity.forEach(function(item) {"
+              if(addWhitespace){programText+="\n\t\t"};
+              programText += "item.body.velocity.x *= 0.9;";
+              if(addWhitespace){programText+="\n\t\t"};
+              programText += "item.body.velocity.y *= 0.9;";
+              if(addWhitespace){programText+="\n\t\t"};
+              programText+="}, this);"
+              if(addWhitespace){programText+="\n\t"};
+              programText += "}}";
+              if(addWhitespace){programText+="\n"};
+            }
             // Add all remaining statements.
             // For each content property specified in the function (e.g. "vars"),
             for (var c in brain.assertions[j][p]) {
@@ -572,9 +587,9 @@ var translateAddSpriteAssertion=function(b,a){
   if (addWhitespace){str+="\n\t\t";}
 
   // (Add some randomness.)
-  str+="x+=(Math.random() * 100)-50;";
+  str+="x+=(Math.random() * 30) - 15;";
   if (addWhitespace){str+="\n\t\t";}
-  str+="y+=(Math.random() * 100)-50;";
+  str+="y+=(Math.random() * 30) - 15;";
   if (addWhitespace){str+="\n\t\t";}
 
   str+= "addedEntities['"+entityName+"'].create(x,y,'"+entityName+"');"
@@ -653,8 +668,8 @@ var translateFunctionAssertion=function(a){
 // tempPoint.x = other.x-entity.x;
 // tempPoint.y = other.y-entity.y;
 // tempPoint.normalize();
-// tempPoint.x *= 100;
-// tempPoint.y *= 100;
+// tempPoint.x *= 10;
+// tempPoint.y *= 10;
 // entity.body.velocity.x *= 0.1;
 // entity.body.velocity.y *= 0.1;
 // entity.movementProfile(entity, tempPoint)
@@ -678,14 +693,14 @@ var translateMove = function(a, move_type){
     if (addWhitespace){str+="\n\t\t";}
     str+="tempPoint.normalize();"
     if (addWhitespace){str+="\n\t\t";}
-    str+="tempPoint.x *= 100;"
+    str+="tempPoint.x *= 10;"
     if (addWhitespace){str+="\n\t\t";}
-    str+="tempPoint.y *= 100;"
+    str+="tempPoint.y *= 10;"
     if (addWhitespace){str+="\n\t\t";}
-    str+="item.body.velocity.x *= 0.1;";
-    if (addWhitespace){str+="\n\t\t";}
-    str+="item.body.velocity.y *= 0.1;"
-    if (addWhitespace){str+="\n\t\t";}
+    // str+="item.body.velocity.x *= 0.1;";
+    // if (addWhitespace){str+="\n\t\t";}
+    // str+="item.body.velocity.y *= 0.1;"
+    // if (addWhitespace){str+="\n\t\t";}
     str+=move_type+"(item, tempPoint);";
     if (addWhitespace){str+="\n";}
     if (other=="item2"){
