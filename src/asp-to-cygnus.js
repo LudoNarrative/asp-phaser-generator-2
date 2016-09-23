@@ -360,7 +360,7 @@ var translateUpdatePrecondition = function(preconds,results,keyword){
       ps = addNormalPrecond(ps, bList, a);
     }
   }
-
+  
   rs = addNormalResult(rs, results);
 
   // If we have valid preconditions and results,
@@ -417,7 +417,8 @@ var addNormalResult = function(rs, results){
         var fList = r.substring(firstParen+1,lastParen).split(",");
 
         if (e=="add"){
-          e="add_to_location";
+          // e="add_to_location";
+          rs.push(translateAdd(r,-1));
         }
 
         if (fList.length==1){
@@ -444,7 +445,6 @@ var addNormalResult = function(rs, results){
               rs.push({"l":[translateNested(fList[0])], "relation":e, "r":[-fList[2]]})
             }
             else{
-              console.log({"l":[translateNested(fList[0])], "relation":e, "r":[-fList[2]]});
               rs.push({"l":[translateNested(fList[0])], "relation":e, "r":[fList[2]]})
             }
           }

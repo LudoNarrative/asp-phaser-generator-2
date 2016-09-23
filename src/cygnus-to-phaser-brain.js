@@ -579,7 +579,6 @@ var getNewHypotheses = function(newLeft, assert){
 };
 
 // assert = cygnusBrain.assertions[i]["r"];
-// Again TODO: Need to push all properties, not just l, relation, right...
 var getNewConclusions = function(newRight, asserts){
   // Update each element in right array.
   // > increase, decrease --> set_value.
@@ -619,6 +618,16 @@ var changeToSetValue = function(assert){
     newRightA["relation"]=oldRelation;
     newRightA["r"]=oldRight;
   }
+
+  // Add all other properties.
+  for (var prop in assert) {
+    if (assert.hasOwnProperty(prop)){
+      if (prop!="l" && prop!="r" && prop != "relation"){
+        newRightA[prop]=assert[prop];
+      }
+    }
+  }
+
   return newRightA;
 }
 
