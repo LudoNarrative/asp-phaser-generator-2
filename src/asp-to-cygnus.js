@@ -42,6 +42,22 @@ function translateSimpleRelation(str){
   return null;
 }
 
+// denotes(r1, confidence)
+// denotes(career(e1), shrimp)
+function translateDenotes(str){
+  var hypStart = str.indexOf("(");
+  var hypMid = str.indexOf(",");
+  var hypEnd = str.indexOf(").");
+
+  if (hypStart != -1 && hypMid != -1 && hypEnd != -1){
+    var x = str.substring(0,hypStart);
+    var y = str.substring(hypStart+1,hypMid);
+    var z =str.substring(hypMid+1,hypEnd);
+    return {"l":[translateNested(y)], "relation": x, "r": [translateNested(z)]};
+  }
+  return null;
+}
+
 // New location spec:
 // add(e1,num,location(top,center))  > add num of e1 to location top center
 // add(e1,num,location(middle,left))  > add num of e1 to location middle left
@@ -379,7 +395,7 @@ var addNormalPrecond = function(ps, bList,a){
     bList[0]="mouse_button";
     bList[1]=bList[1].replace(/\(|\)/g,'')
   }
-  
+
   if (bList.length==1){
     if (a=="timerElapsed"){
         ps.push({"l":[translateNested2(bList[0])],"relation":"has_state","r":[a]});
@@ -530,6 +546,11 @@ function translateASP(lines){
       assertionsToAdd = [translateInitialize(lines[i])];
       doneLines.push(lines[i]);
     }
+    // If denotes command,
+    else if (isDenotes(lines[i])){
+      assertionsToAdd = [translateDenotes(lines[i])];
+      doneLines.push(lines[i]);
+    }
     // If initializing timer logic,
     else if (isTimerLogic(lines[i])){
       assertionsToAdd = [translateTimerLogic(lines[i])];
@@ -608,6 +629,9 @@ function isIsA(str){
 
 function isInitialize(str){
   return str.indexOf("initialize") != -1;
+}
+function isDenotes(str){
+  return str.indexOf("denotes") != -1;
 }
 function isPrecondition(str){
   return str.indexOf("precondition") != -1;

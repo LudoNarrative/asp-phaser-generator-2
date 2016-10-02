@@ -160,6 +160,10 @@ var mergeInitialWithCygnus = function(pID, initialBrain, cygnusBrain){
       // Move to update.
       newProgram["update"]["misc"].push(cygnusBrain.assertions[i]);
     }
+    else if (exports.isDenotesAssertion(cygnusBrain.assertions[i])){
+      // Move to update.
+      newProgram["update"]["misc"].push(cygnusBrain.assertions[i]);
+    }
     else if (exports.isConditionalAssertion(cygnusBrain.assertions[i])){
       // We are going to add a new assertion based on the current "old" assertion in the cygnus brain (cygnusBrain.assertions[i]).
 
@@ -532,8 +536,7 @@ var mergeInitialWithCygnus = function(pID, initialBrain, cygnusBrain){
 
         // Add a new function to the brain called [goalKeyword]OverlapHandler, with e1 and e2 as params.  Inside that function go all of the remaining preconditions and conclusions.
         var assertList = cygnusBrain.assertions[i]["l"];
-        console.log("allo?");
-        console.log(assertList);
+
         // Remove overlapAssertion from assertList.
         var overlapIdx = assertList.indexOf(overlapAssertion);
         assertList.splice(overlapIdx,1);
@@ -846,4 +849,7 @@ exports.isRotatesAssertion = function(a){
 }
 exports.isRotateToAssertion = function(a){
   return exports.isRelationType(a,"rotate_to");
+}
+exports.isDenotesAssertion = function(a){
+  return exports.isRelationType(a,"denotes")
 }

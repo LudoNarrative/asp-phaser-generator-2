@@ -184,6 +184,9 @@ exports.writePhaserProgram = function(brain){
                   else if (ctp.isRotateToAssertion(brain.assertions[j][p][c][a])){
                     programText += translateRotateToAssertion( brain.assertions[j][p][c][a]);
                   }
+                  else if (ctp.isDenotesAssertion(brain.assertions[j][p][c][a])){
+                    programText += translateDenotesAssertion( brain.assertions[j][p][c][a]);
+                  }
                 }
               }
             }
@@ -961,5 +964,13 @@ var translateRestitutionAssertion = function(a){
   var e1 = a["l"][0];
   var e2 = a["r"][0];
   str+="game.physics.arcade.collide("+e1+","+e2+",null,null,this);"
+  return str;
+}
+
+var translateDenotesAssertion = function(a){
+  str = "";
+  var e1 = a["l"][0];
+  var e2 = a["r"][0];
+  str+="setVariable('"+e2+"', "+e1+");";
   return str;
 }
