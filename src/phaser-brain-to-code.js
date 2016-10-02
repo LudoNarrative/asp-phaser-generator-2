@@ -166,6 +166,9 @@ exports.writePhaserProgram = function(brain){
                   else if (ctp.isOverlapAssertion(brain.assertions[j][p][c][a])){
                     programText += translateOverlapAssertion(brain.assertions[j][p][c][a]);
                   }
+                  else if (ctp.isNotOverlapAssertion(brain.assertions[j][p][c][a])){
+                    programText += translateNotOverlapAssertion(brain.assertions[j][p][c][a]);
+                  }
                   else if (ctp.isStaticAssertion(brain.assertions[j][p][c][a])){
                     programText += translateStaticAssertion(brain.assertions[j][p][c][a]);
                   }
@@ -652,6 +655,7 @@ var translateFunctionAssertion=function(a){
     }
   }
   str += "){";
+
   if (a["lines"]!=undefined && a["lines"]!=""){
     for (var j=0;j<a["lines"].length;j++){
       if (addWhitespace){str+="\n\t";}
@@ -867,6 +871,16 @@ var translateOverlapAssertion = function(a){
   var callback = a['goal_keyword'] + "OverlapHandler";
 
   str+="game.physics.arcade.overlap(addedEntities['"+e1+"'],addedEntities['"+e2+"'],"+callback+",null, this);"
+  return str;
+}
+
+var translateNotOverlapAssertion = function(a){
+  var str="";
+  var e1 = a['l'][0];
+  var e2 = a['r'][0];
+  var callback = a['goal_keyword'] + "NotOverlapHandler";
+
+  str+="if (!game.physics.arcade.overlap(addedEntities['"+e1+"'],addedEntities['"+e2+"'],null,null, this)){"+callback+"();}"
   return str;
 }
 

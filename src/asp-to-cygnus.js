@@ -360,7 +360,7 @@ var translateUpdatePrecondition = function(preconds,results,keyword){
       ps = addNormalPrecond(ps, bList, a);
     }
   }
-  
+
   rs = addNormalResult(rs, results);
 
   // If we have valid preconditions and results,
@@ -379,7 +379,7 @@ var addNormalPrecond = function(ps, bList,a){
     bList[0]="mouse_button";
     bList[1]=bList[1].replace(/\(|\)/g,'')
   }
-
+  
   if (bList.length==1){
     if (a=="timerElapsed"){
         ps.push({"l":[translateNested2(bList[0])],"relation":"has_state","r":[a]});
@@ -391,6 +391,12 @@ var addNormalPrecond = function(ps, bList,a){
   else if (bList.length==3){
     if (typeof bList[2] == "number"){
       ps.push({"l":[translateNested(bList[0])],"relation":a,"r":[bList[1]],"num":bList[2]});
+    }
+    else if(a=="overlaps"){
+      if (bList[2]=="false"){
+        a = "not_"+a;
+      }
+      ps.push({"l":[translateNested(bList[0])],"relation":a,"r":[bList[1]]});
     }
     else{
       ps.push({"l":[translateNested(bList[0])],"relation":a,"r":[bList[1]]});
