@@ -218,7 +218,7 @@
     "relation":"is_a",
     "r":["function"],
     "params":["varName","value"],
-    "lines":["variables[varName]=value;","State.set(varName, value);","StoryAssembler.refreshNarrative();","Display.setAvatar(State);"]
+    "lines":["variables[varName]=value;","State.set(varName, value.toFixed(1));","Display.setAvatar(State);","Display.setStats('storyStats');"]
   },
   {
     "l":["getVariable"],
