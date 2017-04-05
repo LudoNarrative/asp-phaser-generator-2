@@ -1,26 +1,31 @@
 /*
  This file generates a string containing a complete Phaser program, giving a brain that contains Phaser abstract syntax.
 */
+
 // Change to false to remove whitespace from output.
 var addWhitespace = true;
 
 // Contains realized goals from the ASP code.
 var goals;
 
-var ctp = require('./cygnus-to-phaser-brain');
+// Dependencies.
+var ctp = require('./cygnus-to-phaser-brain-2');
 var rensa = require('./brain');
 
 // Input: Phaser abstract syntax (brain).
 // Output: Phaser program (string).
 exports.writePhaserProgram = function(brain){
+  // This string variable will contain the Phaser code.
   var programText = "";
 
-   goals = [];
+  // Set the realized goals from the ASP code to an empty array.
+  goals = [];
 
   // Grab variable assertions so we can store their values in create.
   var variableValues = [];
 
-  // Output variable initializations first.
+  // Go through each assertion.  If it is a variable initialization,
+  // add it to our program.  If it is a goal assertion, update the goals array.
   for (var i in brain.assertions){
     /* VARIABLE INSTANTIATIONS */
     if (ctp.isVariableAssertion(brain.assertions[i])){
@@ -32,7 +37,8 @@ exports.writePhaserProgram = function(brain){
       updateAspGoals(brain, brain.assertions[i]);
     }
   }
-  // Now write functions.
+
+  // Now, go through the assertions again.
   for (var j in brain.assertions){
     /* DEFINED FUNCTIONS */
     if (ctp.isFunctionAssertion(brain.assertions[j])){
@@ -40,184 +46,189 @@ exports.writePhaserProgram = function(brain){
     }
     /* WRITING A PROGRAM FROM A PROGRAM ASSERTION CONTAINING PHASER ABSTRACT SYNTAX */
     // We assume, for now, there is only one "program" assertion.
-    else if (brain.assertions[j]["relation"]=="is_a" && brain.assertions[j]["r"].indexOf("program")>=0){
-      // For each function property specified in the object (e.g. "create"),
-      for (var p in brain.assertions[j]) {
-        if (brain.assertions[j].hasOwnProperty(p) && typeof brain.assertions[j][p]!=="function") {
-          if (p!="l" && p!="relation" && p!="r"){
-            // Write the content for that function.
-            programText += "function " + p + "("
+    else if (brain.assertions[j]["relation"]=="instance_of" && brain.assertions[j]["r"].indexOf("program")>=0){
+    // For each function property specified in the object (e.g. "create"),
+    for (var p in brain.assertions[j]) {
+      if (brain.assertions[j].hasOwnProperty(p) && typeof brain.assertions[j][p]!=="function") {
+        if (p!="l" && p!="relation" && p!="r"){
+          // We're going to write the content for that function!
+          // First, let's start by defining the method signature.
+          programText += "function " + p + "("
 
-            // If this function has parameters, list them.
-            if (brain.assertions[j][p].hasOwnProperty("params")){
-              var paramsList = brain.assertions[j][p]["params"];
-              for (var v=0; v<paramsList.length;v++){
-                programText += paramsList[v];
-                if (v<paramsList.length-1){
-                  programText+=",";
-                }
+          // If this function has parameters, list them.
+          if (brain.assertions[j][p].hasOwnProperty("params")){
+            var paramsList = brain.assertions[j][p]["params"];
+            for (var v=0; v<paramsList.length;v++){
+              programText += paramsList[v];
+              if (v<paramsList.length-1){
+                programText+=",";
               }
             }
-            programText += "){";
+          }
+          programText += "){";
 
-            // If this is the create function, assign any initial variable values.
-            // (We assign variable values here, because outside the functions, variables like
-            // game.width have not been correctly assigned yet.)
-            // Also, add default values for arcade physics (like velocity), unless they have been initialized already.
-            if (p==="create"){
-              // Define initial values.
-              if(addWhitespace){programText+="\n"};
-              for (var z=0; z<variableValues.length;z++){
-                var curAssert = variableValues[z];
-                if (curAssert.hasOwnProperty("value")){
-                  if (curAssert["value"]!==""){
-                    // if(addWhitespace){programText+="\n"};
-                    programText += translateVariableAssertion(brain, curAssert, false);
-                  }
-                }
-                // If it's an entity, we need to initialize the entity as a group.
-                if (curAssert.hasOwnProperty("variableType")){
-                  if (curAssert["variableType"].indexOf("entity")>=0){
-                    programText += translateInitGroup(curAssert);
-                  }
-                }
-              }
-              // Add any entities to the canvas.
-              // For each content property specified in the function (e.g. "vars"),
-              for (var d in brain.assertions[j][p]) {
-                if (brain.assertions[j][p].hasOwnProperty(d)) {
-                  // For each assertion in the list of assertions,
-                  for (var b in brain.assertions[j][p][d]){
-                    if (ctp.isRelationType(brain.assertions[j][p][d][b], "add_to_location")){
-                      if (addWhitespace){programText+="\n\t";}
-                      programText += translateAddSpriteAssertion(brain, brain.assertions[j][p][d][b]);
-                    }
-                  }
-                }
+          /* (Now we can define the body of the function.) */
+
+          // If this is the create function, assign any initial variable values.
+          // (We assign variable values here, because outside the functions, variables like
+          // game.width have not been correctly assigned yet.)
+          // Also, add default values for arcade physics (like velocity), unless they have been initialized already.
+          if (p==="create"){
+            programText = addDefaultCreateValues(programText, variableValues, brain, j, p);
+          }
+
+          // If this is the update function, include default code about entity
+          // velocities.
+          else if (p==="update"){
+            programText = addDefaultUpdateValues(programText);
+          }
+
+          /* Now, we are going to add statements that we see, regardless of
+            what type of function they correspond to (because we assume they are organized
+            according to the appropriate function names already). */
+
+          // For each content property specified in the function (e.g. "vars"),
+          for (var c in brain.assertions[j][p]) {
+            if (brain.assertions[j][p].hasOwnProperty(c)) {
+              // For each assertion in the list of assertions,
+              for (var a in brain.assertions[j][p][c]){
+                if (addWhitespace){programText+="\n\t";}
+                programText = addGenericFunctionStatement(programText, brain, brain.assertions[j][p][c][a],p);
               }
             }
-            else if (p==="update"){
-              if(addWhitespace){programText+="\n\t"};              programText += "for(var k in addedEntities) {if (addedEntities.hasOwnProperty(k)) {"
-              if(addWhitespace){programText+="\n\t\t"};
-              programText += "var entity = addedEntities[k];";
-              if(addWhitespace){programText+="\n\t\t"};
-              programText += "entity.forEach(function(item) {"
-              if(addWhitespace){programText+="\n\t\t"};
-              programText += "item.body.velocity.x *= 0.9;";
-              if(addWhitespace){programText+="\n\t\t"};
-              programText += "item.body.velocity.y *= 0.9;";
-              if(addWhitespace){programText+="\n\t\t"};
-              programText+="}, this);"
-              if(addWhitespace){programText+="\n\t"};
-              programText += "}}";
-              if(addWhitespace){programText+="\n"};
-            }
-            // Add all remaining statements.
-            // For each content property specified in the function (e.g. "vars"),
-            for (var c in brain.assertions[j][p]) {
-              if (brain.assertions[j][p].hasOwnProperty(c)) {
-                // For each assertion in the list of assertions,
-                for (var a in brain.assertions[j][p][c]){
-                  if (addWhitespace){programText+="\n\t";}
-                  // Declare / change value of variables.
-                  if (ctp.isVariableAssertion(brain.assertions[j][p][c][a])){
-                    programText += translateVariableAssertion(brain, brain.assertions[j][p][c][a], true);
-                  }
-                  else if (ctp.isConditionalAssertion(brain.assertions[j][p][c][a])){
-                    programText += translateConditionalAssertion(brain, brain.assertions[j][p][c][a]);
-                  }
-                  else if (ctp.isSetValueAssertion(brain.assertions[j][p][c][a])){
-                    programText += translateSetValue(brain.assertions[j][p][c][a]);
-                  }
-                  else if (ctp.isRelationType(brain.assertions[j][p][c][a], "has_sprite")){
-                    programText += translateHasSpriteAssertion(brain, brain.assertions[j][p][c][a]);
-                  }
-                  else if (ctp.isRelationType(brain.assertions[j][p][c][a], "add_to_location") && p!=="create"){
-                    programText += translateAddSpriteAssertion(brain, brain.assertions[j][p][c][a]);
-                  }
-                  else if (ctp.isRelationType(brain.assertions[j][p][c][a], "action")&& brain.assertions[j][p][c][a]["r"][0].indexOf("delete")>=0){
-                    programText += translateDeleteSpriteAssertion(brain, brain.assertions[j][p][c][a]);
-                  }
-                  else if (ctp.isRelationType(brain.assertions[j][p][c][a], "set_mode")){
-                    programText += translateSetMode(brain, brain.assertions[j][p][c][a]);
-                  }
-                  else if (ctp.isRelationType(brain.assertions[j][p][c][a], "move_towards") || ctp.isRelationType(brain.assertions[j][p][c][a], "move_away")|| ctp.isRelationType(brain.assertions[j][p][c][a], "moves")){
-                    programText += translateMove(brain.assertions[j][p][c][a],brain.assertions[j][p][c][a]["relation"]);
-                  }
-                  else if (ctp.isRelationType(brain.assertions[j][p][c][a], "apply_force")){
-                    programText += translateGravity(brain.assertions[j][p][c][a]);
-                  }
-                  else if (ctp.isGoalAssertion(brain.assertions[j][p][c][a])){
-                    updateAspGoals(brain, brain.assertions[j][p][c][a]);
-                  }
-                  // TODO: might need isListenerAssertion at some point.
-                  else if (ctp.isCallbackAssertion(brain.assertions[j][p][c][a])){
-                    programText += translateListenerAssertion(brain.assertions[j][p][c][a]);
-                  }
-                  else if (ctp.isTimerCallbackAssertion(brain.assertions[j][p][c][a])){
-                    programText += translateTimerElapsedAssertion(brain, brain.assertions[j][p][c][a]);
-                  }
-                  else if (ctp.isMousePressedAssertion(brain.assertions[j][p][c][a])){
-                    programText += translatePressedAssertion(brain.assertions[j][p][c][a]);
-                  }
-                  else if (ctp.isDraggableAssertion(brain.assertions[j][p][c][a])){
-                    programText += translateDraggableAssertion(brain.assertions[j][p][c][a]);
-                  }
-                  else if (ctp.isOverlapAssertion(brain.assertions[j][p][c][a])){
-                    programText += translateOverlapAssertion(brain.assertions[j][p][c][a]);
-                  }
-                  else if (ctp.isNotOverlapAssertion(brain.assertions[j][p][c][a])){
-                    programText += translateNotOverlapAssertion(brain.assertions[j][p][c][a]);
-                  }
-                  else if (ctp.isStaticAssertion(brain.assertions[j][p][c][a])){
-                    programText += translateStaticAssertion(brain.assertions[j][p][c][a]);
-                  }
-                  else if (ctp.isSetColorAssertion(brain.assertions[j][p][c][a])){
-                    programText += translateSetColorAssertion(brain, brain.assertions[j][p][c][a]);
-                  }
-                  else if (ctp.isRestitutionAssertion(brain.assertions[j][p][c][a])){
-                    programText += translateRestitutionAssertion( brain.assertions[j][p][c][a]);
-                  }
-                  else if (ctp.isRotatesAssertion(brain.assertions[j][p][c][a])){
-                    programText += translateRotatesAssertion( brain.assertions[j][p][c][a]);
-                  }
-                  else if (ctp.isRotateToAssertion(brain.assertions[j][p][c][a])){
-                    programText += translateRotateToAssertion( brain.assertions[j][p][c][a]);
-                  }
-                  else if (ctp.isDenotesAssertion(brain.assertions[j][p][c][a])){
-                    programText += translateDenotesAssertion( brain.assertions[j][p][c][a]);
-                  }
-                }
-              }
-            }
+          }
 
-            // Add direction changes in the update function.
-            if (p==="update"){
-              if(addWhitespace){programText+="\n\t"};              programText += "for(var k in addedEntities) {if (addedEntities.hasOwnProperty(k)) {"
-              if(addWhitespace){programText+="\n\t\t"};
-              programText += "var entity = addedEntities[k];";
-              if(addWhitespace){programText+="\n\t\t"};
-              programText += "entity.forEach(function(item) {"
-              if(addWhitespace){programText+="\n\t\t"};
-              programText += "item.body.velocity.clamp(-300,300);";
-              if(addWhitespace){programText+="\n\t\t\t"};
-              programText += "if(item.x>game.width){item.x=game.width;}if (item.x<0){item.x=0;} if (item.y>game.height){item.y=game.height;}if (item.y<0){item.y=0;}"
-              if(addWhitespace){programText+="\n\t\t"};
-              programText += "if(item.deleted){item.destroy();}";
-              if(addWhitespace){programText+="\n\t\t"};
-              programText+="}, this);"
-              if(addWhitespace){programText+="\n\t"};
-              programText += "}}";
-              if(addWhitespace){programText+="\n"};
-            }
+          // If we are in the update function, add direction changes.
+          if (p==="update"){
+            programText = addDefaultUpdateDirections(programText);
+          }
 
-            programText += "};";
-            if (addWhitespace){programText += "\n\n"}
+          /* We are all done with the function body! */
+          programText += "};";
+          if (addWhitespace){programText += "\n\n"}
           }
         }
       }
     }
   }
+  // Set the goals variable.
+  programText = setGoalsVariable(programText,goals)
+
+  // Return the final program text.
+  return programText;
+};
+
+/*
+  Helper function for writePhaserProgram.
+  Writes content inside the create function, including assigning values to variables.
+*/
+var addDefaultCreateValues = function(programText, variableValues, brain, j, p){
+  // Define initial values.
+  if(addWhitespace){programText+="\n"};
+  for (var z=0; z<variableValues.length;z++){
+    var curAssert = variableValues[z];
+    if (curAssert.hasOwnProperty("value")){
+      if (curAssert["value"]!==""){
+        // if(addWhitespace){programText+="\n"};
+        programText += translateVariableAssertion(brain, curAssert, false);
+      }
+    }
+    // If it's an entity, we need to initialize the entity as a group.
+    if (curAssert.hasOwnProperty("variableType")){
+      if (curAssert["variableType"].indexOf("entity")>=0){
+        programText += translateInitGroup(curAssert);
+      }
+    }
+  }
+  // Add any entities to the canvas.
+  // For each content property specified in the function (e.g. "vars"),
+  for (var d in brain.assertions[j][p]) {
+    if (brain.assertions[j][p].hasOwnProperty(d)) {
+      // For each assertion in the list of assertions,
+      for (var b in brain.assertions[j][p][d]){
+        if (ctp.isRelationType(brain.assertions[j][p][d][b], "add_to_location")){
+          if (addWhitespace){programText+="\n\t";}
+          programText += translateAddSpriteAssertion(brain, brain.assertions[j][p][d][b]);
+        }
+      }
+    }
+  }
+  return programText;
+}
+
+/*
+  Helper function for writePhaserProgram.
+  Writes content inside the update function.  Specifically, this chunk of code:
+
+  for(var k in addedEntities) {if (addedEntities.hasOwnProperty(k)) {
+		var entity = addedEntities[k];
+		entity.forEach(function(item) {
+		item.body.velocity.x *= 0.9;
+		item.body.velocity.y *= 0.9;
+		}, this);
+	}}
+*/
+var addDefaultUpdateValues = function(programText){
+  if(addWhitespace){programText+="\n\t"};
+  programText += "for(var k in addedEntities) {if (addedEntities.hasOwnProperty(k)) {"
+  if(addWhitespace){programText+="\n\t\t"};
+  programText += "var entity = addedEntities[k];";
+  if(addWhitespace){programText+="\n\t\t"};
+  programText += "entity.forEach(function(item) {"
+  if(addWhitespace){programText+="\n\t\t"};
+  programText += "item.body.velocity.x *= 0.9;";
+  if(addWhitespace){programText+="\n\t\t"};
+  programText += "item.body.velocity.y *= 0.9;";
+  if(addWhitespace){programText+="\n\t\t"};
+  programText+="}, this);"
+  if(addWhitespace){programText+="\n\t"};
+  programText += "}}";
+  if(addWhitespace){programText+="\n"};
+  return programText;
+}
+
+/*
+  Helper function for writePhaserProgram.
+  Writes content inside the update function.  Specifically, this chunk of code relating to direction changes:
+
+  for(var k in addedEntities) {if (addedEntities.hasOwnProperty(k)) {
+		var entity = addedEntities[k];
+		entity.forEach(function(item) {
+		item.body.velocity.clamp(-300,300);
+			if(item.x>game.width){item.x=game.width;}if (item.x<0){item.x=0;} if (item.y>game.height){item.y=game.height;}if (item.y<0){item.y=0;}
+		if(item.deleted){item.destroy();}
+		}, this);
+	}}
+*/
+var addDefaultUpdateDirections = function(programText){
+  if(addWhitespace){programText+="\n\t"};
+  programText += "for(var k in addedEntities) {if (addedEntities.hasOwnProperty(k)) {"
+  if(addWhitespace){programText+="\n\t\t"};
+  programText += "var entity = addedEntities[k];";
+  if(addWhitespace){programText+="\n\t\t"};
+  programText += "entity.forEach(function(item) {"
+  if(addWhitespace){programText+="\n\t\t"};
+  programText += "item.body.velocity.clamp(-300,300);";
+  if(addWhitespace){programText+="\n\t\t\t"};
+  programText += "if(item.x>game.width){item.x=game.width;}if (item.x<0){item.x=0;} if (item.y>game.height){item.y=game.height;}if (item.y<0){item.y=0;}"
+  if(addWhitespace){programText+="\n\t\t"};
+  programText += "if(item.deleted){item.destroy();}";
+  if(addWhitespace){programText+="\n\t\t"};
+  programText+="}, this);"
+  if(addWhitespace){programText+="\n\t"};
+  programText += "}}";
+  if(addWhitespace){programText+="\n"};
+  return programText;
+}
+
+/*
+  Helper function for writePhaserProgram.
+  Writes out the goals at the end of the JS file.
+
+  Example output that would be added to programText:
+    goals=['Prevent:[r1] le [0]','Maintain r1'];
+*/
+var setGoalsVariable = function(programText, goals){
   // Set goals variable.
   if (goals !== undefined && goals.length != 0){
     programText += "goals=[";
@@ -230,8 +241,90 @@ exports.writePhaserProgram = function(brain){
     programText+="];";
   }
   return programText;
-};
+}
 
+/*
+  Helper function for writePhaserProgram.
+  For any Phaser function (e.g., "create", "update"), checks the current assertion
+  and attempts to translate it.
+*/
+var addGenericFunctionStatement = function(programText,brain,curAssert,p){
+  // Declare / change value of variables.
+  if (ctp.isVariableAssertion(curAssert)){
+    programText += translateVariableAssertion(brain, curAssert, true);
+  }
+  else if (ctp.isConditionalAssertion(curAssert)){
+    programText += translateConditionalAssertion(brain, curAssert);
+  }
+  else if (ctp.isSetValueAssertion(curAssert)){
+    programText += translateSetValue(curAssert);
+  }
+  else if (ctp.isRelationType(curAssert, "has_sprite")){
+    programText += translateHasSpriteAssertion(brain, curAssert);
+  }
+  else if (ctp.isRelationType(curAssert, "add_to_location") && p!=="create"){
+    programText += translateAddSpriteAssertion(brain, curAssert);
+  }
+  else if (ctp.isRelationType(curAssert, "action")&& curAssert["r"][0].indexOf("delete")>=0){
+    programText += translateDeleteSpriteAssertion(brain, curAssert);
+  }
+  else if (ctp.isRelationType(curAssert, "set_mode")){
+    programText += translateSetMode(brain, curAssert);
+  }
+  else if (ctp.isMotionAssertion(curAssert)){
+    programText += translateMove(curAssert,curAssert["relation"]);
+  }
+  else if (ctp.isRelationType(curAssert, "apply_force")){
+    programText += translateGravity(curAssert);
+  }
+  else if (ctp.isGoalAssertion(curAssert)){
+    updateAspGoals(brain, curAssert);
+  }
+  else if (ctp.isCallbackAssertion(curAssert)){
+    programText += translateListenerAssertion(curAssert);
+  }
+  else if (ctp.isTimerCallbackAssertion(curAssert)){
+    programText += translateTimerElapsedAssertion(brain, curAssert);
+  }
+  else if (ctp.isMousePressedAssertion(curAssert)){
+    programText += translatePressedAssertion(curAssert);
+  }
+  else if (ctp.isDraggableAssertion(curAssert)){
+    programText += translateDraggableAssertion(curAssert);
+  }
+  else if (ctp.isOverlapAssertion(curAssert)){
+    programText += translateOverlapAssertion(curAssert);
+  }
+  else if (ctp.isNotOverlapAssertion(curAssert)){
+    programText += translateNotOverlapAssertion(curAssert);
+  }
+  else if (ctp.isStaticAssertion(curAssert)){
+    programText += translateStaticAssertion(curAssert);
+  }
+  else if (ctp.isSetColorAssertion(curAssert)){
+    programText += translateSetColorAssertion(brain, curAssert);
+  }
+  else if (ctp.isRestitutionAssertion(curAssert)){
+    programText += translateRestitutionAssertion( curAssert);
+  }
+  else if (ctp.isRotatesAssertion(curAssert)){
+    programText += translateRotatesAssertion( curAssert);
+  }
+  else if (ctp.isRotateToAssertion(curAssert)){
+    programText += translateRotateToAssertion( curAssert);
+  }
+  else if (ctp.isDenotesAssertion(curAssert)){
+    programText += translateDenotesAssertion( curAssert);
+  }
+  return programText;
+}
+
+/*
+  The remaining functions will translate an assertion ("a"), sometimes based on the
+  contents of the brain ("b").
+*/
+
+/* Helper function - declares a variable. */
 var defineVariable = function(b,a){
   str = "";
   // If variable is a property, don't define it.
@@ -254,7 +347,7 @@ var translateVariableAssertion = function(b, a, isNewVar){
     // Make sure there is a value defined (for e.g. "e1.health"),
     // and also make sure that e1 is a defined variable.
     var parent = a["l"][0].substring(0,a["l"][0].indexOf("."))
-    if (a.hasOwnProperty("value") && b.getAssertionsWith({"l":[parent],"relation":"is_a","r":["variable"]}).length>0){
+    if (a.hasOwnProperty("value") && b.getAssertionsWith({"l":[parent],"relation":"instance_of","r":["variable"]}).length>0){
       // TODO deal with hash
       str += a["l"][0]+"="+a["value"]+";";
       if (addWhitespace){str+="\n";}
@@ -438,7 +531,7 @@ var translateConditionalAssertion = function(b,a){
     else if (a["r"][j]["relation"]==="move_towards" || a["r"][j]["relation"]==="move_away" || a["r"][j]["relation"]==="moves"){
       str += translateMove(a["r"][j],a["r"][j]["relation"]);
     }
-    else if (a["r"][j]["relation"]==="is_a" && a["r"][j]["r"].indexOf("static")>=0){
+    else if (a["r"][j]["relation"]==="instance_of" && a["r"][j]["r"].indexOf("static")>=0){
       str+=translateStaticAssertion(a["r"][j]);
     }
     else if (a["r"][j]["relation"]==="set_color"){
@@ -463,13 +556,13 @@ var translateConditionalAssertion = function(b,a){
 // Input: b is the full brain, a is the assertion to translate.
 // Example:
 // > player has_sprite sprite1
-// > sprite1 is_a sprite with image: someImageName
+// > sprite1 instance_of sprite with image: someImageName
 // > game.load.image('"'+player+'"', 'assets/sprites/' + someImageName);
 var translateHasSpriteAssertion=function(b, a){
   var str = "";
 
   // Find sprite image name.
-  var spriteImgID = b.getAssertionsWith({"l":[a["r"][0]],"relation":"is_a","r":["sprite"]});
+  var spriteImgID = b.getAssertionsWith({"l":[a["r"][0]],"relation":"instance_of","r":["sprite"]});
 
   // If the image name exists, add the appropriate preload message for the sprite.
   if (spriteImgID!=undefined && b.assertions[spriteImgID]!=undefined){
@@ -518,8 +611,6 @@ var translateInitGroup=function(a){
 // relation: "add_to_location"
 // r: ["e2"]
 // num: "10"
-
-
 var translateAddSpriteAssertion=function(b,a){
   var str="";
   var entityName = a["l"][0]; // e.g. e1
@@ -574,20 +665,9 @@ var translateAddSpriteAssertion=function(b,a){
     if (addWhitespace){str+="\n\t";}
     str+="var y = 0;";
     if (addWhitespace){str+="\n\t";}
-    // TODO There is probably a better way of finding group item coordinates.
+    // TODO: There is probably a better way of finding group item coordinates.
     str+="addedEntities['"+a["r"][0]+"'].forEach(function(item){x=item.x;y=item.y;}, this);";
     if (addWhitespace){str+="\n\t";}
-
-    // // Create entity at location x,y.
-    // str+="for (var ii = 0; ii < "+num+"; ii++){";
-    // if (addWhitespace){str+="\n\t\t";}
-    // str+= "addedEntities['"+entityName+"'].create(x,y,'"+entityName+"');"
-    // if (addWhitespace){str+="\n\t\t";}
-    // str+= "updateGrid();";
-    // if (addWhitespace){str+="\n\t\t";}
-    // str+="initEntityProperties(addedEntities['"+entityName+"']);"
-    // if (addWhitespace){str+="\n\t";}
-    // str+="}";
   }
 
   // Create entity at location x,y.
@@ -631,7 +711,7 @@ var translateListenerAssertion=function(a){
   return str;
 }
 
-// Example: controlLogic(draggable(e1)). --> e1 is_a draggable -->
+// Example: controlLogic(draggable(e1)). --> e1 instance_of draggable -->
 // >>e1.inputEnabled = true;
 // >>e1.input.enableDrag(true);
 var translateDraggableAssertion=function(a){
@@ -706,10 +786,6 @@ var translateMove = function(a, move_type){
     if (addWhitespace){str+="\n\t\t";}
     str+="tempPoint.y *= 10;"
     if (addWhitespace){str+="\n\t\t";}
-    // str+="item.body.velocity.x *= 0.1;";
-    // if (addWhitespace){str+="\n\t\t";}
-    // str+="item.body.velocity.y *= 0.1;"
-    // if (addWhitespace){str+="\n\t\t";}
     str+=move_type+"(item, tempPoint);";
     if (addWhitespace){str+="\n";}
     if (other=="item2"){
@@ -815,7 +891,7 @@ var updateAspGoals = function(b, a){
       /* Now we need to get any preconditions in the program assertion... */
       var goalObjsTwo = [];
       // First, retrieve the program assertion.  There can only be one!
-      var pID = b.getAssertionsWith({"relation":"is_a","r":["program"]})[0];
+      var pID = b.getAssertionsWith({"relation":"instance_of","r":["program"]})[0];
       var pAssert = b.getAssertionByID(pID);
       // For each assertion in pAssert,
       for (var p in pAssert) {
@@ -868,6 +944,10 @@ var updateAspGoals = function(b, a){
     }
   }
 }
+
+/*
+  Each of the following are explicitly translating specific types of assertions into JS code, and returning that code as a string.  
+*/
 
 // e.g. {"l":["e1"],"relation":"overlaps","r":["e2"],"goal_keyword":"o3"}
 var translateOverlapAssertion = function(a){
@@ -935,7 +1015,7 @@ var translateSetColorAssertion = function(b,a){
   var entityName = a["l"][0];
   var colorName = a["r"][0];
   // Find the hex code for the color.
-  var colorID = b.getAssertionsWith({"l":[colorName],"relation":"is_a","r":["color"]})[0];
+  var colorID = b.getAssertionsWith({"l":[colorName],"relation":"instance_of","r":["color"]})[0];
   if (colorID!=undefined){
     var hexcode = b.getAssertionByID(colorID)["value"];
     str+= "addedEntities['"+entityName+"'].forEach(function(item){item.tint="+hexcode+";}, this);";

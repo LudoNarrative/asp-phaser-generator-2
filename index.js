@@ -1,14 +1,14 @@
-var translateAsp = require('./src/asp-to-cygnus');
+var translateAsp = require('./src/asp-to-cygnus-2');
 var rensa = require('./src/brain');
-var ctp = require('./src/cygnus-to-phaser-brain');
-var translatePhaserBrain = require('./src/phaser-brain-to-code');
+var ctp = require('./src/cygnus-to-phaser-brain-2');
+var translatePhaserBrain = require('./src/phaser-brain-to-code-2');
 
 function AspPhaserGenerator(generatedAsp, initialPhaserFile) {
   // Read each line of the ASP game.
   var lines = generatedAsp.split('\n');
   // For each line read,
   for (var i=0; i<lines.length;i++){
-    // Remove any extra spaces,and add a period at the end if there isn't one.
+    // Remove any extra spaces, and add a period at the end if there isn't one.
     lines[i] = lines[i].replace(/\s+/g, '');
     if (lines[i]!="" && lines[i].slice(-1)!="."){
       lines[i] = lines[i]+".";
@@ -20,7 +20,7 @@ function AspPhaserGenerator(generatedAsp, initialPhaserFile) {
 
   // Store the ASP game.
   this.aspGame = lines;
-    
+
   // Store the initial Phaser file as a brain.
   this.initialPhaser = rensa.makeBrain(JSON.parse(initialPhaserFile));
 }

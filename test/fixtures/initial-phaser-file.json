@@ -1,7 +1,7 @@
 [
   {
     "l":["prog"],
-    "relation": "is_a",
+    "relation": "instance_of",
     "r":["program"],
     "preload": {"images":[]},
     "create":{"vars":[],"sprites":[],"listeners":[],"buttons":[],"motion":[],"misc":[]},
@@ -10,73 +10,73 @@
   },
   {
     "l":["variables"],
-    "relation":"is_a",
+    "relation":"instance_of",
     "r":["variable"],
     "value":{"confidence":5,"optimism":2,"difficulty":3}
   },
   {
     "l":["gridSize"],
-    "relation":"is_a",
+    "relation":"instance_of",
     "r":["variable"],
     "value":30
   },
   {
     "l":["gridLinesHorizontal"],
-    "relation":"is_a",
+    "relation":"instance_of",
     "r":["variable"],
     "value":"Math.floor((game.width-1)/gridSize)"
   },
   {
     "l":["gridLinesVertical"],
-    "relation":"is_a",
+    "relation":"instance_of",
     "r":["variable"],
     "value":"Math.floor((game.height-1)/gridSize)"
   },
   {
     "l":["grid"],
-    "relation":"is_a",
+    "relation":"instance_of",
     "r":["variable"],
     "value":"initGrid()"
   },
   {
     "l":["gridIdx"],
-    "relation":"is_a",
+    "relation":"instance_of",
     "r":["variable"],
     "value":0
   },
   {
     "l":["addedEntities"],
-    "relation":"is_a",
+    "relation":"instance_of",
     "r":["variable"],
     "value":["{}"]
   },
   {
     "l":["low"],
-    "relation":"is_a",
+    "relation":"instance_of",
     "r":["variable"],
     "value":1
   },
   {
     "l":["medium"],
-    "relation":"is_a",
+    "relation":"instance_of",
     "r":["variable"],
     "value":6
   },
   {
     "l":["mid"],
-    "relation":"is_a",
+    "relation":"instance_of",
     "r":["variable"],
     "value":"medium"
   },
   {
     "l":["high"],
-    "relation":"is_a",
+    "relation":"instance_of",
     "r":["variable"],
     "value":11
   },
   {
     "l":["circle"],
-    "relation":"is_a",
+    "relation":"instance_of",
     "r":["sprite"],
     "image":"circle.png",
     "width":40,
@@ -84,7 +84,7 @@
   },
   {
     "l":["pentagon"],
-    "relation":"is_a",
+    "relation":"instance_of",
     "r":["sprite"],
     "image":"pentagon.png",
     "width":40,
@@ -92,7 +92,7 @@
   },
   {
     "l":["triangle"],
-    "relation":"is_a",
+    "relation":"instance_of",
     "r":["sprite"],
     "image":"triangle.png",
     "width":40,
@@ -100,7 +100,7 @@
   },
   {
     "l":["star"],
-    "relation":"is_a",
+    "relation":"instance_of",
     "r":["sprite"],
     "image":"star.png",
     "width":40,
@@ -108,7 +108,7 @@
   },
   {
     "l":["square"],
-    "relation":"is_a",
+    "relation":"instance_of",
     "r":["sprite"],
     "image":"square.png",
     "width":40,
@@ -116,224 +116,224 @@
   },
   {
     "l":["red"],
-    "relation":"is_a",
+    "relation":"instance_of",
     "r":["color"],
     "value":"0xff0000"
   },
   {
     "l":["orange"],
-    "relation":"is_a",
+    "relation":"instance_of",
     "r":["color"],
     "value":"0xffa500"
   },
   {
     "l":["yellow"],
-    "relation":"is_a",
+    "relation":"instance_of",
     "r":["color"],
     "value":"0xffff00"
   },
   {
     "l":["green"],
-    "relation":"is_a",
+    "relation":"instance_of",
     "r":["color"],
     "value":"0x00ff00"
   },
   {
     "l":["blue"],
-    "relation":"is_a",
+    "relation":"instance_of",
     "r":["color"],
     "value":"0x0000ff"
   },
   {
     "l":["purple"],
-    "relation":"is_a",
+    "relation":"instance_of",
     "r":["color"],
     "value":"0x800080"
   },
   {
     "l":["pink"],
-    "relation":"is_a",
+    "relation":"instance_of",
     "r":["color"],
     "value":"0xffc0cB"
   },
   {
     "l":["brown"],
-    "relation":"is_a",
+    "relation":"instance_of",
     "r":["color"],
     "value":"0xa52a2a"
   },
   {
     "l":["white"],
-    "relation":"is_a",
+    "relation":"instance_of",
     "r":["color"],
     "value":"0xffffff"
   },
   {
     "l":["gray","grey"],
-    "relation":"is_a",
+    "relation":"instance_of",
     "r":["color"],
     "value":"0x808080"
   },
   {
     "l":["black"],
-    "relation":"is_a",
+    "relation":"instance_of",
     "r":["color"],
     "value":"0x000000"
   },
   {
     "l":["magenta"],
-    "relation":"is_a",
+    "relation":"instance_of",
     "r":["color"],
     "value":"0xff00ff"
   },
   {
     "l":["cyan"],
-    "relation":"is_a",
+    "relation":"instance_of",
     "r":["color"],
     "value":"0x00ffff"
   },
   {
     "l":["center"],
-    "relation":"is_a",
+    "relation":"instance_of",
     "r":["location"],
     "x":160,
     "y":220
   },
   {
     "l":["lower_left"],
-    "relation":"is_a",
+    "relation":"instance_of",
     "r":["location"],
     "x":100,
     "y":300
   },
   {
     "l":["upper_right"],
-    "relation":"is_a",
+    "relation":"instance_of",
     "r":["location"],
     "x":300,
     "y":100
   },
   {
     "l":["setVariable"],
-    "relation":"is_a",
+    "relation":"instance_of",
     "r":["function"],
     "params":["varName","value"],
     "lines":["variables[varName]=value;","State.set(varName, value.toFixed(1));","Display.setAvatar(State);","Display.setStats('storyStats');"]
   },
   {
     "l":["getVariable"],
-    "relation":"is_a",
+    "relation":"instance_of",
     "r":["function"],
     "params":["varName"],
     "lines":["return variables[varName];"]
   },
   {
     "l":["getRandomPoint"],
-    "relation":"is_a",
+    "relation":"instance_of",
     "r":["function"],
     "params":[],
     "lines":["var x=game.rnd.integerInRange(0,game.world.width-1);","var y=game.rnd.integerInRange(0,game.world.height-1);","return new Phaser.Point(x,y);"]
   },
   {
     "l":["initGrid"],
-    "relation":"is_a",
+    "relation":"instance_of",
     "r":["function"],
     "params":[],
     "lines":["grid=[];","for(var i=0;i<gridLinesHorizontal;i++){for(var j=0;j<gridLinesVertical;j++){grid.push(new Phaser.Point(i*gridSize,j*gridSize));}}","shuffle(grid);","return grid;"]
   },
   {
     "l":["updateGrid"],
-    "relation":"is_a",
+    "relation":"instance_of",
     "r":["function"],
     "params":["sprite"],
     "lines":["gridIdx++;","if(gridIdx===grid.length){gridIdx=0;shuffle(grid);}"]
   },
   {
     "l":["shuffle"],
-    "relation":"is_a",
+    "relation":"instance_of",
     "r":["function"],
     "params":["a"],
     "lines":["var j,x,i;","for(i=a.length;i;i--){j=Math.floor(Math.random()*i);x=a[i-1];a[i-1]=a[j];a[j]=x;}"]
   },
   {
     "l":["move_towards"],
-    "relation":"is_a",
+    "relation":"instance_of",
     "r":["function"],
     "params":["e","dir"],
     "lines":["e.body.velocity.x += dir.x;","e.body.velocity.y += dir.y;"]
   },
   {
     "l":["move_away"],
-    "relation":"is_a",
+    "relation":"instance_of",
     "r":["function"],
     "params":["e","dir"],
     "lines":["e.body.velocity.x -= dir.x;","e.body.velocity.y -= dir.y;"]
   },
   {
     "l":["moves"],
-    "relation":"is_a",
+    "relation":"instance_of",
     "r":["function"],
     "params":["e","x","y"],
     "lines":["e.body.velocity.x += x;","e.body.velocity.y += y;"]
   },
   {
     "l":["move_forward"],
-    "relation":"is_a",
+    "relation":"instance_of",
     "r":["function"],
     "params":["e","amount"],
     "lines":["var newV = game.physics.arcade.velocityFromRotation(e.rotation,amount);","e.body.velocity.x += newV.x;","e.body.velocity.y += newV.y;"]
   },
   {
     "l":["move_left"],
-    "relation":"is_a",
+    "relation":"instance_of",
     "r":["function"],
     "params":["e","amount"],
     "lines":["var newV = game.physics.arcade.velocityFromRotation(e.rotation-Math.PI*0.5,amount);","e.body.velocity.x += newV.x;","e.body.velocity.y += newV.y;"]
   },
   {
     "l":["move_right"],
-    "relation":"is_a",
+    "relation":"instance_of",
     "r":["function"],
     "params":["e","amount"],
     "lines":["var newV = game.physics.arcade.velocityFromRotation(e.rotation+Math.PI*0.5,amount);","e.body.velocity.x += newV.x;","e.body.velocity.y += newV.y;"]
   },
   {
     "l":["move_backward"],
-    "relation":"is_a",
+    "relation":"instance_of",
     "r":["function"],
     "params":["e","amount"],
     "lines":["var newV = game.physics.arcade.velocityFromRotation(e.rotation-Math.PI,amount);","e.body.velocity.x += newV.x;","e.body.velocity.y += newV.y;"]
   },
   {
     "l":["initEntityProperties"],
-    "relation":"is_a",
+    "relation":"instance_of",
     "r":["function"],
     "params":["group"],
     "lines":["group.forEach(function(item) {","item.deleted=false;","item.body.collideWorldBounds = true;","item.anchor.x = 0.5;","item.anchor.y = 0.5;","item.rotation = 0;","if (!item.body.velocity.hasOwnProperty('x')){item.body.velocity.x=0;}","if (!item.body.velocity.hasOwnProperty('y')){item.body.velocity.y=0;}","if (!item.body.hasOwnProperty('angularVelocity')){item.body.angularVelocity=0;}","}, this);"]
   },
   {
     "l":["changeMode"],
-    "relation":"is_a",
+    "relation":"instance_of",
     "r":["function"],
     "params":["newMode"],
     "lines":["if(newMode==='game_win'){mode = 'win'; game.world.removeAll(); displayText('CLEARED');}","else if(newMode==='game_loss'){mode='loss'; game.stage.backgroundColor = '#400';}"]
   },
   {
     "l":["displayText"],
-    "relation":"is_a",
+    "relation":"instance_of",
     "r":["function"],
     "params":["t"],
     "lines":["var style = { font: 'bold 32px Arial', fill: '#fff', boundsAlignH: 'center', boundsAlignV: 'middle'};","text = game.add.text(0, 0, t, style);"]
   },
   {
     "l":["goals"],
-    "relation":"is_a",
+    "relation":"instance_of",
     "r":["variable"],
     "value":["[]"]
   },
   {
     "l":["getAspGoals"],
-    "relation":"is_a",
+    "relation":"instance_of",
     "r":["function"],
     "params":[],
     "lines":["if (goals === undefined || goals.length == 0){return ['No ASP goals.'];}","else{return goals;}"]

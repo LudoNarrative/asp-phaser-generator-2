@@ -1,5 +1,5 @@
 /*
- This file contains a small, personalized chunk of "Rensa" - a library that helps you store and reason over concepts and relationships.  Access is currently invite-only.  For more info on usage, contact Sarah Harmon (smharmon@ucsc.edu).
+ This file contains a small, personalized chunk of "Rensa" - a library that helps you store and reason over concepts and relationships.  
 */
 
 // A Brain contains assertions about the world.
@@ -123,8 +123,8 @@ Brain.prototype.getAssertionsWith = function(d){
 // assertions that involve that concept, and how they are related.
 
 // Example:
-// If concept is "prince" and prince is_a actor, returns
-// [ [{"l":["prince"], "relation":"is_a", "r":["actor"]}, "l"] ]
+// If concept is "prince" and prince instance_of actor, returns
+// [ [{"l":["prince"], "relation":"instance_of", "r":["actor"]}, "l"] ]
 Brain.prototype.getAssertionsRelatedTo = function(concept){
   var l = [];
   for (var i in this.assertions){
