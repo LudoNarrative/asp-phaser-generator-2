@@ -795,44 +795,60 @@ var translateMove = function(a, move_type){
   }
   // Otherwise, assume move(entity, direction)
   else{
+    var amount;
+    //See if an amount to move by has been specified and store it in amount. If not, default amount to 1.
+    if( a["num_r"] === undefined){
+      amount = 1;
+    }
+    else{
+      amount = a["num_r"][0];
+    }
     // str+="moves(";
     if (a["r"][0]==="north"){
       // move(entity, 0, -1);
-      str += "moves(item,0,-1);"
+      //str += "moves(item,0,-1);"
+      str += "moves(item,0,-"+amount+");"
     }
     else if (a["r"][0]==="south"){
-      str += "moves(item,0,1);"
+      //str += "moves(item,0,1);"
+      str += "moves(item,0,"+amount+");"
     }
     else if (a["r"][0]==="east"){
-      str += "moves(item,1,0);"
+      //str += "moves(item,1,0);"
+      str += "moves(item,"+amount+",0);"
     }
     else if (a["r"][0]==="west"){
-      str += "moves(item,-1,0);"
+      //str += "moves(item,-1,0);"
+      str += "moves(item,"+amount+",0);"
     }
     else if (a["r"][0]==="northeast"){
       // move(entity, 0, -1);
-      str += "moves(item,1,-1);"
+      //str += "moves(item,1,-1);"
+      str += "moves(item,"+amount+",-"+amount+");"
     }
     else if (a["r"][0]==="northwest"){
-      str += "moves(item,-1,-1);"
+      //str += "moves(item,-1,-1);"
+      str += "moves(item,-"+amount+",-"+amount+");"
     }
     else if (a["r"][0]==="southeast"){
-      str += "moves(item,1,1);"
+      //str += "moves(item,1,1);"
+      str += "moves(item,"+amount+","+amount+");"
     }
     else if (a["r"][0]==="southwest"){
-      str += "moves(item,-1,1);"
+      //str += "moves(item,-1,1);"
+      str += "moves(item,-"+amount+","+amount+");"
     }
     else if (a["r"][0]==="forward"){
-      str += "move_forward(item,1);"
+      str += "move_forward(item,"+amount+");"
     }
     else if (a["r"][0]==="backward"){
-      str += "move_backward(item,1);"
+      str += "move_backward(item,"+amount+");"
     }
     else if (a["r"][0]==="left"){
-      str += "move_left(item,1);"
+      str += "move_left(item,"+amount+");"
     }
     else if (a["r"][0]==="right"){
-      str += "move_right(item,1);"
+      str += "move_right(item,"+amount+");"
     }
     if (addWhitespace){str+="\n";}
   }
@@ -855,8 +871,20 @@ var translateGravity = function(a){
 var translateDeleteSpriteAssertion = function(b, a){
   var str ="";
   var entity = a["l"][0];
+  // Deletes *all* instances of this entity type.
+  //str+="addedEntities['"+entity+"'].forEach(function(item){item.deleted=true;}, this);";
+
   // str+= entity+".destroy();"
-  str+="addedEntities['"+entity+"'].forEach(function(item){item.deleted=true;}, this);";
+  
+  //We are thinking that, instead of deleting every instance of the sprite, 
+  //we only want to delete the single instance reference?
+
+  //the function preamble for where this code will appear refers to arguments e1 and e2
+  //and this function only ever looks at a["l"] which I (Ben) *think* is the moral equivalent of e1
+  //and because e1 should already refer to the correct entity from when we called the function...
+  //I think we might be able to get away with simply specifying e1 directly in the string...
+
+  str += "e1.deleted = true";
   if (addWhitespace){str+="\n";}
   return str;
 }
