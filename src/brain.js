@@ -2,6 +2,8 @@
  This file contains a small, personalized chunk of "Rensa" - a library that helps you store and reason over concepts and relationships.  
 */
 
+define([], function() {
+
 // A Brain contains assertions about the world.
 function Brain(){
   this.assertions = {};
@@ -236,12 +238,12 @@ Brain.prototype.print = function(){
 // Print all known assertions, prettily.
 Brain.prototype.prettyprint = function(){
   for (var i in this.assertions){
-    exports.prettyprint(this.assertions[i], true);
+    _prettyprint(this.assertions[i], true);
   }
 };
 
 
-exports.prettyprint = function(a, printAllProperties){
+var _prettyprint = function(a, printAllProperties){
   var flag=false;
   console.log(JSON.stringify(a["l"]) +" "+ a["relation"] +" "+ JSON.stringify(a["r"]));
   if (printAllProperties){
@@ -258,7 +260,7 @@ exports.prettyprint = function(a, printAllProperties){
 
 // Return a clone of a brain.
 Brain.prototype.clone = function(){
-  return exports.makeBrain(this.assertions);
+  return makeBrain(this.assertions);
 }
 
 // Assertions are links between two concepts.
@@ -282,7 +284,7 @@ Assertion.prototype.equals = function(other){
       if (this.hasOwnProperty(property)) {
         if (other.hasOwnProperty(property)) {
           if (!(JSON.stringify(other[property]) === JSON.stringify(this[property]))) {
-            if (!(exports.arraysEqual(other[property],this[property]))){
+            if (!(arraysEqual(other[property],this[property]))){
               return false;
             }
           }
@@ -306,7 +308,7 @@ Assertion.prototype.clone = function(){
 
 // Helper for Assertion.prototype.equals.
 // Determines if two arrays are equal.
-exports.arraysEqual=function(a, b) {
+var arraysEqual=function(a, b) {
   if (a.constructor === Array && b.constructor === Array){
     if (a === b) return true;
     if (a == null || b == null) return false;
@@ -342,7 +344,7 @@ Assertion.prototype.addOptionalProperty = function(propertyName,attributesList,d
 };
 
 // Makes a brain given a list of concepts.
-exports.makeBrain = function(facts){
+var makeBrain = function(facts){
   var brain = new Brain();
   for (var i in facts){
     brain.addAssertion(facts[i]);
@@ -351,7 +353,7 @@ exports.makeBrain = function(facts){
 };
 
 // Checks if an array contains an object.
-exports.containsObj=function(obj, list) {
+var containsObj=function(obj, list) {
   var i;
   for (i = 0; i < list.length; i++) {
       if (JSON.stringify(obj) === JSON.stringify(list[i])) {
@@ -374,3 +376,11 @@ function intersect(a, b) {
         return c.indexOf(e) === i;
     });
 };
+
+return {
+  makeBrain : makeBrain,
+  arraysEqual : arraysEqual,
+  prettyprint : _prettyprint,
+  containsObj : containsObj
+}
+});

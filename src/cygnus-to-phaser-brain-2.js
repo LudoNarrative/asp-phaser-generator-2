@@ -1,8 +1,8 @@
 /*
   This file translates Cygnus abstract syntax into Phaser abstract syntax.
 */
-
-var rensa = require('./brain');
+define(["rensa"], function(rensa) {
+//var rensa = require('./brain');
 
 /*
 Input:  initial Phaser abstract syntax content (brain),
@@ -11,7 +11,7 @@ Input:  initial Phaser abstract syntax content (brain),
 Output: Cygnus input translated into Phaser abstract syntax,
         merged with initial Phaser content (brain).
 */
-exports.cygnusToPhaser = function(initialBrain,cygnusBrain){
+var cygnusToPhaser = function(initialBrain,cygnusBrain){
   // Make a clone of the initial brain.
   var finalBrain = initialBrain.clone();
 
@@ -51,7 +51,7 @@ var addSprites=function(pID, brain){
   // For each assertion in the brain,
   for (var i in brain.assertions){
     // If there is an "add_to_location" assertion,
-    if (exports.isRelationType(brain.assertions[i],"add_to_location")){
+    if (isRelationType(brain.assertions[i],"add_to_location")){
       // Add the brain's assertion to the newProgram.
       newProgram["create"]["sprites"].push(brain.assertions[i]);
     }
@@ -74,7 +74,7 @@ var updatePreload=function(pID, brain){
   // For each assertion in the brain,
   for (var i in brain.assertions){
     // If it's a has_sprite assertion,
-    if (exports.isRelationType(brain.assertions[i],"has_sprite")){
+    if (isRelationType(brain.assertions[i],"has_sprite")){
       var inPreload = false;
       // Check if is this sprite is already in ["preload"]["images"].
       for (var e=0; e<newProgram["preload"]["images"].length;e++){
@@ -126,7 +126,7 @@ var mergeInitialWithCygnus = function(pID, initialBrain, cygnusBrain){
     }
 
     // If we are setting the value of a variable...
-    else if (exports.isSetValueAssertion(cygnusBrain.assertions[i])){
+    else if (isSetValueAssertion(cygnusBrain.assertions[i])){
       // Deal with any properties (e.g. e1.angle set_value e2.angle)
       if (cygnusBrain.assertions[i]["l"][0].indexOf(".")>0 || (cygnusBrain.assertions[i]["r"][0].indexOf(".")>0)){
         newProgram["create"]["vars"].push(cygnusBrain.assertions[i]);
@@ -136,16 +136,16 @@ var mergeInitialWithCygnus = function(pID, initialBrain, cygnusBrain){
       }
     }
     else if (
-      exports.isStaticAssertion(cygnusBrain.assertions[i]) || exports.isRotatesAssertion(cygnusBrain.assertions[i]) ||
-      exports.isRotateToAssertion(cygnusBrain.assertions[i])
+      isStaticAssertion(cygnusBrain.assertions[i]) || isRotatesAssertion(cygnusBrain.assertions[i]) ||
+      isRotateToAssertion(cygnusBrain.assertions[i])
     ){
       // Move to create.
       newProgram["create"]["misc"].push(cygnusBrain.assertions[i]);
     }
     else if (
-      exports.isSetColorAssertion(cygnusBrain.assertions[i]) ||
-      exports.isRestitutionAssertion(cygnusBrain.assertions[i]) ||
-      exports.isDenotesAssertion(cygnusBrain.assertions[i])
+      isSetColorAssertion(cygnusBrain.assertions[i]) ||
+      isRestitutionAssertion(cygnusBrain.assertions[i]) ||
+      isDenotesAssertion(cygnusBrain.assertions[i])
     ){
       // Move to update.
       newProgram["update"]["misc"].push(cygnusBrain.assertions[i]);
@@ -154,13 +154,13 @@ var mergeInitialWithCygnus = function(pID, initialBrain, cygnusBrain){
     // If it's a conditional assertion, different things might happen based on
     // whether it is a click, overlap, mouse pressed, or timer logic conditional.
     // All of this is handled in the updateProgramConditional() function.
-    else if (exports.isConditionalAssertion(cygnusBrain.assertions[i])){
+    else if (isConditionalAssertion(cygnusBrain.assertions[i])){
       var updatedProgram = updateProgramConditional(newBrain,cygnusBrain,newProgram,i);
       newBrain = updatedProgram[0];
       newProgram = updatedProgram[1]
     }
     // If something is moving, we need to tell both the update and create functions in Phaser.
-    else if (exports.isMotionAssertion(cygnusBrain.assertions[i])){
+    else if (isMotionAssertion(cygnusBrain.assertions[i])){
       if (cygnusBrain.assertions[i].hasOwnProperty("tags")){
         if (cygnusBrain.assertions[i]["tags"].indexOf("update")>=0){
           newProgram["update"]["motion"].push(cygnusBrain.assertions[i]);
@@ -174,7 +174,7 @@ var mergeInitialWithCygnus = function(pID, initialBrain, cygnusBrain){
       }
     }
     // If something is draggable, we need to tell Phaser's update function.
-    else if (exports.isDraggableAssertion(cygnusBrain.assertions[i])){
+    else if (isDraggableAssertion(cygnusBrain.assertions[i])){
       newProgram["update"]["vars"].push(cygnusBrain.assertions[i]);
     }
 
@@ -817,93 +817,93 @@ var changeToSetValue = function(assert){
 }
 
 // Check if an assertion is a variable declaration in Phaser Abstract Syntax.
-exports.isVariableAssertion=function(a){
+var isVariableAssertion=function(a){
   return a["relation"]=="instance_of" && (a["r"].indexOf("variable")>=0);
 };
 
-exports.isRelationType=function(a,relationType){
+var isRelationType=function(a,relationType){
   return a["relation"]==relationType;
 };
 
 // Check if an assertion is setting the value of one or more concepts.
-exports.isSetValueAssertion=function(a){
-  return exports.isRelationType(a,"set_value");
+var isSetValueAssertion=function(a){
+  return isRelationType(a,"set_value");
 };
 
 // Check if an assertion is a conditional.
-exports.isConditionalAssertion = function(a){
-  return exports.isRelationType(a,"causes");
+var isConditionalAssertion = function(a){
+  return isRelationType(a,"causes");
 }
 
-exports.isCallbackAssertion = function(a){
-  return exports.isRelationType(a,"triggers");
+var isCallbackAssertion = function(a){
+  return isRelationType(a,"triggers");
 }
 
-exports.isTimerCallbackAssertion = function(a){
-  return exports.isRelationType(a,"has_state") && (a["r"].indexOf("timerElapsed")>=0);
+var isTimerCallbackAssertion = function(a){
+  return isRelationType(a,"has_state") && (a["r"].indexOf("timerElapsed")>=0);
 }
 
-exports.isDraggableAssertion = function(a){
-  return exports.isRelationType(a,"instance_of") && (a["r"].indexOf("draggable")>=0);
+var isDraggableAssertion = function(a){
+  return isRelationType(a,"instance_of") && (a["r"].indexOf("draggable")>=0);
 }
 
-exports.isFunctionAssertion = function(a){
+var isFunctionAssertion = function(a){
   return a["relation"]=="instance_of" && (a["r"].indexOf("function")>=0);
 }
 
-exports.isGoalAssertion = function(a){
-  return exports.isRelationType(a,"instance_of") && (a["r"].indexOf("goal")>=0);
+var isGoalAssertion = function(a){
+  return isRelationType(a,"instance_of") && (a["r"].indexOf("goal")>=0);
 }
 
-exports.isOverlapAssertion = function(a){
-  return exports.isRelationType(a,"overlaps");
+var isOverlapAssertion = function(a){
+  return isRelationType(a,"overlaps");
 }
 
-exports.isNotOverlapAssertion = function(a){
-  return exports.isRelationType(a,"not_overlaps");
+var isNotOverlapAssertion = function(a){
+  return isRelationType(a,"not_overlaps");
 }
 
-exports.isMousePressedAssertion = function(a){
-  return exports.isRelationType(a,"control_event") && (a["r"].indexOf("pressed")>=0);
+var isMousePressedAssertion = function(a){
+  return isRelationType(a,"control_event") && (a["r"].indexOf("pressed")>=0);
 }
 
-exports.isStaticAssertion = function(a){
-  return exports.isRelationType(a,"instance_of") && (a["r"].indexOf("static")>=0);
+var isStaticAssertion = function(a){
+  return isRelationType(a,"instance_of") && (a["r"].indexOf("static")>=0);
 }
 
-exports.isSetColorAssertion = function(a){
-  return exports.isRelationType(a,"set_color");
+var isSetColorAssertion = function(a){
+  return isRelationType(a,"set_color");
 }
 
-exports.isRestitutionAssertion = function(a){
-  return exports.isRelationType(a,"apply_restitution")
+var isRestitutionAssertion = function(a){
+  return isRelationType(a,"apply_restitution")
 }
 
-exports.isRotatesAssertion = function(a){
-  return exports.isRelationType(a,"rotates");
+var isRotatesAssertion = function(a){
+  return isRelationType(a,"rotates");
 }
 
-exports.isRotateToAssertion = function(a){
-  return exports.isRelationType(a,"rotate_to");
+var isRotateToAssertion = function(a){
+  return isRelationType(a,"rotate_to");
 }
 
-exports.isDenotesAssertion = function(a){
-  return exports.isRelationType(a,"denotes")
+var isDenotesAssertion = function(a){
+  return isRelationType(a,"denotes")
 }
 
-exports.isMotionAssertion = function(a){
+var isMotionAssertion = function(a){
   return (
-      exports.isRelationType(a,"move_towards") ||
-      exports.isRelationType(a,"move_away")    ||
-      exports.isRelationType(a,"moves")
+      isRelationType(a,"move_towards") ||
+      isRelationType(a,"move_away")    ||
+      isRelationType(a,"moves")
   )
 }
 
 var isUpdateValueAssertion = function(a){
   return (
-    exports.isRelationType(a,"increase") ||
-    exports.isRelationType(a,"decrease") ||
-    exports.isRelationType(a,"increase_over_time") || exports.isRelationType(a,"decrease_over_time")
+    isRelationType(a,"increase") ||
+    isRelationType(a,"decrease") ||
+    isRelationType(a,"increase_over_time") || isRelationType(a,"decrease_over_time")
   )
 }
 
@@ -911,3 +911,29 @@ var isUpdateValueAssertion = function(a){
 var isVariableTypeAssertion=function(a){
   return a["relation"]=="instance_of" && (a["r"].indexOf("resource")>=0 || a["r"].indexOf("entity")>=0);
 };
+
+return {
+  cygnusToPhaser : cygnusToPhaser,
+  isVariableAssertion : isVariableAssertion,
+  isRelationType : isRelationType,
+  isSetValueAssertion : isSetValueAssertion,
+  isConditionalAssertion : isConditionalAssertion,
+  isCallbackAssertion : isCallbackAssertion,
+  isTimerCallbackAssertion : isTimerCallbackAssertion,
+  isDraggableAssertion : isDraggableAssertion,
+  isFunctionAssertion : isFunctionAssertion,
+  isGoalAssertion : isGoalAssertion,
+  isOverlapAssertion : isOverlapAssertion,
+  isNotOverlapAssertion : isNotOverlapAssertion,
+  isMousePressedAssertion : isMousePressedAssertion,
+  isStaticAssertion : isStaticAssertion,
+  isSetColorAssertion : isSetColorAssertion,
+  isRestitutionAssertion : isRestitutionAssertion,
+  isRotatesAssertion : isRotatesAssertion,
+  isRotateToAssertion : isRotateToAssertion,
+  isDenotesAssertion : isDenotesAssertion,
+  isMotionAssertion : isMotionAssertion,
+  isUpdateValueAssertion : isUpdateValueAssertion,
+  isVariableTypeAssertion : isVariableTypeAssertion,
+}
+});

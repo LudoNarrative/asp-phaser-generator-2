@@ -7,6 +7,9 @@
 
   Returns a list ("assertions") containing all assertions that will be added to the Cygnus brain.
 */
+
+define([], function() {
+
 function translateASP(lines){
   // Final list of translated assertions.
   // Ben adding a dumb line for repo test.
@@ -438,7 +441,7 @@ function capitalizeFirstLetter(s) {
     return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
-module.exports = translateASP;
+//module.exports = translateASP;
 
 /* Finds all preconditions in a set of lines corresponding to a keyword. */
 function findPreconds(lines, keyword){
@@ -790,3 +793,8 @@ function translateNested2(x){
   }
   return newX;
 }
+
+return {
+  translateASP: translateASP
+};
+});

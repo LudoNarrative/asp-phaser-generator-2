@@ -7,7 +7,6 @@ var initialPhaserFile = fs.readFileSync('./test/fixtures/initial-phaser-file.jso
 var generator = new AspPhaserGenerator(aspGame, initialPhaserFile);
 var phaserProgram = generator.generate(false);
 
-//hello repo test.
 //console.log("\n------------------------------");
 //console.log("Finished Phaser game:");
 //console.log("------------------------------");

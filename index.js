@@ -1,9 +1,15 @@
+/*
 var translateAsp = require('./src/asp-to-cygnus-2');
 var rensa = require('./src/brain');
 var ctp = require('./src/cygnus-to-phaser-brain-2');
 var translatePhaserBrain = require('./src/phaser-brain-to-code-2');
+*/
+
+define(["translateAsp", "rensa", "ctp", "translatePhaserBrain"], function(translateAsp, rensa, ctp, translatePhaserBrain) {
 
 function AspPhaserGenerator(generatedAsp, initialPhaserFile) {
+
+  var newGenerator = {};
   // Read each line of the ASP game.
   var lines = generatedAsp.split('\n');
   // For each line read,
@@ -19,18 +25,21 @@ function AspPhaserGenerator(generatedAsp, initialPhaserFile) {
   }
 
   // Store the ASP game.
-  this.aspGame = lines;
+  newGenerator.aspGame = lines;
 
   // Store the initial Phaser file as a brain.
-  this.initialPhaser = rensa.makeBrain(JSON.parse(initialPhaserFile));
+  //this.initialPhaser = rensa.makeBrain(JSON.parse(initialPhaserFile));
+  newGenerator.initialPhaser = rensa.makeBrain(initialPhaserFile);
+
+  return newGenerator;
 }
 
-AspPhaserGenerator.prototype.generate = function(debug) {
+var generate = function(aspGame, initialPhaser, debug) {
   // Create a Rensa brain from literal ASP.
-  var cygnus = rensa.makeBrain(translateAsp(this.aspGame));
+  var cygnus = rensa.makeBrain(translateAsp.translateASP(aspGame));
 
   // Translate this brain into Phaser Abstract Syntax given some initial Phaser assertions.
-  var generatedPhaserBrain = ctp.cygnusToPhaser(this.initialPhaser, cygnus);
+  var generatedPhaserBrain = ctp.cygnusToPhaser(initialPhaser, cygnus);
 
   // Write a Phaser program using this brain.
   var gameProgram = translatePhaserBrain.writePhaserProgram(generatedPhaserBrain);
@@ -40,7 +49,7 @@ AspPhaserGenerator.prototype.generate = function(debug) {
     console.log("\n------------------------------");
     console.log("Initial Phaser Brain: ");
     console.log("------------------------------");
-    this.initialPhaser.prettyprint();
+    initialPhaser.prettyprint();
     console.log("\n------------------------------");
     console.log("Cygnus Brain: ");
     console.log("------------------------------");
@@ -53,4 +62,8 @@ AspPhaserGenerator.prototype.generate = function(debug) {
   return gameProgram;
 };
 
-module.exports = AspPhaserGenerator;
+return {
+  AspPhaserGenerator : AspPhaserGenerator,
+  generate : generate
+}
+});

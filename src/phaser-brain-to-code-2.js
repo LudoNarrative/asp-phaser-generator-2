@@ -1,7 +1,7 @@
 /*
  This file generates a string containing a complete Phaser program, giving a brain that contains Phaser abstract syntax.
 */
-
+define(["ctp", "rensa"], function(ctp, rensa) {
 // Change to false to remove whitespace from output.
 var addWhitespace = true;
 
@@ -9,12 +9,12 @@ var addWhitespace = true;
 var goals;
 
 // Dependencies.
-var ctp = require('./cygnus-to-phaser-brain-2');
-var rensa = require('./brain');
+//var ctp = require('./cygnus-to-phaser-brain-2');
+//var rensa = require('./brain');
 
 // Input: Phaser abstract syntax (brain).
 // Output: Phaser program (string).
-exports.writePhaserProgram = function(brain){
+var writePhaserProgram = function(brain){
   // This string variable will contain the Phaser code.
   var programText = "";
 
@@ -1082,3 +1082,9 @@ var translateDenotesAssertion = function(a){
   str+="setVariable('"+e2+"', "+e1+");";
   return str;
 }
+
+return {
+  writePhaserProgram : writePhaserProgram
+}
+
+});
