@@ -7,7 +7,7 @@ var translatePhaserBrain = require('./src/phaser-brain-to-code-2');
 
 //define(["translateAsp", "rensa", "ctp", "translatePhaserBrain"], function(translateAsp, rensa, ctp, translatePhaserBrain) {
 
-define(["./src/asp-to-cygnus-2", "./src/brain", "./src/cygnus-to-phaser-brain-2", "./src/phaser-brain-to-code-2"], function(translateAsp, rensa, ctp, translatePhaserBrain) {
+define(["../asp-phaser-generator-2/src/asp-to-cygnus-2", "../asp-phaser-generator-2/src/brain", "../asp-phaser-generator-2/src/cygnus-to-phaser-brain-2", "../asp-phaser-generator-2/src/phaser-brain-to-code-2"], function(translateAsp, rensa, ctp, translatePhaserBrain) {
 
 
 function AspPhaserGenerator(generatedAsp, initialPhaserFile) {
