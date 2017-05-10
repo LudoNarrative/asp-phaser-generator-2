@@ -1,3 +1,4 @@
+require("amd-loader");
 var test = require('tape');
 var fs = require('fs');
 var AspPhaserGenerator = require('../index');

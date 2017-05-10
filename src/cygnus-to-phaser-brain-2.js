@@ -1,7 +1,8 @@
 /*
   This file translates Cygnus abstract syntax into Phaser abstract syntax.
 */
-define(["rensa"], function(rensa) {
+//define(["rensa"], function(rensa) {
+  define(["./brain"], function(rensa) {
 //var rensa = require('./brain');
 
 /*

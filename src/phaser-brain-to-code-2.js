@@ -1,7 +1,8 @@
 /*
  This file generates a string containing a complete Phaser program, giving a brain that contains Phaser abstract syntax.
 */
-define(["ctp", "rensa"], function(ctp, rensa) {
+//define(["ctp", "rensa"], function(ctp, rensa) {
+  define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 // Change to false to remove whitespace from output.
 var addWhitespace = true;
 

@@ -1,6 +1,14 @@
+// in order to get required files written in the "amd" format of require to play nicely.
+// you may need to run the command npm install amd-loader on your console before amd-loader will work.
+require("amd-loader"); 
 var test = require('tape');
 var fs = require('fs');
 var translateASP = require('../src/asp-to-cygnus-2.js');
+
+//using the amd-loder makes translateASP return an object. However, we want access to 
+//that objects translateASP function.
+translateASP = translateASP.translateASP
+
 
 test('test increase/decrease', function (t) {
   var output = translateASP([
