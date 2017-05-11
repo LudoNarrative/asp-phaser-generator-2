@@ -337,5 +337,38 @@
     "r":["function"],
     "params":[],
     "lines":["if (goals === undefined || goals.length == 0){return ['No ASP goals.'];}","else{return goals;}"]
+  },
+  {
+    "l":["updateProgressBar"],
+    "relation":"instance_of",
+    "r":["function"],
+    "params":["resourceValue","resourceCount"],
+    "lines":["/*console.log('Updating progress bar for resource number ' + resourceCount + '(' + resourceValue + ')');*/",
+      "/*Draw the 'max' bar to the screen*/",
+      "var resourceMaxBar;",
+      "var maxBarWidth = 100;",
+      "var maxBarHeight = 10;",
+      "var maxBarBitmapData = game.add.bitmapData(maxBarWidth,maxBarHeight);",
+      "maxBarBitmapData.ctx.beginPath();",
+      "maxBarBitmapData.boundsPadding = 0;",
+      "maxBarBitmapData.ctx.rect(0,0,maxBarWidth,maxBarHeight);",
+      "maxBarBitmapData.ctx.fillStyle = '#ffffff';",
+      "maxBarBitmapData.ctx.fill();",
+      "resourceMaxBar = game.add.sprite(10,10,maxBarBitmapData);",
+      "resourceMaxBar.anchor.setTo(0.0,0.5);",
+      "/*Draw the 'current' bar to the screen*/",
+      "var resourceCurrentBar;",
+      "var currentBarWidth = resourceValue * 10;",
+      "if(currentBarWidth > 100) {currentBarWidth = 100;} else if(currentBarWidth < 0){ currentBarWidth = 0;}",
+      "var currentBarHeight = 10",
+      "var currentBarBitmapData = game.add.bitmapData(currentBarWidth,currentBarHeight);",
+      "currentBarBitmapData.ctx.beginPath();",
+      "currentBarBitmapData.boundsPadding = 0;",
+      "currentBarBitmapData.ctx.rect(0,0,currentBarWidth,currentBarHeight);",
+      "currentBarBitmapData.ctx.fillStyle = '#00ff00';",
+      "currentBarBitmapData.ctx.fill();",
+      "resourceCurrentBar = game.add.sprite(10,10,currentBarBitmapData);",
+      "resourceCurrentBar.anchor.setTo(0.0, 0.5);"
+    ]
   }
 ]

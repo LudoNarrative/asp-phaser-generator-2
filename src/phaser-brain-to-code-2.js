@@ -104,6 +104,11 @@ var writePhaserProgram = function(brain){
             programText = addDefaultUpdateDirections(programText);
           }
 
+          // if we are in the update function, add function to update status of bars that reveal resource values.
+          if (p==="update"){
+            programText = addResourceBarUpdateCalls(programText, variableValues)
+          }
+
           /* We are all done with the function body! */
           programText += "};";
           if (addWhitespace){programText += "\n\n"}
@@ -219,6 +224,29 @@ var addDefaultUpdateDirections = function(programText){
   if(addWhitespace){programText+="\n\t"};
   programText += "}}";
   if(addWhitespace){programText+="\n"};
+  return programText;
+}
+
+/*
+  Helper function to add calls to update the bars that display the current values of resources.
+*/
+var addResourceBarUpdateCalls = function(programText, variableValues){
+  var currentVariable;
+  var numResources = 0; // need to keep track, as each resource needs to be displayed on a different part of the screen.
+  
+  //we need to add an update call for each of our variables of type "resource"
+  for(var i = 0; i < variableValues.length; i += 1){
+    currentVariable = variableValues[i];
+    var variableTypeArray = currentVariable.variableType; // might be undefined
+    if(variableTypeArray !== undefined && variableTypeArray[0] === "resource"){
+      //we've found a variable of type resource. Add a call ot update it to the progrma text!
+      numResources += 1;
+      if(addWhitespace){programText+="\n\t"};
+      var resourceName = currentVariable.l[0]
+      programText += "updateProgressBar(" + resourceName + ", " + numResources + ");";
+      if(addWhitespace){programText+="\n\t"};
+    }
+  }
   return programText;
 }
 
