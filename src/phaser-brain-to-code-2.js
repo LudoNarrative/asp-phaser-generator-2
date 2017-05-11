@@ -240,11 +240,12 @@ var addResourceBarUpdateCalls = function(programText, variableValues){
     var variableTypeArray = currentVariable.variableType; // might be undefined
     if(variableTypeArray !== undefined && variableTypeArray[0] === "resource"){
       //we've found a variable of type resource. Add a call ot update it to the progrma text!
-      numResources += 1;
+      
       if(addWhitespace){programText+="\n\t"};
       var resourceName = currentVariable.l[0]
       programText += "updateProgressBar(" + resourceName + ", " + numResources + ");";
       if(addWhitespace){programText+="\n\t"};
+      numResources += 1; // update at end, we want the first bar to have a count of zero.
     }
   }
   return programText;
