@@ -34,6 +34,10 @@ function translateASP(lines){
         assertionsToAdd = [translateSimpleDeclaration(terms)];
         doneLines.push(lines[i]);
       }
+      // If it is a label statement
+      else if(terms.predicate ==="label"){
+        assertionsToAdd = [translateLabel(terms.terms)];
+      }
       // If it is an initialize statement,
       else if (terms.predicate=="initialize"){
         terms = terms.terms[0];
@@ -147,6 +151,11 @@ function translateSimpleDeclaration(terms){
   var declType = terms.predicate;
   var declName = terms.terms[0].predicate;
   return {"l":[declName], "relation":"instance_of", "r":[declType], "tags":["global"]};
+}
+
+// Example: label(resource(r_1_XX_),satiation). >> r_1_xx has_label satiation
+function translateLabel(terms){
+  return translateSimpleTriple("has_label",terms);
 }
 
 // Example: set_sprite(entity(e1),circle) >> e1 has_sprite circle

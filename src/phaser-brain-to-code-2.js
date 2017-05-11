@@ -242,8 +242,8 @@ var addResourceBarUpdateCalls = function(programText, variableValues){
       //we've found a variable of type resource. Add a call ot update it to the progrma text!
       
       if(addWhitespace){programText+="\n\t"};
-      var resourceName = currentVariable.l[0]
-      programText += "updateProgressBar(" + resourceName + ", " + numResources + ");";
+      var resourceName = currentVariable.l[0];
+      programText += "updateProgressBar(" + resourceName + ", " + numResources + ", labels['" + resourceName + "']);";
       if(addWhitespace){programText+="\n\t"};
       numResources += 1; // update at end, we want the first bar to have a count of zero.
     }
@@ -345,6 +345,9 @@ var addGenericFunctionStatement = function(programText,brain,curAssert,p){
   }
   else if (ctp.isDenotesAssertion(curAssert)){
     programText += translateDenotesAssertion( curAssert);
+  }
+  else if(ctp.isLabelAssertion(curAssert)){
+    programText += translateLabelAssertion(curAssert);
   }
   return programText;
 }
@@ -1110,6 +1113,14 @@ var translateDenotesAssertion = function(a){
   var e1 = a["l"][0];
   var e2 = a["r"][0];
   str+="setVariable('"+e2+"', "+e1+");";
+  return str;
+}
+
+var translateLabelAssertion = function(a){
+  str = ""
+  var e1 = a["l"][0];
+  var e2 = a["r"][0];
+  str += "labels['" + e1 + "'] = '" + e2 + "';";
   return str;
 }
 

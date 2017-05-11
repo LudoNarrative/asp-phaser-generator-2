@@ -136,6 +136,9 @@ var mergeInitialWithCygnus = function(pID, initialBrain, cygnusBrain){
           tempVarValues[cygnusBrain.assertions[i]["l"]] = cygnusBrain.assertions[i]["r"];
       }
     }
+    else if (isLabelAssertion(cygnusBrain.assertions[i])){
+      newProgram["create"]["vars"].push(cygnusBrain.assertions[i]);
+    }
     else if (
       isStaticAssertion(cygnusBrain.assertions[i]) || isRotatesAssertion(cygnusBrain.assertions[i]) ||
       isRotateToAssertion(cygnusBrain.assertions[i])
@@ -908,6 +911,10 @@ var isUpdateValueAssertion = function(a){
   )
 }
 
+var isLabelAssertion = function(a){
+  return isRelationType(a,"has_label");
+}
+
 // Checks if an assertion is a variable declaration in Cygnus Abstract Syntax.
 var isVariableTypeAssertion=function(a){
   return a["relation"]=="instance_of" && (a["r"].indexOf("resource")>=0 || a["r"].indexOf("entity")>=0);
@@ -936,5 +943,6 @@ return {
   isMotionAssertion : isMotionAssertion,
   isUpdateValueAssertion : isUpdateValueAssertion,
   isVariableTypeAssertion : isVariableTypeAssertion,
+  isLabelAssertion : isLabelAssertion
 }
 });

@@ -2,7 +2,7 @@ require("amd-loader");  //enables amd style requires to be interpreted by runnin
 var fs = require('fs');
 var AspPhaserGenerator = require('./index');
 
-var aspGame = fs.readFileSync('./test/fixtures/lectureGames-5-5-2017/tempgames/games_5_5/games_5_5_1.lp', 'utf8');
+var aspGame = fs.readFileSync('./test/fixtures/labelGames/5-11_1.lp', 'utf8');
 var initialPhaserFile = fs.readFileSync('./test/fixtures/initial-phaser-file.json', 'utf8');
 
 //apparantly we need to use JSON.parse now; if we don't, initialPhaserFile gets interpreted as a string.

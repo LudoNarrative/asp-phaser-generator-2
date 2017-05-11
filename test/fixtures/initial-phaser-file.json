@@ -51,6 +51,12 @@
     "value":["{}"]
   },
   {
+    "l":["labels"],
+    "relation":"instance_of",
+    "r":["variable"],
+    "value":["{}"]
+  },
+  {
     "l":["low"],
     "relation":"instance_of",
     "r":["variable"],
@@ -342,19 +348,19 @@
     "l":["updateProgressBar"],
     "relation":"instance_of",
     "r":["function"],
-    "params":["resourceValue","resourceCount"],
-    "lines":["/*console.log('Updating progress bar for resource number ' + resourceCount + '(' + resourceValue + ')');*/",
+    "params":["resourceValue","resourceCount","label"],
+    "lines":["/*console.log('Updating ' + label + ' progress bar for resource number ' + resourceCount + '(' + resourceValue + ')');*/",
       "/*Establish some variables for easy tuning*/",
 
 
-      "var barHeight = 10;",
+      "var barHeight = 18;",
       "var barWidth  = 100;",
       "var startX = 10 + (10 * resourceCount) + (barWidth * resourceCount);",
       "var startY = 10;",
       "var maxBarColor = '#ffffff';",
       "var currentBarColor = '#ff00ff'",
       "if(resourceCount === 0) {currentBarColor = '#ff0000'} else if(resourceCount === 1) {currentBarColor = '#00ff00';} else if(resourceCount === 2){currentBarColor = '#0000ff';}",
-      "console.log('here is barColor: ' , currentBarColor);",
+      "/*console.log('here is barColor: ' , currentBarColor);*/",
 
 
 
@@ -382,7 +388,27 @@
       "currentBarBitmapData.ctx.fillStyle = currentBarColor;",
       "currentBarBitmapData.ctx.fill();",
       "resourceCurrentBar = game.add.sprite(startX,startY,currentBarBitmapData);",
-      "resourceCurrentBar.anchor.setTo(0.0, 0.5);"
+      "resourceCurrentBar.anchor.setTo(0.0, 0.5);",
+
+      "/*Display Label*/",
+      "if(label !== undefined){",
+        "text = game.add.text(startX + 10, 0, label);",
+        "text.setTextBounds(0,0,barWidth,barHeight);",
+        "text.anchor.set(0.0);",
+        "text.align = 'center';",
+        "//  Font style",
+        "text.font = 'Arial Black';",
+        "text.fontSize =14;",
+        "//text.fontWeight = 'bold';",
+        "text.fontWeight = 'normal';",
+        "text.width = barWidth;",
+        "//  Stroke color and thickness",
+        "text.stroke = '#000000';",
+        "text.strokeThickness = 3;",
+        "text.fill = '#556b2f';",
+      "}"
+
+
     ]
   }
 ]
