@@ -694,8 +694,8 @@ var translateAddSpriteAssertion=function(b,a){
     else{
       console.log("Warning: keyword " + col + " is not a known col name.");
     }
-    str+="var x="+x+";";
-    str+="var y="+y+";";
+    str+="var x="+x+"+ xOffset;";
+    str+="var y="+y+"+ yOffset;";
   }
 
   // Example 2:
