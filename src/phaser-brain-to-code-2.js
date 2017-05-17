@@ -146,6 +146,14 @@ var addDefaultCreateValues = function(programText, variableValues, brain, j, p){
       }
     }
   }
+
+  //Draw the rounded corners of the playspace.
+  programText += establishRoundedPlayArea();
+
+  //add a call to setting up the "walls" that form the boundry of the game
+  //the body of this function is defined inside of initial-phaser-file.json
+  programText += "\n\tsetUpWalls();\n";
+
   // Add any entities to the canvas.
   // For each content property specified in the function (e.g. "vars"),
   for (var d in brain.assertions[j][p]) {
@@ -314,7 +322,7 @@ var addGenericFunctionStatement = function(programText,brain,curAssert,p){
     programText += translateListenerAssertion(curAssert);
   }
   else if (ctp.isTimerCallbackAssertion(curAssert)){
-    programText += translateTimerElapsedAssertion(brain, curAssert);
+    programText += translateTimer_elapsedAssertion(brain, curAssert);
   }
   else if (ctp.isMousePressedAssertion(curAssert)){
     programText += translatePressedAssertion(curAssert);
@@ -1038,7 +1046,7 @@ var translatePressedAssertion = function(a){
   return str;
 }
 
-var translateTimerElapsedAssertion = function(b,a){
+var translateTimer_elapsedAssertion = function(b,a){
   var str = "";
   // Get timer id.
   var timerID = a["l"][0];
@@ -1121,6 +1129,18 @@ var translateLabelAssertion = function(a){
   var e1 = a["l"][0];
   var e2 = a["r"][0];
   str += "labels['" + e1 + "'] = '" + e2 + "';";
+  return str;
+}
+
+var establishRoundedPlayArea = function(){
+  str = ""
+
+  str += "\n\tgraphics = game.add.graphics( 0,0);\n";
+  str += "\tgraphics.beginFill(0x000000);\n";
+  str += "\tgraphics.drawRoundedRect(xOffset,yOffset, 400, 300, 10);\n";
+  str += "\tgraphics.endFill();\n";
+  str += "\tgraphics.alpha = 0.2;\n";
+
   return str;
 }
 

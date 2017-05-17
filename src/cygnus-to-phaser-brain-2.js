@@ -290,7 +290,7 @@ var updateProgramConditional = function(newBrain, cygnusBrain, newProgram,i){
       }
 
       // Get the timerElapsed assertion, if any.
-      if (rensa.arraysEqual(oldHypRight,["timerElapsed"])){
+      if (rensa.arraysEqual(oldHypRight,["timer_elapsed"])){
         isTimerLogicConditional=true;
         timerLogicAssertion = cygnusBrain.assertions[i]["l"][q];
       }
@@ -844,7 +844,7 @@ var isCallbackAssertion = function(a){
 }
 
 var isTimerCallbackAssertion = function(a){
-  return isRelationType(a,"has_state") && (a["r"].indexOf("timerElapsed")>=0);
+  return isRelationType(a,"has_state") && (a["r"].indexOf("timer_elapsed")>=0);
 }
 
 var isDraggableAssertion = function(a){

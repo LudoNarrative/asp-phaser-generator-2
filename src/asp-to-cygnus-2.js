@@ -641,7 +641,7 @@ var addNormalPrecond = function(ps, bList, a){
   }
 
   else if (bList.length==1){
-    if (a=="timerElapsed"){
+    if (a=="timer_elapsed"){
         ps.push({"l":[bList[0]],"relation":"has_state","r":[a]});
     }
   }
