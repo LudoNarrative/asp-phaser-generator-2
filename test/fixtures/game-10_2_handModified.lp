@@ -35,7 +35,6 @@ result(outcome(joeyjoejoeshabadoojunior_o_3____aasdfasdf___),increase_over_time(
 result(outcome(joeyjoejoeshabadoojunior_o_3____aasdfasdf___),rotates(entity(e2),cw,scalar(10))).
 
 precondition(timer_elapsed(t1),outcome(t1)).
-result(outcome(t1),set_static(entity(e2),true)).
 result(outcome(t1),set_value(resource(r1),scalar(11))).
 
 result(outcome(t1),rotates(entity(e2),cw,scalar(10))).

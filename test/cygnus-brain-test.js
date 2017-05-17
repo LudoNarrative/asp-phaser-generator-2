@@ -167,12 +167,12 @@ test('test set_draggable', function (t) {
 
 test('test timer outcome add', function (t) {
   var output = translateASP([
-    "precondition(timerElapsed(t1),outcome(t1)).","result(outcome(t1),add(entity(e1),scalar(1),location(middle,center)))."
+    "precondition(timer_elapsed(t1),outcome(t1)).","result(outcome(t1),add(entity(e1),scalar(1),location(middle,center)))."
   ]);
   t.deepEqual([
     {
       "goal_keyword":"t1",
-      "l":[{"l":["t1"],"relation":"has_state","r":["timerElapsed"]}],
+      "l":[{"l":["t1"],"relation":"has_state","r":["timer_elapsed"]}],
       "relation":"causes",
       "r":[{"l":["e1"],"relation":"add_to_location","r":["abstract"],"row":"middle", "col": "center", "num": "1", "tags":["create"]}]
     }
@@ -182,12 +182,12 @@ test('test timer outcome add', function (t) {
 
 test('test timer outcome mode_change', function (t) {
   var output = translateASP([
-    "precondition(timerElapsed(t1),outcome(t1)).","result(outcome(t1),mode_change(game_win))."
+    "precondition(timer_elapsed(t1),outcome(t1)).","result(outcome(t1),mode_change(game_win))."
   ]);
   t.deepEqual([
     {
       "goal_keyword":"t1",
-      "l":[{"l":["t1"],"relation":"has_state","r":["timerElapsed"]}],
+      "l":[{"l":["t1"],"relation":"has_state","r":["timer_elapsed"]}],
       "relation":"causes",
       "r":[{"l":["game"],"relation":"set_mode","r":["game_win"]}]
     }
@@ -197,12 +197,12 @@ test('test timer outcome mode_change', function (t) {
 
 test('test timer outcome delete', function (t) {
   var output = translateASP([
-    "precondition(timerElapsed(t1),outcome(t1)).","result(outcome(t1),delete(entity(e1)))."
+    "precondition(timer_elapsed(t1),outcome(t1)).","result(outcome(t1),delete(entity(e1)))."
   ]);
   t.deepEqual([
     {
       "goal_keyword":"t1",
-      "l":[{"l":["t1"],"relation":"has_state","r":["timerElapsed"]}],
+      "l":[{"l":["t1"],"relation":"has_state","r":["timer_elapsed"]}],
       "relation":"causes",
       "r":[{"l":["e1"],"relation":"action","r":["delete"]}]
     }
@@ -212,12 +212,12 @@ test('test timer outcome delete', function (t) {
 
 test('test timer outcome static', function (t) {
   var output = translateASP([
-    "precondition(timerElapsed(t1),outcome(t1)).","result(outcome(t1),set_static(entity(e1),true))."
+    "precondition(timer_elapsed(t1),outcome(t1)).","result(outcome(t1),set_static(entity(e1),true))."
   ]);
   t.deepEqual([
     {
       "goal_keyword":"t1",
-      "l":[{"l":["t1"],"relation":"has_state","r":["timerElapsed"]}],
+      "l":[{"l":["t1"],"relation":"has_state","r":["timer_elapsed"]}],
       "relation":"causes",
       "r":[{"l":["e1"],"relation":"instance_of","r":["static"]}]
     }
@@ -227,12 +227,12 @@ test('test timer outcome static', function (t) {
 
 test('test timer outcome rotate_to', function (t) {
   var output = translateASP([
-    "precondition(timerElapsed(t1),outcome(t1)).","result(outcome(t1),rotate_to(entity(e1),random_int(0,360)))."
+    "precondition(timer_elapsed(t1),outcome(t1)).","result(outcome(t1),rotate_to(entity(e1),random_int(0,360)))."
   ]);
   t.deepEqual([
     {
       "goal_keyword":"t1",
-      "l":[{"l":["t1"],"relation":"has_state","r":["timerElapsed"]}],
+      "l":[{"l":["t1"],"relation":"has_state","r":["timer_elapsed"]}],
       "relation":"causes",
       "r":[{"l":["e1"],"relation":"rotate_to","r":[0,360]}]
     }
@@ -243,12 +243,12 @@ test('test timer outcome rotate_to', function (t) {
 // Note: It's unclear in the spec what angular_direction (etc.) is supposed to be, so this test especially is an educated guess.
 test('test timer outcome rotates', function (t) {
   var output = translateASP([
-    "precondition(timerElapsed(t1),outcome(t1)).","result(outcome(t1),rotates(entity(e1),ccw,scalar(10)))."
+    "precondition(timer_elapsed(t1),outcome(t1)).","result(outcome(t1),rotates(entity(e1),ccw,scalar(10)))."
   ]);
   t.deepEqual([
     {
       "goal_keyword":"t1",
-      "l":[{"l":["t1"],"relation":"has_state","r":["timerElapsed"]}],
+      "l":[{"l":["t1"],"relation":"has_state","r":["timer_elapsed"]}],
       "relation":"causes",
       "r":[{"l":["e1"],"relation":"rotates","r":["-10"]}]
     }

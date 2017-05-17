@@ -33,6 +33,10 @@ function translateASP(lines){
       if (isSimpleDeclarationPredicate(terms.predicate)){
         assertionsToAdd = [translateSimpleDeclaration(terms)];
         doneLines.push(lines[i]);
+        //we want to add an additional restitution assertion for each entity for pushing up against the game walls.
+        if(isEntityPredicate(terms.predicate)){
+          assertionsToAdd.push(addEntityWallRestitutionAssertion(terms));
+        }
       }
       // If it is a label statement
       else if(terms.predicate ==="label"){
@@ -141,6 +145,10 @@ function isSimpleDeclarationPredicate(str){
   return str=="entity" || str=="resource" || str=="flag";
 }
 
+function isEntityPredicate(str){
+  return str=="entity";
+}
+
 /*
   Examples:
     entity(e1).   >>    e1 instance_of entity
@@ -156,6 +164,11 @@ function translateSimpleDeclaration(terms){
 // Example: label(resource(r_1_XX_),satiation). >> r_1_xx has_label satiation
 function translateLabel(terms){
   return translateSimpleTriple("has_label",terms);
+}
+
+function addEntityWallRestitutionAssertion(terms){
+  var name = terms.terms[0].predicate;
+  return {"l":[name], "relation":"apply_restitution", "r":["walls"]}
 }
 
 // Example: set_sprite(entity(e1),circle) >> e1 has_sprite circle
