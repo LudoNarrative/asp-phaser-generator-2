@@ -1,1 +1,336 @@
 node_modules
+test/fixtures/ruleGames/games_5_11-2.tar.bz2
+test/fixtures/ruleGames/games_5_11.tar.bz2
+test/fixtures/ruleGames/games_5_12.tar.bz2
+test/fixtures/ruleGames/5-15meeting/dinner_ns_5_12_1.lp
+test/fixtures/ruleGames/5-15meeting/dinner_ns_5_12_2.lp
+test/fixtures/ruleGames/5-15meeting/dinner_ns_5_12_3.lp
+test/fixtures/ruleGames/5-15meeting/dinner_ns_5_12_4.lp
+test/fixtures/ruleGames/5-15meeting/dinner_ns_5_12_5.lp
+test/fixtures/ruleGames/5-15meeting/dinner_ns_5_12_6.lp
+test/fixtures/ruleGames/5-15meeting/dinner_ns_5_12_7.lp
+test/fixtures/ruleGames/games/dinner_5_11_1.lp
+test/fixtures/ruleGames/games/dinner_5_11_10.lp
+test/fixtures/ruleGames/games/dinner_5_11_11.lp
+test/fixtures/ruleGames/games/dinner_5_11_12.lp
+test/fixtures/ruleGames/games/dinner_5_11_13.lp
+test/fixtures/ruleGames/games/dinner_5_11_14.lp
+test/fixtures/ruleGames/games/dinner_5_11_15.lp
+test/fixtures/ruleGames/games/dinner_5_11_16.lp
+test/fixtures/ruleGames/games/dinner_5_11_17.lp
+test/fixtures/ruleGames/games/dinner_5_11_18.lp
+test/fixtures/ruleGames/games/dinner_5_11_19.lp
+test/fixtures/ruleGames/games/dinner_5_11_2.lp
+test/fixtures/ruleGames/games/dinner_5_11_20.lp
+test/fixtures/ruleGames/games/dinner_5_11_21.lp
+test/fixtures/ruleGames/games/dinner_5_11_22.lp
+test/fixtures/ruleGames/games/dinner_5_11_23.lp
+test/fixtures/ruleGames/games/dinner_5_11_24.lp
+test/fixtures/ruleGames/games/dinner_5_11_25.lp
+test/fixtures/ruleGames/games/dinner_5_11_26.lp
+test/fixtures/ruleGames/games/dinner_5_11_27.lp
+test/fixtures/ruleGames/games/dinner_5_11_28.lp
+test/fixtures/ruleGames/games/dinner_5_11_29.lp
+test/fixtures/ruleGames/games/dinner_5_11_3.lp
+test/fixtures/ruleGames/games/dinner_5_11_30.lp
+test/fixtures/ruleGames/games/dinner_5_11_31.lp
+test/fixtures/ruleGames/games/dinner_5_11_32.lp
+test/fixtures/ruleGames/games/dinner_5_11_33.lp
+test/fixtures/ruleGames/games/dinner_5_11_34.lp
+test/fixtures/ruleGames/games/dinner_5_11_35.lp
+test/fixtures/ruleGames/games/dinner_5_11_36.lp
+test/fixtures/ruleGames/games/dinner_5_11_37.lp
+test/fixtures/ruleGames/games/dinner_5_11_38.lp
+test/fixtures/ruleGames/games/dinner_5_11_39.lp
+test/fixtures/ruleGames/games/dinner_5_11_4.lp
+test/fixtures/ruleGames/games/dinner_5_11_40.lp
+test/fixtures/ruleGames/games/dinner_5_11_41.lp
+test/fixtures/ruleGames/games/dinner_5_11_42.lp
+test/fixtures/ruleGames/games/dinner_5_11_43.lp
+test/fixtures/ruleGames/games/dinner_5_11_44.lp
+test/fixtures/ruleGames/games/dinner_5_11_45.lp
+test/fixtures/ruleGames/games/dinner_5_11_46.lp
+test/fixtures/ruleGames/games/dinner_5_11_47.lp
+test/fixtures/ruleGames/games/dinner_5_11_48.lp
+test/fixtures/ruleGames/games/dinner_5_11_49.lp
+test/fixtures/ruleGames/games/dinner_5_11_5.lp
+test/fixtures/ruleGames/games/dinner_5_11_50.lp
+test/fixtures/ruleGames/games/dinner_5_11_6.lp
+test/fixtures/ruleGames/games/dinner_5_11_7.lp
+test/fixtures/ruleGames/games/dinner_5_11_8.lp
+test/fixtures/ruleGames/games/dinner_5_11_9.lp
+test/fixtures/ruleGames/games/dinner_ns_5_11_1.lp
+test/fixtures/ruleGames/games/dinner_ns_5_11_10.lp
+test/fixtures/ruleGames/games/dinner_ns_5_11_11.lp
+test/fixtures/ruleGames/games/dinner_ns_5_11_12.lp
+test/fixtures/ruleGames/games/dinner_ns_5_11_13.lp
+test/fixtures/ruleGames/games/dinner_ns_5_11_14.lp
+test/fixtures/ruleGames/games/dinner_ns_5_11_15.lp
+test/fixtures/ruleGames/games/dinner_ns_5_11_16.lp
+test/fixtures/ruleGames/games/dinner_ns_5_11_17.lp
+test/fixtures/ruleGames/games/dinner_ns_5_11_18.lp
+test/fixtures/ruleGames/games/dinner_ns_5_11_19.lp
+test/fixtures/ruleGames/games/dinner_ns_5_11_2.lp
+test/fixtures/ruleGames/games/dinner_ns_5_11_20.lp
+test/fixtures/ruleGames/games/dinner_ns_5_11_21.lp
+test/fixtures/ruleGames/games/dinner_ns_5_11_22.lp
+test/fixtures/ruleGames/games/dinner_ns_5_11_23.lp
+test/fixtures/ruleGames/games/dinner_ns_5_11_24.lp
+test/fixtures/ruleGames/games/dinner_ns_5_11_25.lp
+test/fixtures/ruleGames/games/dinner_ns_5_11_26.lp
+test/fixtures/ruleGames/games/dinner_ns_5_11_27.lp
+test/fixtures/ruleGames/games/dinner_ns_5_11_28.lp
+test/fixtures/ruleGames/games/dinner_ns_5_11_29.lp
+test/fixtures/ruleGames/games/dinner_ns_5_11_3.lp
+test/fixtures/ruleGames/games/dinner_ns_5_11_30.lp
+test/fixtures/ruleGames/games/dinner_ns_5_11_31.lp
+test/fixtures/ruleGames/games/dinner_ns_5_11_32.lp
+test/fixtures/ruleGames/games/dinner_ns_5_11_33.lp
+test/fixtures/ruleGames/games/dinner_ns_5_11_34.lp
+test/fixtures/ruleGames/games/dinner_ns_5_11_35.lp
+test/fixtures/ruleGames/games/dinner_ns_5_11_36.lp
+test/fixtures/ruleGames/games/dinner_ns_5_11_37.lp
+test/fixtures/ruleGames/games/dinner_ns_5_11_38.lp
+test/fixtures/ruleGames/games/dinner_ns_5_11_39.lp
+test/fixtures/ruleGames/games/dinner_ns_5_11_4.lp
+test/fixtures/ruleGames/games/dinner_ns_5_11_40.lp
+test/fixtures/ruleGames/games/dinner_ns_5_11_41.lp
+test/fixtures/ruleGames/games/dinner_ns_5_11_42.lp
+test/fixtures/ruleGames/games/dinner_ns_5_11_43.lp
+test/fixtures/ruleGames/games/dinner_ns_5_11_44.lp
+test/fixtures/ruleGames/games/dinner_ns_5_11_45.lp
+test/fixtures/ruleGames/games/dinner_ns_5_11_46.lp
+test/fixtures/ruleGames/games/dinner_ns_5_11_47.lp
+test/fixtures/ruleGames/games/dinner_ns_5_11_48.lp
+test/fixtures/ruleGames/games/dinner_ns_5_11_49.lp
+test/fixtures/ruleGames/games/dinner_ns_5_11_5.lp
+test/fixtures/ruleGames/games/dinner_ns_5_11_50.lp
+test/fixtures/ruleGames/games/dinner_ns_5_11_6.lp
+test/fixtures/ruleGames/games/dinner_ns_5_11_7.lp
+test/fixtures/ruleGames/games/dinner_ns_5_11_8.lp
+test/fixtures/ruleGames/games/dinner_ns_5_11_9.lp
+test/fixtures/ruleGames/games 2/dinner_5_11_1.lp
+test/fixtures/ruleGames/games 2/dinner_5_11_10.lp
+test/fixtures/ruleGames/games 2/dinner_5_11_11.lp
+test/fixtures/ruleGames/games 2/dinner_5_11_12.lp
+test/fixtures/ruleGames/games 2/dinner_5_11_13.lp
+test/fixtures/ruleGames/games 2/dinner_5_11_14.lp
+test/fixtures/ruleGames/games 2/dinner_5_11_15.lp
+test/fixtures/ruleGames/games 2/dinner_5_11_16.lp
+test/fixtures/ruleGames/games 2/dinner_5_11_17.lp
+test/fixtures/ruleGames/games 2/dinner_5_11_18.lp
+test/fixtures/ruleGames/games 2/dinner_5_11_19.lp
+test/fixtures/ruleGames/games 2/dinner_5_11_2.lp
+test/fixtures/ruleGames/games 2/dinner_5_11_20.lp
+test/fixtures/ruleGames/games 2/dinner_5_11_21.lp
+test/fixtures/ruleGames/games 2/dinner_5_11_22.lp
+test/fixtures/ruleGames/games 2/dinner_5_11_23.lp
+test/fixtures/ruleGames/games 2/dinner_5_11_24.lp
+test/fixtures/ruleGames/games 2/dinner_5_11_25.lp
+test/fixtures/ruleGames/games 2/dinner_5_11_26.lp
+test/fixtures/ruleGames/games 2/dinner_5_11_27.lp
+test/fixtures/ruleGames/games 2/dinner_5_11_28.lp
+test/fixtures/ruleGames/games 2/dinner_5_11_29.lp
+test/fixtures/ruleGames/games 2/dinner_5_11_3.lp
+test/fixtures/ruleGames/games 2/dinner_5_11_30.lp
+test/fixtures/ruleGames/games 2/dinner_5_11_31.lp
+test/fixtures/ruleGames/games 2/dinner_5_11_32.lp
+test/fixtures/ruleGames/games 2/dinner_5_11_33.lp
+test/fixtures/ruleGames/games 2/dinner_5_11_34.lp
+test/fixtures/ruleGames/games 2/dinner_5_11_35.lp
+test/fixtures/ruleGames/games 2/dinner_5_11_36.lp
+test/fixtures/ruleGames/games 2/dinner_5_11_37.lp
+test/fixtures/ruleGames/games 2/dinner_5_11_38.lp
+test/fixtures/ruleGames/games 2/dinner_5_11_39.lp
+test/fixtures/ruleGames/games 2/dinner_5_11_4.lp
+test/fixtures/ruleGames/games 2/dinner_5_11_40.lp
+test/fixtures/ruleGames/games 2/dinner_5_11_41.lp
+test/fixtures/ruleGames/games 2/dinner_5_11_42.lp
+test/fixtures/ruleGames/games 2/dinner_5_11_43.lp
+test/fixtures/ruleGames/games 2/dinner_5_11_44.lp
+test/fixtures/ruleGames/games 2/dinner_5_11_45.lp
+test/fixtures/ruleGames/games 2/dinner_5_11_46.lp
+test/fixtures/ruleGames/games 2/dinner_5_11_47.lp
+test/fixtures/ruleGames/games 2/dinner_5_11_48.lp
+test/fixtures/ruleGames/games 2/dinner_5_11_49.lp
+test/fixtures/ruleGames/games 2/dinner_5_11_5.lp
+test/fixtures/ruleGames/games 2/dinner_5_11_50.lp
+test/fixtures/ruleGames/games 2/dinner_5_11_6.lp
+test/fixtures/ruleGames/games 2/dinner_5_11_7.lp
+test/fixtures/ruleGames/games 2/dinner_5_11_8.lp
+test/fixtures/ruleGames/games 2/dinner_5_11_9.lp
+test/fixtures/ruleGames/games 2/dinner_ns_5_11_1.lp
+test/fixtures/ruleGames/games 2/dinner_ns_5_11_10.lp
+test/fixtures/ruleGames/games 2/dinner_ns_5_11_11.lp
+test/fixtures/ruleGames/games 2/dinner_ns_5_11_12.lp
+test/fixtures/ruleGames/games 2/dinner_ns_5_11_13.lp
+test/fixtures/ruleGames/games 2/dinner_ns_5_11_14.lp
+test/fixtures/ruleGames/games 2/dinner_ns_5_11_15.lp
+test/fixtures/ruleGames/games 2/dinner_ns_5_11_16.lp
+test/fixtures/ruleGames/games 2/dinner_ns_5_11_17.lp
+test/fixtures/ruleGames/games 2/dinner_ns_5_11_18.lp
+test/fixtures/ruleGames/games 2/dinner_ns_5_11_19.lp
+test/fixtures/ruleGames/games 2/dinner_ns_5_11_2.lp
+test/fixtures/ruleGames/games 2/dinner_ns_5_11_20.lp
+test/fixtures/ruleGames/games 2/dinner_ns_5_11_21.lp
+test/fixtures/ruleGames/games 2/dinner_ns_5_11_22.lp
+test/fixtures/ruleGames/games 2/dinner_ns_5_11_23.lp
+test/fixtures/ruleGames/games 2/dinner_ns_5_11_24.lp
+test/fixtures/ruleGames/games 2/dinner_ns_5_11_25.lp
+test/fixtures/ruleGames/games 2/dinner_ns_5_11_26.lp
+test/fixtures/ruleGames/games 2/dinner_ns_5_11_27.lp
+test/fixtures/ruleGames/games 2/dinner_ns_5_11_28.lp
+test/fixtures/ruleGames/games 2/dinner_ns_5_11_29.lp
+test/fixtures/ruleGames/games 2/dinner_ns_5_11_3.lp
+test/fixtures/ruleGames/games 2/dinner_ns_5_11_30.lp
+test/fixtures/ruleGames/games 2/dinner_ns_5_11_31.lp
+test/fixtures/ruleGames/games 2/dinner_ns_5_11_32.lp
+test/fixtures/ruleGames/games 2/dinner_ns_5_11_33.lp
+test/fixtures/ruleGames/games 2/dinner_ns_5_11_34.lp
+test/fixtures/ruleGames/games 2/dinner_ns_5_11_35.lp
+test/fixtures/ruleGames/games 2/dinner_ns_5_11_36.lp
+test/fixtures/ruleGames/games 2/dinner_ns_5_11_37.lp
+test/fixtures/ruleGames/games 2/dinner_ns_5_11_38.lp
+test/fixtures/ruleGames/games 2/dinner_ns_5_11_39.lp
+test/fixtures/ruleGames/games 2/dinner_ns_5_11_4.lp
+test/fixtures/ruleGames/games 2/dinner_ns_5_11_40.lp
+test/fixtures/ruleGames/games 2/dinner_ns_5_11_41.lp
+test/fixtures/ruleGames/games 2/dinner_ns_5_11_42.lp
+test/fixtures/ruleGames/games 2/dinner_ns_5_11_43.lp
+test/fixtures/ruleGames/games 2/dinner_ns_5_11_44.lp
+test/fixtures/ruleGames/games 2/dinner_ns_5_11_45.lp
+test/fixtures/ruleGames/games 2/dinner_ns_5_11_46.lp
+test/fixtures/ruleGames/games 2/dinner_ns_5_11_47.lp
+test/fixtures/ruleGames/games 2/dinner_ns_5_11_48.lp
+test/fixtures/ruleGames/games 2/dinner_ns_5_11_49.lp
+test/fixtures/ruleGames/games 2/dinner_ns_5_11_5.lp
+test/fixtures/ruleGames/games 2/dinner_ns_5_11_50.lp
+test/fixtures/ruleGames/games 2/dinner_ns_5_11_6.lp
+test/fixtures/ruleGames/games 2/dinner_ns_5_11_7.lp
+test/fixtures/ruleGames/games 2/dinner_ns_5_11_8.lp
+test/fixtures/ruleGames/games 2/dinner_ns_5_11_9.lp
+test/fixtures/ruleGames/games 3/dinner_5_11_1.lp
+test/fixtures/ruleGames/games 3/dinner_5_11_10.lp
+test/fixtures/ruleGames/games 3/dinner_5_11_11.lp
+test/fixtures/ruleGames/games 3/dinner_5_11_12.lp
+test/fixtures/ruleGames/games 3/dinner_5_11_13.lp
+test/fixtures/ruleGames/games 3/dinner_5_11_14.lp
+test/fixtures/ruleGames/games 3/dinner_5_11_15.lp
+test/fixtures/ruleGames/games 3/dinner_5_11_16.lp
+test/fixtures/ruleGames/games 3/dinner_5_11_17.lp
+test/fixtures/ruleGames/games 3/dinner_5_11_18.lp
+test/fixtures/ruleGames/games 3/dinner_5_11_19.lp
+test/fixtures/ruleGames/games 3/dinner_5_11_2.lp
+test/fixtures/ruleGames/games 3/dinner_5_11_20.lp
+test/fixtures/ruleGames/games 3/dinner_5_11_21.lp
+test/fixtures/ruleGames/games 3/dinner_5_11_22.lp
+test/fixtures/ruleGames/games 3/dinner_5_11_23.lp
+test/fixtures/ruleGames/games 3/dinner_5_11_24.lp
+test/fixtures/ruleGames/games 3/dinner_5_11_25.lp
+test/fixtures/ruleGames/games 3/dinner_5_11_26.lp
+test/fixtures/ruleGames/games 3/dinner_5_11_27.lp
+test/fixtures/ruleGames/games 3/dinner_5_11_28.lp
+test/fixtures/ruleGames/games 3/dinner_5_11_29.lp
+test/fixtures/ruleGames/games 3/dinner_5_11_3.lp
+test/fixtures/ruleGames/games 3/dinner_5_11_30.lp
+test/fixtures/ruleGames/games 3/dinner_5_11_31.lp
+test/fixtures/ruleGames/games 3/dinner_5_11_32.lp
+test/fixtures/ruleGames/games 3/dinner_5_11_33.lp
+test/fixtures/ruleGames/games 3/dinner_5_11_34.lp
+test/fixtures/ruleGames/games 3/dinner_5_11_35.lp
+test/fixtures/ruleGames/games 3/dinner_5_11_36.lp
+test/fixtures/ruleGames/games 3/dinner_5_11_37.lp
+test/fixtures/ruleGames/games 3/dinner_5_11_38.lp
+test/fixtures/ruleGames/games 3/dinner_5_11_39.lp
+test/fixtures/ruleGames/games 3/dinner_5_11_4.lp
+test/fixtures/ruleGames/games 3/dinner_5_11_40.lp
+test/fixtures/ruleGames/games 3/dinner_5_11_41.lp
+test/fixtures/ruleGames/games 3/dinner_5_11_42.lp
+test/fixtures/ruleGames/games 3/dinner_5_11_43.lp
+test/fixtures/ruleGames/games 3/dinner_5_11_44.lp
+test/fixtures/ruleGames/games 3/dinner_5_11_45.lp
+test/fixtures/ruleGames/games 3/dinner_5_11_46.lp
+test/fixtures/ruleGames/games 3/dinner_5_11_47.lp
+test/fixtures/ruleGames/games 3/dinner_5_11_48.lp
+test/fixtures/ruleGames/games 3/dinner_5_11_49.lp
+test/fixtures/ruleGames/games 3/dinner_5_11_5.lp
+test/fixtures/ruleGames/games 3/dinner_5_11_50.lp
+test/fixtures/ruleGames/games 3/dinner_5_11_6.lp
+test/fixtures/ruleGames/games 3/dinner_5_11_7.lp
+test/fixtures/ruleGames/games 3/dinner_5_11_8.lp
+test/fixtures/ruleGames/games 3/dinner_5_11_9.lp
+test/fixtures/ruleGames/games 3/dinner_ns_5_11_1.lp
+test/fixtures/ruleGames/games 3/dinner_ns_5_11_10.lp
+test/fixtures/ruleGames/games 3/dinner_ns_5_11_11.lp
+test/fixtures/ruleGames/games 3/dinner_ns_5_11_12.lp
+test/fixtures/ruleGames/games 3/dinner_ns_5_11_13.lp
+test/fixtures/ruleGames/games 3/dinner_ns_5_11_14.lp
+test/fixtures/ruleGames/games 3/dinner_ns_5_11_15.lp
+test/fixtures/ruleGames/games 3/dinner_ns_5_11_16.lp
+test/fixtures/ruleGames/games 3/dinner_ns_5_11_17.lp
+test/fixtures/ruleGames/games 3/dinner_ns_5_11_18.lp
+test/fixtures/ruleGames/games 3/dinner_ns_5_11_19.lp
+test/fixtures/ruleGames/games 3/dinner_ns_5_11_2.lp
+test/fixtures/ruleGames/games 3/dinner_ns_5_11_20.lp
+test/fixtures/ruleGames/games 3/dinner_ns_5_11_21.lp
+test/fixtures/ruleGames/games 3/dinner_ns_5_11_22.lp
+test/fixtures/ruleGames/games 3/dinner_ns_5_11_23.lp
+test/fixtures/ruleGames/games 3/dinner_ns_5_11_24.lp
+test/fixtures/ruleGames/games 3/dinner_ns_5_11_25.lp
+test/fixtures/ruleGames/games 3/dinner_ns_5_11_26.lp
+test/fixtures/ruleGames/games 3/dinner_ns_5_11_27.lp
+test/fixtures/ruleGames/games 3/dinner_ns_5_11_28.lp
+test/fixtures/ruleGames/games 3/dinner_ns_5_11_29.lp
+test/fixtures/ruleGames/games 3/dinner_ns_5_11_3.lp
+test/fixtures/ruleGames/games 3/dinner_ns_5_11_30.lp
+test/fixtures/ruleGames/games 3/dinner_ns_5_11_31.lp
+test/fixtures/ruleGames/games 3/dinner_ns_5_11_32.lp
+test/fixtures/ruleGames/games 3/dinner_ns_5_11_33.lp
+test/fixtures/ruleGames/games 3/dinner_ns_5_11_34.lp
+test/fixtures/ruleGames/games 3/dinner_ns_5_11_35.lp
+test/fixtures/ruleGames/games 3/dinner_ns_5_11_36.lp
+test/fixtures/ruleGames/games 3/dinner_ns_5_11_37.lp
+test/fixtures/ruleGames/games 3/dinner_ns_5_11_38.lp
+test/fixtures/ruleGames/games 3/dinner_ns_5_11_39.lp
+test/fixtures/ruleGames/games 3/dinner_ns_5_11_4.lp
+test/fixtures/ruleGames/games 3/dinner_ns_5_11_40.lp
+test/fixtures/ruleGames/games 3/dinner_ns_5_11_41.lp
+test/fixtures/ruleGames/games 3/dinner_ns_5_11_42.lp
+test/fixtures/ruleGames/games 3/dinner_ns_5_11_43.lp
+test/fixtures/ruleGames/games 3/dinner_ns_5_11_44.lp
+test/fixtures/ruleGames/games 3/dinner_ns_5_11_45.lp
+test/fixtures/ruleGames/games 3/dinner_ns_5_11_46.lp
+test/fixtures/ruleGames/games 3/dinner_ns_5_11_47.lp
+test/fixtures/ruleGames/games 3/dinner_ns_5_11_48.lp
+test/fixtures/ruleGames/games 3/dinner_ns_5_11_49.lp
+test/fixtures/ruleGames/games 3/dinner_ns_5_11_5.lp
+test/fixtures/ruleGames/games 3/dinner_ns_5_11_50.lp
+test/fixtures/ruleGames/games 3/dinner_ns_5_11_6.lp
+test/fixtures/ruleGames/games 3/dinner_ns_5_11_7.lp
+test/fixtures/ruleGames/games 3/dinner_ns_5_11_8.lp
+test/fixtures/ruleGames/games 3/dinner_ns_5_11_9.lp
+test/fixtures/ruleGames/games 4/dinner_ns_5_12_1.lp
+test/fixtures/ruleGames/games 4/dinner_ns_5_12_10.lp
+test/fixtures/ruleGames/games 4/dinner_ns_5_12_11.lp
+test/fixtures/ruleGames/games 4/dinner_ns_5_12_12.lp
+test/fixtures/ruleGames/games 4/dinner_ns_5_12_13.lp
+test/fixtures/ruleGames/games 4/dinner_ns_5_12_14.lp
+test/fixtures/ruleGames/games 4/dinner_ns_5_12_15.lp
+test/fixtures/ruleGames/games 4/dinner_ns_5_12_16.lp
+test/fixtures/ruleGames/games 4/dinner_ns_5_12_17.lp
+test/fixtures/ruleGames/games 4/dinner_ns_5_12_18.lp
+test/fixtures/ruleGames/games 4/dinner_ns_5_12_19.lp
+test/fixtures/ruleGames/games 4/dinner_ns_5_12_2.lp
+test/fixtures/ruleGames/games 4/dinner_ns_5_12_20.lp
+test/fixtures/ruleGames/games 4/dinner_ns_5_12_21.lp
+test/fixtures/ruleGames/games 4/dinner_ns_5_12_22.lp
+test/fixtures/ruleGames/games 4/dinner_ns_5_12_23.lp
+test/fixtures/ruleGames/games 4/dinner_ns_5_12_24.lp
+test/fixtures/ruleGames/games 4/dinner_ns_5_12_25.lp
+test/fixtures/ruleGames/games 4/dinner_ns_5_12_3.lp
+test/fixtures/ruleGames/games 4/dinner_ns_5_12_4.lp
+test/fixtures/ruleGames/games 4/dinner_ns_5_12_5.lp
+test/fixtures/ruleGames/games 4/dinner_ns_5_12_6.lp
+test/fixtures/ruleGames/games 4/dinner_ns_5_12_7.lp
+test/fixtures/ruleGames/games 4/dinner_ns_5_12_8.lp
+test/fixtures/ruleGames/games 4/dinner_ns_5_12_9.lp
