@@ -335,6 +335,22 @@
     "lines":["group.forEach(function(item) {","item.deleted=false;","item.body.collideWorldBounds = true;","item.anchor.x = 0.5;","item.anchor.y = 0.5;","item.rotation = 0;","if (!item.body.velocity.hasOwnProperty('x')){item.body.velocity.x=0;}","if (!item.body.velocity.hasOwnProperty('y')){item.body.velocity.y=0;}","if (!item.body.hasOwnProperty('angularVelocity')){item.body.angularVelocity=0;}","}, this);"]
   },
   {
+    "l":["initEntity"],
+    "relation":"instance_of",
+    "r":["function"],
+    "params":["item"],
+    "lines":[
+      "item.deleted=false;",
+      "item.body.collideWorldBounds = true;",
+      "item.anchor.x = 0.5;",
+      "item.anchor.y = 0.5;",
+      "item.rotation = 0;",
+      "if (!item.body.velocity.hasOwnProperty('x')){item.body.velocity.x=0;}",
+      "if (!item.body.velocity.hasOwnProperty('y')){item.body.velocity.y=0;}",
+      "if (!item.body.hasOwnProperty('angularVelocity')){item.body.angularVelocity=0;}"
+    ]
+  },
+  {
     "l":["changeMode"],
     "relation":"instance_of",
     "r":["function"],
@@ -433,4 +449,8 @@
       "}"
     ]
   }
+
+
+
+
 ]

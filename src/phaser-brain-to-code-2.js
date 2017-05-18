@@ -790,6 +790,14 @@ var translateAddSpriteAssertion=function(b,a){
   str+="y+=(Math.random() * 30) - 15;";
   if (addWhitespace){str+="\n\t\t";}
 
+  str+= "initEntity(addedEntities['"+entityName+"'].create(x,y,'"+entityName+"'));"
+  if (addWhitespace){str+="\n\t\t";}
+  str+= "updateGrid();";
+  if (addWhitespace){str+="\n\t\t";}
+  str+="}";
+
+  /*
+  //OLD WAY where we updated *every* entity in the group when we created a new one.
   str+= "addedEntities['"+entityName+"'].create(x,y,'"+entityName+"');"
   if (addWhitespace){str+="\n\t\t";}
   str+= "updateGrid();";
@@ -797,6 +805,7 @@ var translateAddSpriteAssertion=function(b,a){
   str+="initEntityProperties(addedEntities['"+entityName+"']);"
   if (addWhitespace){str+="\n\t";}
   str+="}";
+  */
 
 
 
