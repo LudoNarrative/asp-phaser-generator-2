@@ -362,71 +362,6 @@
     "lines":["if (goals === undefined || goals.length == 0){return ['No ASP goals.'];}","else{return goals;}"]
   },
   {
-    "l":["updateProgressBar"],
-    "relation":"instance_of",
-    "r":["function"],
-    "params":["resourceValue","resourceCount","label"],
-    "lines":["/*console.log('Updating ' + label + ' progress bar for resource number ' + resourceCount + '(' + resourceValue + ')');*/",
-      "/*Establish some variables for easy tuning*/",
-
-
-      "var barHeight = 18;",
-      "var barWidth  = 100;",
-      "var startX = 10 + (10 * resourceCount) + (barWidth * resourceCount);",
-      "var startY = 10;",
-      "var maxBarColor = '#ffffff';",
-      "var currentBarColor = '#ff00ff'",
-      "if(resourceCount === 0) {currentBarColor = '#ff0000'} else if(resourceCount === 1) {currentBarColor = '#00ff00';} else if(resourceCount === 2){currentBarColor = '#0000ff';}",
-      "/*console.log('here is barColor: ' , currentBarColor);*/",
-
-
-
-      "/*Draw the 'max' bar to the screen*/",
-      "var resourceMaxBar;",
-      "var maxBarWidth = barWidth;",
-      "var maxBarHeight = barHeight;",
-      "var maxBarBitmapData = game.add.bitmapData(maxBarWidth,maxBarHeight);",
-      "maxBarBitmapData.ctx.beginPath();",
-      "maxBarBitmapData.boundsPadding = 0;",
-      "maxBarBitmapData.ctx.rect(0,0,maxBarWidth,maxBarHeight);",
-      "maxBarBitmapData.ctx.fillStyle = maxBarColor;",
-      "maxBarBitmapData.ctx.fill();",
-      "resourceMaxBar = game.add.sprite(startX,startY,maxBarBitmapData);",
-      "resourceMaxBar.anchor.setTo(0.0,0.5);",
-      "/*Draw the 'current' bar to the screen*/",
-      "var resourceCurrentBar;",
-      "var currentBarWidth = resourceValue * 10;",
-      "if(currentBarWidth > 100) {currentBarWidth = 100;} else if(currentBarWidth < 0){ currentBarWidth = 0;}",
-      "var currentBarHeight = barHeight",
-      "var currentBarBitmapData = game.add.bitmapData(currentBarWidth,currentBarHeight);",
-      "currentBarBitmapData.ctx.beginPath();",
-      "currentBarBitmapData.boundsPadding = 0;",
-      "currentBarBitmapData.ctx.rect(0,0,currentBarWidth,currentBarHeight);",
-      "currentBarBitmapData.ctx.fillStyle = currentBarColor;",
-      "currentBarBitmapData.ctx.fill();",
-      "resourceCurrentBar = game.add.sprite(startX,startY,currentBarBitmapData);",
-      "resourceCurrentBar.anchor.setTo(0.0, 0.5);",
-
-      "/*Display Label*/",
-      "if(label !== undefined){",
-        "text = game.add.text(startX + 10, 0, label);",
-        "text.setTextBounds(0,0,barWidth,barHeight);",
-        "text.anchor.set(0.0);",
-        "text.align = 'center';",
-        "//  Font style",
-        "text.font = 'Arial Black';",
-        "text.fontSize =14;",
-        "//text.fontWeight = 'bold';",
-        "text.fontWeight = 'normal';",
-        "text.width = barWidth;",
-        "//  Stroke color and thickness",
-        "text.stroke = '#000000';",
-        "text.strokeThickness = 3;",
-        "text.fill = '#556b2f';",
-      "}"
-    ]
-  },
-  {
     "l":["setUpWalls"],
     "relation":"instance_of",
     "r":["function"],
@@ -450,6 +385,52 @@
         "wall3.body.immovable = true;",
         "wall4.body.immovable = true;"
 
+    ]
+  },
+  {
+    "l":["createProgressBarConfig"],
+    "relation":"instance_of",
+    "r":["function"],
+    "params":["resourceValue","resourceCount","label"],
+    "lines":[
+      "var barConfig = {};",
+      "var barHeight = 18;",
+      "var barWidth = 100;",
+      "barConfig.height = barHeight;",
+      "barConfig.width = barWidth;",
+      "barConfig.x = 100 + (10 * resourceCount) + (barWidth * resourceCount);",
+      "barConfig.y = 10;",
+      "barConfig.bg = {};",
+      "barConfig.bg.color = '#ffffff';",
+      "barConfig.bar = {};",
+      "barConfig.bar.color = '#ff00ff';",
+      "return barConfig;"
+    ]
+  },
+  {
+    "l":["addBarLabel"],
+    "relation":"instance_of",
+    "r":["function"],
+    "params":["barConfig","resourceCount","label"],
+    "lines":[
+      "var barWidth = 100;",
+      "var barHeight = 40;",
+      "var startX = barConfig.x;",
+      "var startY = barConfig.y + 2;",
+      "if(label !== undefined){",
+      "  text = game.add.text(startX, startY, label);",
+      "  text.anchor.set(0.5,0.5);",
+      "  text.align = 'center';",
+      "  //  Font style",
+      "  text.font = 'Arial Black';",
+      "  text.fontSize =12;",
+      "  text.fontWeight = 'normal';",
+      "  text.width = barWidth;",
+      "  //  Stroke color and thickness",
+      "  text.stroke = '#000000';",
+      "  text.strokeThickness = 3;",
+      "  text.fill = '#556b2f';",
+      "}"
     ]
   }
 ]

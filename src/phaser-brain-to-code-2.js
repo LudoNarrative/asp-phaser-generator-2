@@ -105,9 +105,20 @@ var writePhaserProgram = function(brain){
           }
 
           // if we are in the update function, add function to update status of bars that reveal resource values.
+
+          if (p==="create"){
+            //programText = addResourceBarUpdateCalls(programText, variableValues)
+            programText = addResourceBarCreateCalls(programText, variableValues);
+          }
+
+          if (p==="update"){
+            programText = addResourceValueClamping(programText, variableValues)
+          }
+          
           if (p==="update"){
             programText = addResourceBarUpdateCalls(programText, variableValues)
           }
+          
 
           /* We are all done with the function body! */
           programText += "};";
@@ -236,6 +247,33 @@ var addDefaultUpdateDirections = function(programText){
 }
 
 /*
+  Helper function to clamp the values of our resources to be between 0 and 10
+*/
+var addResourceValueClamping = function(programText, variableValues){
+  var currentVariable;
+  var numResources = 0; // need to keep track, as each resource needs to be displayed on a different part of the screen.
+  
+  //we need to add an update call for each of our variables of type "resource"
+  for(var i = 0; i < variableValues.length; i += 1){
+
+    currentVariable = variableValues[i];
+    var variableTypeArray = currentVariable.variableType; // might be undefined
+    if(variableTypeArray !== undefined && variableTypeArray[0] === "resource"){
+      //we've found a variable of type resource. Add a call ot update it to the progrma text!
+      var resourceName = currentVariable.l[0];
+      if(addWhitespace){programText+="\n\t"};
+      programText += "if(" + resourceName + " > 10){\n\t\t";
+      programText += resourceName + " = 10;\n\t}\n\t";
+      programText += "else if (" + resourceName + " < 0 ){\n\t\t";
+      programText += resourceName + " = 0;\n\t}";
+      if(addWhitespace){programText+="\n\t"};
+      numResources += 1; // update at end, we want the first bar to have a count of zero.
+    }
+  }
+  return programText;  
+}
+
+/*
   Helper function to add calls to update the bars that display the current values of resources.
 */
 var addResourceBarUpdateCalls = function(programText, variableValues){
@@ -244,14 +282,45 @@ var addResourceBarUpdateCalls = function(programText, variableValues){
   
   //we need to add an update call for each of our variables of type "resource"
   for(var i = 0; i < variableValues.length; i += 1){
+
     currentVariable = variableValues[i];
     var variableTypeArray = currentVariable.variableType; // might be undefined
     if(variableTypeArray !== undefined && variableTypeArray[0] === "resource"){
       //we've found a variable of type resource. Add a call ot update it to the progrma text!
-      
+      var resourceBarName = "resourceBar" + numResources;
+      var resourceName = currentVariable.l[0];
+      var percentName = "percent" + numResources;
+      if(addWhitespace){programText+="\n\t"};
+      programText += "var " + percentName + " = " + resourceName + "/10;";
+      if(addWhitespace){programText+="\n\t"};
+      programText += percentName + " = " + percentName + " * 100;";
+      if(addWhitespace){programText+="\n\t"};
+      programText += "this."+resourceBarName+".setPercent("+percentName+");";
+      if(addWhitespace){programText+="\n\t"};
+      numResources += 1; // update at end, we want the first bar to have a count of zero.
+    }
+  }
+  return programText;
+}
+
+var addResourceBarCreateCalls = function(programText, variableValues){
+  var currentVariable;
+  var numResources = 0; // need to keep track, as each resource needs to be displayed on a different part of the screen.
+  if(addWhitespace){programText+="\n\t"};
+  for(var i = 0; i < variableValues.length; i += 1){
+    
+    currentVariable = variableValues[i];
+    var variableTypeArray = currentVariable.variableType; // might be undefined
+    if(variableTypeArray !== undefined && variableTypeArray[0] === "resource"){
+      //we've found a variable of type resource. Add a call ot update it to the progrma text!
+      var barConfigName= "barConfig" + numResources;
       if(addWhitespace){programText+="\n\t"};
       var resourceName = currentVariable.l[0];
-      programText += "updateProgressBar(" + resourceName + ", " + numResources + ", labels['" + resourceName + "']);";
+      programText += "var " + barConfigName + " = createProgressBarConfig(" + resourceName + ", " + numResources + ", labels['" + resourceName + "']);";
+      if(addWhitespace){programText+="\n\t"};
+      programText += "this.resourceBar" + numResources + " = new HealthBar(this.game, " + barConfigName +")";
+      if(addWhitespace){programText+="\n\t"};
+      programText += "addBarLabel(" + barConfigName + ", " + numResources + ", labels['" + resourceName + "']);"
       if(addWhitespace){programText+="\n\t"};
       numResources += 1; // update at end, we want the first bar to have a count of zero.
     }
