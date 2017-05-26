@@ -343,11 +343,11 @@ function translateSetStatic(terms){
   }
 }
 
-// Example: rotate_to(entity(e1), random_int(0,360))
+// Example: rotate_to(entity(e1), random_int(scalar(0),scalar(360)))
 // right = [0,360]
 function translateRotateTo(terms){
   var name = terms[0].terms[0].predicate;
-  var right = [parseInt(terms[1].terms[0].predicate),parseInt(terms[1].terms[1].predicate)]
+  var right = [parseInt(terms[1].terms[0].terms[0].predicate),parseInt(terms[1].terms[1].terms[0].predicate)]
   return {"l":[name],"relation":"rotate_to","r":right};
 }
 
@@ -768,7 +768,10 @@ var addNormalResult = function(rs, results){
 // This assumes only zero or one set of terms for now.
 function newTranslateNested(terms){
   var name = terms.predicate;
-  if (terms.terms!=undefined){
+  if (name == "scalar"){
+    return terms.terms[0].predicate;
+  }
+  else if (terms.terms!=undefined){
     var property = terms.terms[0].predicate;
     return name + "." + property;
   }

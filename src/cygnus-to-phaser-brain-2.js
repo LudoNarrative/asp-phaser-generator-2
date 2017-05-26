@@ -789,19 +789,19 @@ var changeToSetValue = function(assert){
   if (oldRelation=="increase"){
     newRightA["relation"]="set_value";
     // TODO fix so not assuming newRightA["l"] consists of one element (if needed)
-    newRightA["r"]=[newRightA["l"][0]+"+"+oldRight];
+    newRightA["r"]=[newRightA["l"][0]+"+"+oldRight+"/2"];
   }
   else if (oldRelation=="decrease"){
     newRightA["relation"]="set_value";
-    newRightA["r"]=[newRightA["l"][0]+"-"+oldRight];
+    newRightA["r"]=[newRightA["l"][0]+"-"+oldRight+"/2"];
   }
   else if (oldRelation=="increase_over_time"){
     newRightA["relation"]="set_value";
-    newRightA["r"]=[newRightA["l"][0]+"+"+oldRight+"*this.game.time.elapsed/10000.0"];
+    newRightA["r"]=[newRightA["l"][0]+"+"+oldRight+"*this.game.time.elapsed/1000.0"];
   }
   else if (oldRelation=="decrease_over_time"){
     newRightA["relation"]="set_value";
-    newRightA["r"]=[newRightA["l"][0]+"-"+oldRight+"*this.game.time.elapsed/10000.0"];
+    newRightA["r"]=[newRightA["l"][0]+"-"+oldRight+"*this.game.time.elapsed/1000.0"];
   }
   else {
     newRightA["relation"]=oldRelation;
