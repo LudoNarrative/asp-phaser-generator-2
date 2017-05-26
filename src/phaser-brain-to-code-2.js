@@ -19,6 +19,8 @@ var writePhaserProgram = function(brain){
   // This string variable will contain the Phaser code.
   var programText = "";
 
+  //console.log(JSON.stringify(brain, null, 4));
+
   // Set the realized goals from the ASP code to an empty array.
   goals = [];
 
@@ -998,12 +1000,20 @@ var translateDeleteSpriteAssertion = function(b, a){
   //We are thinking that, instead of deleting every instance of the sprite, 
   //we only want to delete the single instance reference?
 
-  //the function preamble for where this code will appear refers to arguments e1 and e2
-  //and this function only ever looks at a["l"] which I (Ben) *think* is the moral equivalent of e1
-  //and because e1 should already refer to the correct entity from when we called the function...
-  //I think we might be able to get away with simply specifying e1 directly in the string...
+  //the assertion (the "a" parameter) knows what needs to be deleted,
+  //and that gets stored in "entity"
+  //the function itself receives two parameters, e1 and e2.
+  //both of these have "key" properties -- the key property will match the string stored in "entity"
+  //Let's make an if statement to see if the key matches "entity" for both e1 and e2, and delete the entity if it does!
 
-  str += "e1.deleted = true";
+  //str += "e1.deleted = true";
+
+  if (addWhitespace){str+="\n";}
+  str += "\tif (e1.key === '" + entity + "'){\n\t\te1.deleted = true;\n\t}";
+  if (addWhitespace){str+="\n";}
+  str += "\tif (e2.key === '" + entity + "'){\n\t\te2.deleted = true;\n\t}";
+  if (addWhitespace){str+="\n";}
+
   if (addWhitespace){str+="\n";}
   return str;
 }
