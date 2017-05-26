@@ -32,6 +32,9 @@ function AspPhaserGenerator(generatedAsp, initialPhaserFile) {
 
   // Store the initial Phaser file as a brain.
   //this.initialPhaser = rensa.makeBrain(JSON.parse(initialPhaserFile));
+  if (typeof initialPhaserFile === "string"){
+    initialPhaserFile = JSON.parse(initialPhaserFile);
+  } 
   newGenerator.initialPhaser = rensa.makeBrain(initialPhaserFile);
 
   return newGenerator;
