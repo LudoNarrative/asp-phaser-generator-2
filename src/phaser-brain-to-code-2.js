@@ -323,6 +323,19 @@ var addResourceBarCreateCalls = function(programText, variableValues){
       programText += "this.resourceBar" + numResources + " = new HealthBar(this.game, " + barConfigName +")";
       if(addWhitespace){programText+="\n\t"};
       programText += "addBarLabel(" + barConfigName + ", " + numResources + ", labels['" + resourceName + "']);"
+	if(addWhitespace){programText+="\n\t"};
+
+	
+      //we've found a variable of type resource. Add a call ot update it to the progrma text!
+      var resourceBarName = "resourceBar" + numResources;
+      var resourceName = currentVariable.l[0];
+      var percentName = "percent" + numResources;
+      if(addWhitespace){programText+="\n\t"};
+      programText += "var " + percentName + " = " + resourceName + "/10;";
+      if(addWhitespace){programText+="\n\t"};
+      programText += percentName + " = " + percentName + " * 100;";
+      if(addWhitespace){programText+="\n\t"};
+      programText += "this."+resourceBarName+".setPercent("+percentName+");";
       if(addWhitespace){programText+="\n\t"};
       numResources += 1; // update at end, we want the first bar to have a count of zero.
     }

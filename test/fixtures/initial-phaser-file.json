@@ -445,7 +445,7 @@
       "  //  Stroke color and thickness",
       "  text.stroke = '#000000';",
       "  text.strokeThickness = 3;",
-      "  text.fill = '#556b2f';",
+      "  text.fill = '#000000';",
       "}"
     ]
   }

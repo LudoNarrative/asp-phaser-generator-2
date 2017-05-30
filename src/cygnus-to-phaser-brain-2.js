@@ -797,11 +797,11 @@ var changeToSetValue = function(assert){
   }
   else if (oldRelation=="increase_over_time"){
     newRightA["relation"]="set_value";
-    newRightA["r"]=[newRightA["l"][0]+"+"+oldRight+"*this.game.time.elapsed/1000.0"];
+    newRightA["r"]=[newRightA["l"][0]+"+"+oldRight+"*this.game.time.elapsed/3840.0"];
   }
   else if (oldRelation=="decrease_over_time"){
     newRightA["relation"]="set_value";
-    newRightA["r"]=[newRightA["l"][0]+"-"+oldRight+"*this.game.time.elapsed/1000.0"];
+    newRightA["r"]=[newRightA["l"][0]+"-"+oldRight+"*this.game.time.elapsed/3840.0"];
   }
   else {
     newRightA["relation"]=oldRelation;
