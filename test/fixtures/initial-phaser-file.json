@@ -98,6 +98,12 @@
     "value":50
   },
   {
+    "l":["lossTextDisplayed"],
+    "relation":"instance_of",
+    "r":["variable"],
+    "value":false
+  },
+  {
     "l":["circle"],
     "relation":"instance_of",
     "r":["sprite"],
@@ -355,7 +361,19 @@
     "relation":"instance_of",
     "r":["function"],
     "params":["newMode"],
-    "lines":["if(newMode==='game_win'){mode = 'win'; game.world.removeAll(); displayText('CLEARED');}","else if(newMode==='game_loss'){mode='loss'; game.stage.backgroundColor = '#400'; displayText('(Loss State Reached)');}"]
+    "lines":["if(newMode==='game_win'){",
+      " mode = 'win';",
+      " game.world.removeAll();",
+      " displayText('CLEARED');",
+      "}",
+      "else if(newMode==='game_loss'){",
+      " mode='loss';",
+      " game.stage.backgroundColor = '#400';",
+      " if(!lossTextDisplayed){",
+      "   displayText('(Loss State Reached)');",
+      "   lossTextDisplayed=true",
+      " }",
+      "}"]
   },
   {
     "l":["displayText"],
