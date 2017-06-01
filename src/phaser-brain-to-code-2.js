@@ -335,7 +335,7 @@ var addResourceBarCreateCalls = function(programText, variableValues){
       if(addWhitespace){programText+="\n\t"};
       programText += percentName + " = " + percentName + " * 100;";
       if(addWhitespace){programText+="\n\t"};
-      programText += "this."+resourceBarName+".setPercent("+percentName+");";
+      programText += "this."+resourceBarName+".setPercentNow("+percentName+");";
       if(addWhitespace){programText+="\n\t"};
       numResources += 1; // update at end, we want the first bar to have a count of zero.
     }
