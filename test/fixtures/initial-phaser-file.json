@@ -429,7 +429,7 @@
     "lines":[
       "var barConfig = {};",
       "var barHeight = 18;",
-      "var barWidth = 100;",
+      "var barWidth = 150;",
       "barConfig.height = barHeight;",
       "barConfig.width = barWidth;",
       "barConfig.x = 100 + (10 * resourceCount) + (barWidth * resourceCount);",
@@ -457,12 +457,13 @@
       "  text.align = 'center';",
       "  //  Font style",
       "  text.font = 'Arial Black';",
-      "  text.fontSize =12;",
-      "  text.fontWeight = 'normal';",
-      "  text.width = barWidth;",
+      "  text.fontSize =16;",
+      "  text.fontWeight = 'bold';",
+      "  //text.width = barWidth;",
+      "  //text.height = barHeight;",
       "  //  Stroke color and thickness",
       "  text.stroke = '#000000';",
-      "  text.strokeThickness = 3;",
+      "  text.strokeThickness = 1;",
       "  text.fill = '#000000';",
       "}"
     ]
