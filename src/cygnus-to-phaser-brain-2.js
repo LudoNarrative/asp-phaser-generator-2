@@ -895,6 +895,10 @@ var isDenotesAssertion = function(a){
   return isRelationType(a,"denotes")
 }
 
+var isLookAtAssertion = function(a){
+  return isRelationType(a, "look_at");
+}
+
 var isMotionAssertion = function(a){
   return (
       isRelationType(a,"move_towards") ||
@@ -943,6 +947,7 @@ return {
   isMotionAssertion : isMotionAssertion,
   isUpdateValueAssertion : isUpdateValueAssertion,
   isVariableTypeAssertion : isVariableTypeAssertion,
-  isLabelAssertion : isLabelAssertion
+  isLabelAssertion : isLabelAssertion,
+  isLookAtAssertion : isLookAtAssertion
 }
 });

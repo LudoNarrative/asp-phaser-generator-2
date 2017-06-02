@@ -3,7 +3,8 @@ var fs = require('fs');
 var AspPhaserGenerator = require('./index');
 
 //var aspGame = fs.readFileSync('./test/fixtures/timerTest.lp', 'utf8');
-var aspGame = fs.readFileSync('./test/fixtures/dinner__17.lp', 'utf8');
+var aspGame = fs.readFileSync('./test/fixtures/look_at-theFirst.lp', 'utf8');
+//var aspGame = fs.readFileSync('./test/fixtures/games-5-26/games-5_36/lecture_5_26_11.lp', 'utf8');
 var initialPhaserFile = fs.readFileSync('./test/fixtures/initial-phaser-file.json', 'utf8');
 
 //apparantly we need to use JSON.parse now; if we don't, initialPhaserFile gets interpreted as a string.

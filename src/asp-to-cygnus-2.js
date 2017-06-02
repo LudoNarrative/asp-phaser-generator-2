@@ -304,6 +304,10 @@ function translateAdd(terms){
   }
 }
 
+function translateLookAt(terms){
+  return {"l":[terms[0].terms[0].predicate], "relation":"look_at", "r":[terms[1].terms[0].predicate], "choice":terms[2].predicate}
+}
+
 // Example: delete(entity(e1)) >> e1 action delete
 function translateDelete(terms){
   var name = terms[0].terms[0].predicate;
@@ -697,6 +701,9 @@ var addNormalResult = function(rs, results){
     // TODO: add more if statements for simple translates (like "translateAdd") here as needed
     if (e=="add"){
       rs.push(translateAdd(fList));
+    }
+    else if(e=="look_at"){
+      rs.push(translateLookAt(fList));
     }
     else if (e=="decrease_over_time"){
       rs.push(translateDecreaseOverTime(fList));
