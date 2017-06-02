@@ -325,7 +325,7 @@ var addResourceBarCreateCalls = function(programText, variableValues){
       programText += "addBarLabel(" + barConfigName + ", " + numResources + ", labels['" + resourceName + "']);"
 	if(addWhitespace){programText+="\n\t"};
 
-	
+	/*
       //we've found a variable of type resource. Add a call ot update it to the progrma text!
       var resourceBarName = "resourceBar" + numResources;
       var resourceName = currentVariable.l[0];
@@ -337,7 +337,9 @@ var addResourceBarCreateCalls = function(programText, variableValues){
       if(addWhitespace){programText+="\n\t"};
       programText += "this."+resourceBarName+".setPercentNow("+percentName+");";
       if(addWhitespace){programText+="\n\t"};
+	  */
       numResources += 1; // update at end, we want the first bar to have a count of zero.
+	  
     }
   }
   return programText;
