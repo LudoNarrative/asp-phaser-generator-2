@@ -1247,30 +1247,30 @@ var translateLookAtAssertion = function(a){
   //str += "//Let's do it again in the function: " , JSON.stringify(a, null, 4);
   //str += "//AM I EVEN BEING ADDED TO WHERE I HOPE I AM MAYBE? I want " + e1 + " to look at " + e2;
   //str += "//don't forget this equation: O.angle = Math.atan2(Other.y- E.y, Other.x - E.x);"
-  str += "//Make all instances of "+e1+"look at an instance of " + e2 + " using choice parameter: " + choice;
+  str += "\t//Make all instances of "+e1+"look at an instance of " + e2 + " using choice parameter: " + choice;
   //str += "//\n\tvar newAngle = Math.atan2(addedEntities['e_1_XX_'].y - addedEntities['e_2_XX_'], addedEntities['e_1_XX_'].x - addedEntities['e_2_XX_'].x);"
-  str += "\n\taddedEntities['"+e1+"'].forEach(function(lookerItem) {";
-  str += "\n\tvar curBestDistance = undefined;";
-  str += "\n\tvar curBestIndex = -1;";
-  str += "\n\tvar curIndex = 0;";
+  str += "\n\t\taddedEntities['"+e1+"'].forEach(function(lookerItem) {";
+  str += "\n\t\t\tvar curBestDistance = undefined;";
+  str += "\n\t\t\tvar curBestIndex = -1;";
+  str += "\n\t\t\tvar curIndex = 0;";
   if(choice === "furthest" || choice === "closest"){
-    str += "\n\taddedEntities['"+e2+"'].forEach(function(lookedAtItem){";
-    str += "\n\t\tvar distance = Phaser.Math.distance(lookerItem.x, lookerItem.y, lookedAtItem.x, lookedAtItem.y);";
-    str += "\n\t\tvar index;";
+    str += "\n\t\t\taddedEntities['"+e2+"'].forEach(function(lookedAtItem){";
+    str += "\n\t\t\t\tvar distance = Phaser.Math.distance(lookerItem.x, lookerItem.y, lookedAtItem.x, lookedAtItem.y);";
+    str += "\n\t\t\t\tvar index;";
     if(choice === "furthest"){
-      str += "\n\t\tif(curBestDistance === undefined || curBestDistance < distance){"
+      str += "\n\t\t\t\tif(curBestDistance === undefined || curBestDistance < distance){"
     }
     else if(choice === "closest"){
-      str += "\n\t\tif(curBestDistance === undefined || curBestDistance > distance){"
+      str += "\n\t\t\t\tif(curBestDistance === undefined || curBestDistance > distance){"
     }
-    str += "\n\t\t\tcurBestIndex = curIndex;";
-    str += "\n\t\t\tcurBestDistance = distance;";
-    str += "\n\t\t}"
-    str += "\n\t\tcurIndex += 1;";
-    str += "\n\t},this);"
+    str += "\n\t\t\t\t\tcurBestIndex = curIndex;";
+    str += "\n\t\t\t\t\tcurBestDistance = distance;";
+    str += "\n\t\t\t\t}"
+    str += "\n\t\t\t\tcurIndex += 1;";
+    str += "\n\t\t\t},this);"
   }
   else if(choice ==="random"){
-    str += "\n\tcurBestIndex = Math.floor(Math.random() * (addedEntities['"+e2+"'].length));"; 
+    str += "\n\t\t\tcurBestIndex = Math.floor(Math.random() * (addedEntities['"+e2+"'].length));"; 
   }
   else{
     console.log("ERROR: UNRECOGNIZED VALUE FOR CHOICE IN look_at COMMAND");
@@ -1278,11 +1278,12 @@ var translateLookAtAssertion = function(a){
 
   //we care about 
   //str += "\n\tconsole.log('BEST INDEX IS:',curBestIndex,'with a distance of: ', curBestDistance);";
-  str += "\n\tvar targetItem = addedEntities['"+e2+"'].children[curBestIndex];";
+  str += "\n\t\t\tvar targetItem = addedEntities['"+e2+"'].children[curBestIndex];";
   //str += "\n\tvar newAngle = Math.atan2(game.input.mousePointer.y - item.y, game.input.mousePointer.x - item.x);"
-  str += "\n\tvar newAngle = Math.atan2(targetItem.y - lookerItem.y, targetItem.x - lookerItem.x);"  
-  str += "\n\tlookerItem.angle = newAngle";
-  str += "\n\t},this)";
+  str += "\n\t\t\tvar newAngle = Math.atan2(targetItem.y - lookerItem.y, targetItem.x - lookerItem.x);"  
+  str += "\n\t\t\tnewAngle = newAngle * (180/Math.PI); //convert from radians to degrees."; 
+  str += "\n\t\t\tlookerItem.angle = newAngle;";
+  str += "\n\t\t},this);";
 
 
 
