@@ -3,7 +3,7 @@ var fs = require('fs');
 var AspPhaserGenerator = require('./index');
 
 //var aspGame = fs.readFileSync('./test/fixtures/timerTest.lp', 'utf8');
-var aspGame = fs.readFileSync('./test/fixtures/dinner_11-offendingClickFile-modified.lp', 'utf8');
+var aspGame = fs.readFileSync('./test/fixtures/dinner_11-offendingClickFile.lp', 'utf8');
 //var aspGame = fs.readFileSync('./test/fixtures/games-5-26/games-5_36/lecture_5_26_11.lp', 'utf8');
 
 
