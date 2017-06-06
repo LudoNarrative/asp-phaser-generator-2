@@ -579,6 +579,7 @@ var updateProgramConditional = function(newBrain, cygnusBrain, newProgram,i){
     newRight = getNewConclusions(newRight,cygnusBrain.assertions[i]["r"]);
 
     newProgram[clickListenFn] = {};
+    newProgram[clickListenFn]["params"] = [];
     newProgram[clickListenFn]["outcomes"] = [];
 
     var newAssert2 = {
@@ -589,9 +590,13 @@ var updateProgramConditional = function(newBrain, cygnusBrain, newProgram,i){
     if (goal_keyword != undefined){
       newAssert2["goal_keyword"]=goal_keyword;
     }
+
     newProgram[clickListenFn]["outcomes"].push(newAssert2);
+    newProgram[clickListenFn]["params"].push(["clickedOnObject"]); //the object that was clicked on.
+    newProgram[clickListenFn]["params"].push(["pointer"]); //the pointer that clicked the object
     // Push the old assertion into the brain anyway.  This lets us update coordinates.
     newBrain.addAssertion(cygnusBrain.assertions[i]);
+
   }
   // e.g. e1 overlaps e2 or e1 not_overlaps e2
   else if ((isOverlapConditional && overlapAssertion!=null) || (isNotOverlapConditional && notOverlapAssertion!=null)){
@@ -666,6 +671,7 @@ var updateProgramConditional = function(newBrain, cygnusBrain, newProgram,i){
       "relation":"causes",
       "r": newRight
     };
+
     if (goal_keyword != undefined){
       newAssert2["goal_keyword"]=goal_keyword;
     }

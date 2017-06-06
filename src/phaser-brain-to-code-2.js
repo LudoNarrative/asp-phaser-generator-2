@@ -1028,10 +1028,13 @@ var translateDeleteSpriteAssertion = function(b, a){
   //str += "e1.deleted = true";
 
   if (addWhitespace){str+="\n";}
-  str += "\tif (e1.key === '" + entity + "'){\n\t\te1.deleted = true;\n\t}";
+  str += "\tif (typeof e1 !== \'undefined\' && e1.key === '" + entity + "'){\n\t\te1.deleted = true;\n\t}";
   if (addWhitespace){str+="\n";}
-  str += "\tif (e2.key === '" + entity + "'){\n\t\te2.deleted = true;\n\t}";
+  str += "\tif (typeof e2 !== \'undefined\' && e2.key === '" + entity + "'){\n\t\te2.deleted = true;\n\t}";
   if (addWhitespace){str+="\n";}
+  //check if we are in a click handler.
+  str += "\tif (typeof clickedOnObject !== \'undefined\'){\n\t\tclickedOnObject.deleted = true;\n\t}";
+
 
   if (addWhitespace){str+="\n";}
   return str;
