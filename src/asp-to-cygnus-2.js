@@ -305,7 +305,22 @@ function translateAdd(terms){
 }
 
 function translateLookAt(terms){
-  return {"l":[terms[0].terms[0].predicate], "relation":"look_at", "r":[terms[1].terms[0].predicate], "choice":terms[2].predicate}
+  //lookAt can either be looking at an entity or a cursor!
+  var rensaObject = {};
+
+  rensaObject.l = [terms[0].terms[0].predicate];
+  rensaObject.relation = "look_at";
+  if(terms[1].predicate !== undefined && terms[1].predicate === "cursor"){
+    //we are dealing with a cursor object.
+    rensaObject.r = [terms[1].predicate]
+  }
+  else{
+    rensaObject.r = [terms[1].terms[0].predicate];
+  }
+  rensaObject.choice = terms[2].predicate;
+  return rensaObject;
+  
+  //return {"l":[terms[0].terms[0].predicate], "relation":"look_at", "r":[terms[1].terms[0].predicate], "choice":terms[2].predicate}
 }
 
 // Example: delete(entity(e1)) >> e1 action delete
