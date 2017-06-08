@@ -338,7 +338,7 @@
     "relation":"instance_of",
     "r":["function"],
     "params":["group"],
-    "lines":["group.forEach(function(item) {","item.deleted=false;","item.body.collideWorldBounds = true;","item.anchor.x = 0.5;","item.anchor.y = 0.5;","item.rotation = 0;","if (!item.body.velocity.hasOwnProperty('x')){item.body.velocity.x=0;}","if (!item.body.velocity.hasOwnProperty('y')){item.body.velocity.y=0;}","if (!item.body.hasOwnProperty('angularVelocity')){item.body.angularVelocity=0;}","}, this);"]
+    "lines":["group.forEach(function(item) {","item.deleted=false;","item.body.collideWorldBounds = true;","item.anchor.x = 0.5;","item.anchor.y = 0.5;","item.rotation = 0;","item.health = 100;","if (!item.body.velocity.hasOwnProperty('x')){item.body.velocity.x=0;}","if (!item.body.velocity.hasOwnProperty('y')){item.body.velocity.y=0;}","if (!item.body.hasOwnProperty('angularVelocity')){item.body.angularVelocity=0;}","}, this);"]
   },
   {
     "l":["initEntity"],
@@ -351,6 +351,7 @@
       "item.anchor.x = 0.5;",
       "item.anchor.y = 0.5;",
       "item.rotation = 0;",
+      "item.health = 100;",
       "if (!item.body.velocity.hasOwnProperty('x')){item.body.velocity.x=0;}",
       "if (!item.body.velocity.hasOwnProperty('y')){item.body.velocity.y=0;}",
       "if (!item.body.hasOwnProperty('angularVelocity')){item.body.angularVelocity=0;}"
@@ -465,6 +466,24 @@
       "  text.stroke = '#000000';",
       "  text.strokeThickness = 1;",
       "  text.fill = '#000000';",
+      "}"
+    ]
+  },
+  {
+    "l":["markZeroHealthEntitiesForDeletion"],
+    "relation":"instance_of",
+    "r":["function"],
+    "params":[],
+    "lines":[
+      "for(var k in addedEntities) {",
+      " if (addedEntities.hasOwnProperty(k)) {",
+      "   var entity = addedEntities[k];",
+      "   entity.forEach(function(item) {",
+      "     if(item.health <= 0){",
+      "       item.deleted = true;",
+      "     }",
+      "   }, this);",
+      " }",
       "}"
     ]
   }

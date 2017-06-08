@@ -110,6 +110,7 @@ var writePhaserProgram = function(brain){
             //programText = addResourceBarUpdateCalls(programText, variableValues)
             programText = addResourceBarCreateCalls(programText, variableValues);
           }
+          
 
           if (p==="update"){
             programText = addResourceValueClamping(programText, variableValues)
@@ -117,6 +118,9 @@ var writePhaserProgram = function(brain){
           
           if (p==="update"){
             programText = addResourceBarUpdateCalls(programText, variableValues)
+          }
+          if (p==="update"){
+            programText = addDefaultPropertyChecks(programText);
           }
           
 
@@ -301,6 +305,15 @@ var addResourceBarUpdateCalls = function(programText, variableValues){
     }
   }
   return programText;
+}
+
+var addDefaultPropertyChecks = function(programText){
+
+  if(addWhitespace){programText+="\n\t"};
+  programText += "markZeroHealthEntitiesForDeletion();";
+  if(addWhitespace){programText+="\n\t"};
+
+  return programText
 }
 
 var addResourceBarCreateCalls = function(programText, variableValues){
