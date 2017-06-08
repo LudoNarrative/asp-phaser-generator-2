@@ -16,6 +16,7 @@ var goals;
 // Input: Phaser abstract syntax (brain).
 // Output: Phaser program (string).
 var writePhaserProgram = function(brain){
+
   // This string variable will contain the Phaser code.
   var programText = "";
 

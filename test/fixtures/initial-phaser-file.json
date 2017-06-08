@@ -423,6 +423,16 @@
     ]
   },
   {
+    "l":["random_int"],
+    "relation":"instance_of",
+    "r":["function"],
+    "params":["min", "max"],
+    "lines":[
+      "var random_integer = Math.random()*(max+1)|min;",
+      "return random_integer;"
+    ]
+  },
+  {
     "l":["createProgressBarConfig"],
     "relation":"instance_of",
     "r":["function"],

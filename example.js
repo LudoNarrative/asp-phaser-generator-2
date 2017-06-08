@@ -5,8 +5,8 @@ var AspPhaserGenerator = require('./index');
 //var aspGame = fs.readFileSync('./test/fixtures/timerTest.lp', 'utf8');
 //var aspGame = fs.readFileSync('./test/fixtures/games-6-5/compiler_test/property-overlaps.lp', 'utf8');
 //var aspGame = fs.readFileSync('./test/fixtures/games-6-5/compiler_test/property.lp', 'utf8');
-var aspGame = fs.readFileSync('./test/fixtures/games-6-5/compiler_test/property-clickHandler.lp', 'utf8');
-//var aspGame = fs.readFileSync('./test/fixtures/games-6-5/compiler_test/random_int.lp', 'utf8');
+//var aspGame = fs.readFileSync('./test/fixtures/games-6-5/compiler_test/property-clickHandler.lp', 'utf8');
+var aspGame = fs.readFileSync('./test/fixtures/games-6-5/compiler_test/random_int2.lp', 'utf8');
 
 //var aspGame = fs.readFileSync('./test/fixtures/games-5-26/games-5_36/lecture_5_26_11.lp', 'utf8');
 

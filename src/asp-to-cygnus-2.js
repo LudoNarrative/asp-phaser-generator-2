@@ -681,6 +681,17 @@ var translateUpdatePrecondition = function(preconds,results,keyword){
       var a = p.substring(0,start);
       var bList = p.substring(start+1, mid).split(",");
 
+      //there is a chance that bList is not good, because we split on "," and sometimes there are "single terms"
+      //that have commas in them (e.g., random_int(num1,num2))
+      //I guess we're gonna do some munging to try and preserve those combos?
+      for(var k = 0; k < bList.length; k += 1){
+        if(bList[k].indexOf("random_int") >= 0){
+          //ok, we want to merge the value at index k with the value at index k+1
+          bList[k] = bList[k] + "," + bList[k+1];
+          bList.splice(k+1, 1);
+        }
+      }
+
       // Push this precondition into our final array of all preconditions.
       ps = addNormalPrecond(ps, bList, a);
     }
@@ -712,8 +723,16 @@ var addNormalPrecond = function(ps, bList, a){
     }
   }
   else if (bList.length==2){ // B = bList[0], C = bList[1]
-    var left = parseTerms(bList[0])[0][0].terms[0].predicate;
-    var right = parseTerms(bList[1])[0][0].terms[0].predicate;
+    var left = parseTerms(bList[0]);
+    left = left[0][0].terms[0].predicate;
+    var right = parseTerms(bList[1]);
+    if(right[0][0].predicate === "random_int"){
+      right = "random_int(" + right[0][0].terms[0].predicate + "," + right[0][0].terms[1].predicate + ")";
+    }
+    else{
+      right = right[0][0].terms[0].predicate;
+    }
+  
     ps.push({"l":[left],"relation":a,"r":[right]});
   }
   else if (bList.length==3){
