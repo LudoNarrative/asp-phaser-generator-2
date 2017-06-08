@@ -191,9 +191,18 @@ function translateIncrease(terms){
 /*
 Examples:
   increase(resource(r1),scalar(6)) >> r1 increase 6
+  increase_over_time(property(entity(e1),health),scalar(1)) >> increase e1's health property by 1.
 */
 function translateIncreaseOverTime(terms){
-  return translateSimpleTriple2("increase_over_time",terms);
+  if(terms[0].predicate === "property"){
+    //we are increasing or decreasing a property of an entity.
+    return translatePropertyChangeOverTime("increase_over_time",terms);
+  }
+  else{
+    //we are simply increasing or decreasing a resource
+    return translateSimpleTriple2("increase_over_time",terms);
+  }
+  //return translateSimpleTriple2("increase_over_time",terms);
 }
 
 /*
@@ -207,9 +216,17 @@ function translateDecrease(terms){
 /*
 Examples:
   increase(resource(r1),scalar(6)) >> r1 increase 6
+  decrease_over_time(property(entity(e1),health),scalar(1)) >> reduce e1's health property by 1.
 */
 function translateDecreaseOverTime(terms){
-  return translateSimpleTriple2("decrease_over_time",terms);
+  if(terms[0].predicate === "property"){
+    //we are increasing or decreasing a property of an entity.
+    return translatePropertyChangeOverTime("decrease_over_time",terms);
+  }
+  else{
+    //we are simply increasing or decreasing a resource
+    return translateSimpleTriple2("decrease_over_time",terms);
+  }
 }
 
 /*
@@ -286,6 +303,21 @@ function translateMoveToOrAway(rel, terms){
   // var y = point + ".y";
   // return {"l":[name],"relation":rel,"r":[x,y],"num_r":[amount]};
   return {"l":[name],"relation":rel,"r":[point],"num_r":[amount]};
+}
+
+function translatePropertyChangeOverTime(rel, terms){
+  var returnHelper = {};
+  var entityName = terms[0].terms[0].terms[0].predicate;
+  var propertyName = terms[0].terms[1].predicate;
+  
+  var changeAmount = terms[1].terms[0].predicate;
+  returnHelper.l = [entityName];
+  returnHelper.relation = rel;
+  returnHelper.r = [changeAmount];
+  returnHelper.property = propertyName;
+  return returnHelper;
+
+
 }
 
 /*

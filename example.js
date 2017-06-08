@@ -3,9 +3,11 @@ var fs = require('fs');
 var AspPhaserGenerator = require('./index');
 
 //var aspGame = fs.readFileSync('./test/fixtures/timerTest.lp', 'utf8');
-var aspGame = fs.readFileSync('./test/fixtures/look_at-theFirst.lp', 'utf8');
+var aspGame = fs.readFileSync('./test/fixtures/games-6-5/compiler_test/property-benModified2.lp', 'utf8');
 //var aspGame = fs.readFileSync('./test/fixtures/games-5-26/games-5_36/lecture_5_26_11.lp', 'utf8');
 
+///test/fixtures/games-5-26/games-5_36/dinner_5_26_1.lp -- precondition(tick,tick).
+//var aspGame = fs.readFileSync('./test/fixtures/games-5-26/games-5_36/dinner_5_26_1.lp', 'utf8');
 
 //testing clicking stuff.
 

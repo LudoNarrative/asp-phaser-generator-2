@@ -531,12 +531,18 @@ var translateSetValue = function(a){
         // Find property2
         property2 = names[1];
 
-        /* CASE 1: If e1.property = e2.property's value, */
-        str+="addedEntities['"+entity1+"'].forEach(function(item){";
-        if(addWhitespace){str+="\n"};
-        str+="addedEntities['"+entity2+"'].forEach(function(item2){";
-        if(addWhitespace){str+="\n"};
-        str+="item." + property1 + " =item2."+property2+";}, this);}, this);"
+        if(entity1 !== entity2){
+          /* CASE 1: If e1.property = e2.property's value, */
+          str+="addedEntities['"+entity1+"'].forEach(function(item){";
+          if(addWhitespace){str+="\n"};
+          str+="addedEntities['"+entity2+"'].forEach(function(item2){";
+          if(addWhitespace){str+="\n"};
+          str+="item." + property1 + " =item2."+property2+";}, this);}, this);"
+        }
+        else{
+          /* CASE 1.5: if e1.property  = modified value of e1 (e.g. e1.health = e1.health - 1) */
+          str="addedEntities['"+entity1+"'].forEach(function(item){item." + property1 + " = item."+property2+";}, this);";
+        }
       }
       /* CASE 2: If e1.property = some_known_var_or_value, */
       else{

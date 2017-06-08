@@ -787,6 +787,14 @@ var getNewConclusions = function(newRight, asserts){
 var changeToSetValue = function(assert){
   var newRightA ={};
   newRightA["l"]=assert["l"];
+  
+  //if we are updating a property, handle that here.
+  if(assert["property"] !== undefined){
+    newRightA = {};
+    var property = assert["property"];
+
+    newRightA["l"]=[assert["l"] +"."+property];
+  }
 
   // Here are the "old" values from the cygnus brain corresponding to the right attribute.
   var oldRelation = assert["relation"];
@@ -803,11 +811,13 @@ var changeToSetValue = function(assert){
   }
   else if (oldRelation=="increase_over_time"){
     newRightA["relation"]="set_value";
-    newRightA["r"]=[newRightA["l"][0]+"+"+oldRight+"*this.game.time.elapsed/3840.0"];
+    //newRightA["r"]=[newRightA["l"][0]+"+"+oldRight+"*this.game.time.elapsed/3840.0"];
+    newRightA["r"]=[newRightA["l"][0]+"+"+oldRight];
   }
   else if (oldRelation=="decrease_over_time"){
     newRightA["relation"]="set_value";
-    newRightA["r"]=[newRightA["l"][0]+"-"+oldRight+"*this.game.time.elapsed/3840.0"];
+    //newRightA["r"]=[newRightA["l"][0]+"-"+oldRight+"*this.game.time.elapsed/3840.0"];
+    newRightA["r"]=[newRightA["l"][0]+"-"+oldRight];
   }
   else {
     newRightA["relation"]=oldRelation;
