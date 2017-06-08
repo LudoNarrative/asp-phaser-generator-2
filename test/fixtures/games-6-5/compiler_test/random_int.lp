@@ -8,6 +8,6 @@ resource(r1).
 initialize(add(entity(e1),scalar(1),location(top,right))).
 initialize(set_value(resource(r1),scalar(5))).
 
-precondition(ge(resource(r1),random_int(10),outcome(should_happen)).
+precondition(ge(resource(r1),random_int(10)),outcome(should_happen)).
 precondition(control_event(click(entity(e1))),outcome(should_happen)).
 result(outcome(should_happen),add(entity(e1),scalar(1),location(bottom,left))).

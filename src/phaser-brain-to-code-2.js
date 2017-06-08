@@ -541,7 +541,12 @@ var translateSetValue = function(a){
         }
         else{
           /* CASE 1.5: if e1.property  = modified value of e1 (e.g. e1.health = e1.health - 1) */
-          str="addedEntities['"+entity1+"'].forEach(function(item){item." + property1 + " = item."+property2+";}, this);";
+          if(a.handler !== undefined && a.handler.indexOf("ClickListener") >= 0){
+            str="clickedOnObject."+property1+"=clickedOnObject."+property2;
+          }
+          else{
+            str="addedEntities['"+entity1+"'].forEach(function(item){item." + property1 + " = item."+property2+";}, this);";
+          }
         }
       }
       /* CASE 2: If e1.property = some_known_var_or_value, */

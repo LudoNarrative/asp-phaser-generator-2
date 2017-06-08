@@ -81,7 +81,7 @@ function translateASP(lines){
         // At this time, if a tick precondition occurs, there are no other preconditions in the group.  If this changes, we will need to alter how this works.
         else{
           results = findResults(lines, "tick");
-
+          //TODO: I THINK WE NEED TO SET preconds = TO SOMETHING HERE, OTHERWISE IT COMPLAINS ABOUT NOT KNOWING WHAT PRECONDS ARE.
           assertionsToAdd = translateTickPrecondition(results);
         }
 
@@ -767,6 +767,9 @@ var addNormalResult = function(rs, results){
     // Push this result into our final array of all results.
     else if (fList.length==2){
       var zTerms = newTranslateNested(fList[0].terms[0]);
+      if(fList[0].predicate === "property"){
+        zTerms = fList[0].terms[0].terms[0].predicate + "." + fList[0].terms[1].predicate;
+      }
       if (e=="set"){
         e="set_value";
         rs.push({"l":[zTerms],"relation":e,"r":[oTerms]});

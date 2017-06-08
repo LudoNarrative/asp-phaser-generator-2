@@ -577,6 +577,10 @@ var updateProgramConditional = function(newBrain, cygnusBrain, newProgram,i){
     */
     newLeft = getNewHypotheses(newLeft, cygnusBrain.assertions[i]["l"]);
     newRight = getNewConclusions(newRight,cygnusBrain.assertions[i]["r"]);
+    
+    for(var k = 0; k < newRight.length; k++){
+      newRight[k].handler = clickListenFn; // we're gonna store this in 'right' even though it feels wrong.
+    }
 
     newProgram[clickListenFn] = {};
     newProgram[clickListenFn]["params"] = [];
@@ -753,6 +757,10 @@ var getNewHypotheses = function(newLeft, assert){
       if (!rensa.arraysEqual(oldRight,["click_listener"])){
         var newLeftA =  {"l":oldLeft,"relation":oldRelation,"r":oldRight,"logicalOp":"&&"};
         newLeft.push(newLeftA);
+      }
+      else{
+        //I believe it is intentional that this block is empty, as we want click_listeners (and maybe others too?)
+        //to have an empty hypothesis. (i.e. we don't want to generate if statements for them)
       }
     }
   }
