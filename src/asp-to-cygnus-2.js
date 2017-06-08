@@ -398,7 +398,9 @@ function translateSetStatic(terms){
 // right = [0,360]
 function translateRotateTo(terms){
   var name = terms[0].terms[0].predicate;
-  var right = [parseInt(terms[1].terms[0].terms[0].predicate),parseInt(terms[1].terms[1].terms[0].predicate)]
+  //unit tests, at some point, stopped passing, because terms[1].terms[0].terms[0] did not exist (removed one level of depth to fix)
+  //var right = [parseInt(terms[1].terms[0].terms[0].predicate),parseInt(terms[1].terms[1].terms[0].predicate)]
+  var right = [parseInt(terms[1].terms[0].predicate),parseInt(terms[1].terms[1].predicate)]
   return {"l":[name],"relation":"rotate_to","r":right};
 }
 
