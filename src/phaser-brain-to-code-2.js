@@ -557,6 +557,13 @@ var translateSetValue = function(a){
           if(a.handler !== undefined && a.handler.indexOf("ClickListener") >= 0){
             str="clickedOnObject."+property1+"=clickedOnObject."+property2;
           }
+          else if(a.handler !== undefined && a.handler.indexOf("OverlapHandler") >= 0){
+              if (addWhitespace){str+="\n";}
+              str += "\tif (typeof e1 !== \'undefined\' && e1.key === '" + entity1 + "'){\n\t\te1."+property1+" = " + "e1."+property2+";\n\t}";
+              if (addWhitespace){str+="\n";}
+              str += "\tif (typeof e2 !== \'undefined\' && e2.key === '" + entity1 + "'){\n\t\te2."+property1+" = " + "e2."+property2+";\n\t}";
+              if (addWhitespace){str+="\n";}
+          }
           else{
             str="addedEntities['"+entity1+"'].forEach(function(item){item." + property1 + " = item."+property2+";}, this);";
           }

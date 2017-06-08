@@ -628,8 +628,14 @@ var updateProgramConditional = function(newBrain, cygnusBrain, newProgram,i){
 
     newRight = getNewConclusions(newRight,cygnusBrain.assertions[i]["r"]);
 
+
+
     var functionName = goal_keyword + fName;
     newProgram[functionName] = {};
+
+    for(var k = 0; k < newRight.length; k++){
+      newRight[k].handler = functionName; // we're gonna store this in 'right' even though it feels wrong.
+    }
 
     if (isNotOverlapConditional){
       newProgram[functionName]["params"] = [];
