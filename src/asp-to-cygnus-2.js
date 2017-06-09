@@ -22,6 +22,8 @@ function translateASP(lines){
   // we have already addressed/translated.
   var doneKeywords = [];
 
+  var preconds;
+
   // For each line,
   for (var i in lines){
     // Temporary variable that stores the new assertions to add based on the current line we're translating.

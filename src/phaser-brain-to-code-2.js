@@ -991,7 +991,7 @@ var translateMove = function(a, move_type){
     }
     else if (a["r"][0]==="west"){
       //str += "moves(item,-1,0);"
-      str += "moves(item,"+amount+",0);"
+      str += "moves(item,-"+amount+",0);"
     }
     else if (a["r"][0]==="northeast"){
       // move(entity, 0, -1);
