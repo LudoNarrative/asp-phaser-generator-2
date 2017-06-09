@@ -288,15 +288,15 @@
     "l":["move_towards"],
     "relation":"instance_of",
     "r":["function"],
-    "params":["e","dir"],
-    "lines":["e.body.velocity.x += dir.x;","e.body.velocity.y += dir.y;"]
+    "params":["e","dir","speed"],
+    "lines":["e.body.velocity.x += dir.x*speed/8;","e.body.velocity.y += dir.y*speed/8;"]
   },
   {
     "l":["move_away"],
     "relation":"instance_of",
     "r":["function"],
-    "params":["e","dir"],
-    "lines":["e.body.velocity.x -= dir.x;","e.body.velocity.y -= dir.y;"]
+    "params":["e","dir","speed"],
+    "lines":["e.body.velocity.x -= dir.x*speed/8;","e.body.velocity.y -= dir.y*speed/8;"]
   },
   {
     "l":["moves"],

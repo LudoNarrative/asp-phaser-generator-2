@@ -942,6 +942,13 @@ var translateMove = function(a, move_type){
   if (move_type==="move_towards" || move_type==="move_away"){
     // if a["r"][0]==="cursor", change it to to "game.input.mousePointer"
     var other = a["r"][0];
+    var speed;
+    if(a["num_r"] === undefined){
+      speed = 1; // default
+    }
+    else{
+      speed = a["num_r"][0];
+    } 
     if (other==="cursor"){
       other="game.input.mousePointer";
     }
@@ -958,7 +965,7 @@ var translateMove = function(a, move_type){
     if (addWhitespace){str+="\n\t\t";}
     str+="tempPoint.y *= 10;"
     if (addWhitespace){str+="\n\t\t";}
-    str+=move_type+"(item, tempPoint);";
+    str+=move_type+"(item, tempPoint, "+speed+");";
     if (addWhitespace){str+="\n";}
     if (other=="item2"){
       str+="}, this);"
