@@ -5,10 +5,10 @@ initialize(add(entity(e1),scalar(1),location(top,right))).
 initialize(add(entity(e2),scalar(1),location(bottom,right))).
 initialize(set_draggable(entity(e1),true)).
 
-initialize(set_sprite(entity(e1),circle)).
+initialize(set_sprite(entity(e1),triangle)).
 initialize(set_color(entity(e1),green)).
 
-initialize(set_sprite(entity(e2),circle)).
+initialize(set_sprite(entity(e2),triangle)).
 initialize(set_color(entity(e2),red)).
 
 precondition(overlaps(entity(e1),entity(e2),true),outcome(o1)).

@@ -727,14 +727,50 @@ var translateHasSpriteAssertion=function(b, a){
   // Find sprite image name.
   var spriteImgID = b.getAssertionsWith({"l":[a["r"][0]],"relation":"instance_of","r":["sprite"]});
 
+
+  var circleAssetNames = ["Circle_Outlined_GradientSwirl2.png", "Circle_Outlined_grid2.png", "Circle_Swirl_NegativeSpace.png", "Circle_grid2.png", "Circle_outergradient.png", "Circle_outlined_outergradient.png", "Circle_outlined_swirl2.png","Circle_pixels.png"];
+  var squareAssetNames = ["square.png", "square1.0.png", "square1.1.png","square2.0.png","square2.1.png","square2.2.png","square3.0.png","square3.1.png","square3.2.png"];
+  var starAssetNames = ["starCircleCut.png","starCircleCut2.png","starDiagonalLines.png","starDiagonalLines2.png","starGradientLinear.png","starGradientRadial.png","starGradientRadial2.png","starStyled01.png","starTriCuts.png"];
+  var pentagonAssetNames = ["pentagon.png","pentagon1.0.png","pentagon2.0.png","pentagon3.0.png","pentagon3.1.png"];
+  var triangleAssetNames = ["triangleCircleCut.png","triangleCircleCut2.png","triangleDiagonalLines.png","triangleDiagonalLines2.png","triangleLinearGradient.png","triangleRadialGradient.png","triangleStyled01.png","triangleStyled02.png"];
+
   // If the image name exists, add the appropriate preload message for the sprite.
   if (spriteImgID!=undefined && b.assertions[spriteImgID]!=undefined){
     if (b.assertions[spriteImgID]["image"]){
       var img = b.assertions[spriteImgID]["image"];
-      str+= "game.load.image('" + a["l"][0] + "','assets/sprites/"+img+"');"
+      var assetIndex = -999;
+      if(img === "circle.png"){
+        //dealing with circles
+        assetIndex = Math.floor(Math.random()*circleAssetNames.length);
+        str+= "game.load.image('" + a["l"][0] + "','assets/sprites/newArt/Circle/"+circleAssetNames[assetIndex]+"');"
+      }
+      else if(img === "triangle.png"){
+        //dealing with triangles
+        assetIndex = Math.floor(Math.random()*triangleAssetNames.length);
+        str+= "game.load.image('" + a["l"][0] + "','assets/sprites/newArt/Triangle/"+triangleAssetNames[assetIndex]+"');"
+      }
+      else if(img === "pentagon.png"){
+        //dealing with pentagons
+        assetIndex = Math.floor(Math.random()*pentagonAssetNames.length);
+        str+= "game.load.image('" + a["l"][0] + "','assets/sprites/newArt/Pentagon/"+pentagonAssetNames[assetIndex]+"');"
+      }
+      else if(img === "star.png"){
+        //dealing with stars
+        assetIndex = Math.floor(Math.random()*starAssetNames.length);
+        str+= "game.load.image('" + a["l"][0] + "','assets/sprites/newArt/Star/"+starAssetNames[assetIndex]+"');"
+      }
+      else if(img === "square.png"){
+        //dealing with squares.
+        assetIndex = Math.floor(Math.random()*squareAssetNames.length);
+        str+= "game.load.image('" + a["l"][0] + "','assets/sprites/newArt/Square/"+squareAssetNames[assetIndex]+"');"
+      }
+      else{
+        str+= "game.load.image('" + a["l"][0] + "','assets/sprites/"+img+"');"
+      }
       if (addWhitespace){str+="\n";}
     }
   }
+  //console.log("returning this image string: " , str);
   return str;
 }
 
