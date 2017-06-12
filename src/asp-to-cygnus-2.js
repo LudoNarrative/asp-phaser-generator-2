@@ -790,6 +790,8 @@ var addNormalResult = function(rs, results){
     // Push this result into our final array of all results.
     else if (fList.length==2){
       var zTerms = newTranslateNested(fList[0].terms[0]);
+      //console.log("fList is: " , JSON.stringify(fList, null, 4));
+      //console.log("zTerms: " , JSON.stringify(zTerms, null, 4));
       if(fList[0].predicate === "property"){
         zTerms = fList[0].terms[0].terms[0].predicate + "." + fList[0].terms[1].predicate;
       }
