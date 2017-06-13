@@ -5,6 +5,7 @@
   define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 // Change to false to remove whitespace from output.
 var addWhitespace = true;
+var maxEntityCount = 20;
 
 // Contains realized goals from the ASP code.
 var goals;
@@ -885,9 +886,15 @@ var translateAddSpriteAssertion=function(b,a){
   str+="y+=(Math.random() * 30) - 15;";
   if (addWhitespace){str+="\n\t\t";}
 
-  str+= "initEntity(addedEntities['"+entityName+"'].create(x,y,'"+entityName+"'));"
+  // (make sure that we aren't over populating the screen!)
   if (addWhitespace){str+="\n\t\t";}
+  str+= "if(addedEntities['"+entityName+"'].length < " + maxEntityCount + "){"
+  if (addWhitespace){str+="\n\t\t\t";}
+  str+= "initEntity(addedEntities['"+entityName+"'].create(x,y,'"+entityName+"'));"
+  if (addWhitespace){str+="\n\t\t\t";}
   str+= "updateGrid();";
+  if (addWhitespace){str+="\n\t\t";}
+  str += "}";
   if (addWhitespace){str+="\n\t\t";}
   str+="}";
 
