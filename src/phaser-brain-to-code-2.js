@@ -1341,14 +1341,14 @@ var translateLookAtAssertion = function(a){
     str += "\n\t\t\tvar curBestDistance = undefined;";
     str += "\n\t\t\tvar curBestIndex = -1;";
     str += "\n\t\t\tvar curIndex = 0;";
-    if(choice === "furthest" || choice === "closest"){
+    if(choice === "furthest" || choice === "closest" || choice === "nearest"){
       str += "\n\t\t\taddedEntities['"+e2+"'].forEach(function(lookedAtItem){";
       str += "\n\t\t\t\tvar distance = Phaser.Math.distance(lookerItem.x, lookerItem.y, lookedAtItem.x, lookedAtItem.y);";
       str += "\n\t\t\t\tvar index;";
       if(choice === "furthest"){
         str += "\n\t\t\t\tif(curBestDistance === undefined || curBestDistance < distance){"
       }
-      else if(choice === "closest"){
+      else if(choice === "closest" || choice === "nearest"){
         str += "\n\t\t\t\tif(curBestDistance === undefined || curBestDistance > distance){"
       }
       str += "\n\t\t\t\t\tcurBestIndex = curIndex;";

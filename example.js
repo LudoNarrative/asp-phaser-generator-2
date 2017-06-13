@@ -3,11 +3,11 @@ var fs = require('fs');
 var AspPhaserGenerator = require('./index');
 
 
-//var aspGame = fs.readFileSync('./test/fixtures/dean_15.lp', 'utf8');
+var aspGame = fs.readFileSync('./test/fixtures/dean_20.lp', 'utf8');
 
 
 //var aspGame = fs.readFileSync('./test/fixtures/timerTest.lp', 'utf8');
-var aspGame = fs.readFileSync('./test/fixtures/games-6-5/compiler_test/property-overlaps.lp', 'utf8');
+//var aspGame = fs.readFileSync('./test/fixtures/games-6-5/compiler_test/property-overlaps.lp', 'utf8');
 //var aspGame = fs.readFileSync('./test/fixtures/games-6-5/compiler_test/property.lp', 'utf8');
 //var aspGame = fs.readFileSync('./test/fixtures/games-6-5/compiler_test/property-clickHandler.lp', 'utf8');
 //var aspGame = fs.readFileSync('./test/fixtures/games-6-5/compiler_test/random_int2.lp', 'utf8');
