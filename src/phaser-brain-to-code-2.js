@@ -862,18 +862,51 @@ var translateAddSpriteAssertion=function(b,a){
     str+="var x="+x+"+ xOffset;";
     str+="var y="+y+"+ yOffset;";
   }
+  // Example 1.5:
+  // add(e1, 1, cursor)
+  else if(a["r"][0] === "cursor"){
+    var handler = a["handler"];
+    str+="var x = 0;";
+    if (addWhitespace){str+="\n\t";}
+    str+="var y = 0;";
+    if (addWhitespace){str+="\n\t";}
+    if(handler.indexOf("PressedHandler") >= 0){
+      str+="x = game.input.mousePointer.x;";
+      if (addWhitespace){str+="\n\t";}
+      str+="y = game.input.mousePointer.y;";
+      if (addWhitespace){str+="\n\t";}
+    }
+  }
 
   // Example 2:
   // initialize (add(e1, 10, e2)).
   else{
+    var locationToAddTo = a["entityName"];
+    var handler = a["handler"];
     // Find coordinates of entity with name a["r"][0].
     str+="var x = 0;";
     if (addWhitespace){str+="\n\t";}
     str+="var y = 0;";
     if (addWhitespace){str+="\n\t";}
     // TODO: There is probably a better way of finding group item coordinates.
-    str+="addedEntities['"+a["r"][0]+"'].forEach(function(item){x=item.x;y=item.y;}, this);";
-    if (addWhitespace){str+="\n\t";}
+    //str+="addedEntities['"+a["r"][0]+"'].forEach(function(item){x=item.x;y=item.y;}, this);";
+    if(handler.indexOf("ClickListener") >= 0){
+      //we are dealing with a click listener! Add our new guy at the location of the thing that was clicked on!
+      if (addWhitespace){str+="\n\t";}
+      str+="x=clickedOnObject.x";
+      if (addWhitespace){str+="\n\t";}
+      str+="y=clickedOnObject.y";
+      if (addWhitespace){str+="\n\t";}
+
+      
+    }
+    else{
+      if (addWhitespace){str+="\n\t";}
+      str+="x="+locationToAddTo+".x";
+      if (addWhitespace){str+="\n\t";}
+      str+="y="+locationToAddTo+".y";
+      if (addWhitespace){str+="\n\t";}
+    }
   }
 
   // Create entity at location x,y.

@@ -541,7 +541,8 @@ var updateProgramConditional = function(newBrain, cygnusBrain, newProgram,i){
     var newAssert2 = {
       "l": newLeft,
       "relation":"causes",
-      "r": newRight
+      "r": newRight,
+      "handler" : pressedAssertion
     };
     if (goal_keyword != undefined){
       newAssert2["goal_keyword"]=goal_keyword;
@@ -675,6 +676,8 @@ var updateProgramConditional = function(newBrain, cygnusBrain, newProgram,i){
     var functionName = goal_keyword + "PressedHandler";
     newProgram[functionName] = {};
     newProgram[functionName]["outcomes"] = [];
+
+    newRight[0].handler = functionName;
 
     var newAssert2 = {
       "l": newLeft,

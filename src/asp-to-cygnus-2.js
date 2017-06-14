@@ -326,15 +326,33 @@ function translatePropertyChangeOverTime(rel, terms){
 Examples:
   add(entity(e1),scalar(3),location(top,right))
   >> e1 add_to_location abstract top right 3
+  add(entity(e1),scalar(3),entity(e2))
+  >> e1 add_to_location entity e2 1 (we assume we have reference to a specific instance of e2, e.g. from a click handler.)
 */
 function translateAdd(terms){
   var name = terms[0].terms[0].predicate;
   var num = terms[1].terms[0].predicate;
-  var row = terms[2].terms[0].predicate;
-  var col = terms[2].terms[1].predicate;
-  return {
-    "l":[name],"relation":"add_to_location","r":["abstract"],
-    "row":row, "col": col, "num": num, "tags":["create"]
+  var locationType = terms[2].predicate; // might be a location, might be another entity.
+  if(locationType === "location"){
+    var row = terms[2].terms[0].predicate;
+    var col = terms[2].terms[1].predicate;
+    return {
+      "l":[name],"relation":"add_to_location","r":["abstract"],
+      "row":row, "col": col, "num": num, "tags":["create"]
+    }
+  }
+  else if(locationType === "entity"){
+    var entityName = terms[2].terms[0].predicate;
+    return {
+      "l":[name],"relation":"add_to_location","r":["entity"],
+      "entityName":entityName, "num": num, "tags":["create"]
+    }
+  }
+  else if(locationType === "cursor"){
+    return {
+      "l":[name],"relation":"add_to_location","r":["cursor"],
+      "num": num, "tags":["create"]
+    } 
   }
 }
 
@@ -790,8 +808,6 @@ var addNormalResult = function(rs, results){
     // Push this result into our final array of all results.
     else if (fList.length==2){
       var zTerms = newTranslateNested(fList[0].terms[0]);
-      //console.log("fList is: " , JSON.stringify(fList, null, 4));
-      //console.log("zTerms: " , JSON.stringify(zTerms, null, 4));
       if(fList[0].predicate === "property"){
         zTerms = fList[0].terms[0].terms[0].predicate + "." + fList[0].terms[1].predicate;
       }
