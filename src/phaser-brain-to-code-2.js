@@ -112,6 +112,10 @@ var writePhaserProgram = function(brain){
             //programText = addResourceBarUpdateCalls(programText, variableValues)
             programText = addResourceBarCreateCalls(programText, variableValues);
           }
+
+          if (p==="create"){
+            programText = addTimerToUpdateNarrative(programText); 
+          }
           
 
           if (p==="update"){
@@ -124,7 +128,11 @@ var writePhaserProgram = function(brain){
           if (p==="update"){
             programText = addDefaultPropertyChecks(programText);
           }
-          
+          /*
+          if (p === "update"){
+            programText = addCallToUpdateNarrativeStateBasedOnGameValues(programText);
+          }
+          */
 
           /* We are all done with the function body! */
           programText += "};";
@@ -318,6 +326,68 @@ var addDefaultPropertyChecks = function(programText){
   return programText
 }
 
+var addTimerToUpdateNarrative = function(programText){
+
+  if(addWhitespace){programText+="\n\t"};
+  programText += "game.time.events.loop(Phaser.Timer.SECOND * 1, informNarrativeOfUpdatedVariables, this);";
+  if(addWhitespace){programText+="\n\t"};
+
+  return programText;
+}
+
+/*
+REPLACED WITH a function inserted into initial-phaser-file.json.
+var addCallToUpdateNarrativeStateBasedOnGameValues = function(programText){
+  
+
+  if(addWhitespace){programText+="\n\t"};
+  programText += "//updating program values! TODO: add this to a timer so that it isn't udating every single moment: game.time.events.loop(Phaser.Timer.SECOND * numSecondsPerupdate, callBackFunction, this);";
+  if(addWhitespace){programText+="\n\t"};
+  //programText += "if(State.get('debugMode') === true){";
+  //if(addWhitespace){programText+="\n\t"};
+  //programText += "  setVariable("
+
+  programText += "for (i = 0; i < Object.keys(labels).length; i += 1) {";
+    if(addWhitespace){programText+="\n\t"};
+  programText +=  "var variableName = Object.keys(labels)[i];";
+  if(addWhitespace){programText+="\n\t"};
+  //programText +=  "    console.log(labels[variableName].name + ' -> ' + labels[variableName].variable + ' ' + labels[variableName].readWrite);";
+    if(addWhitespace){programText+="\n\t"};
+      programText +=  "    if(labels[variableName].readWrite === 'write'){";
+    if(addWhitespace){programText+="\n\t"};
+      programText +=  "      setVariable(labels[variableName].name, window[labels[variableName].variable]);";
+    if(addWhitespace){programText+="\n\t"};
+      programText +=  "    }";
+    if(addWhitespace){programText+="\n\t"};
+  programText += "  }";
+  if(addWhitespace){programText+="\n\t"};
+  //programText += "}";
+
+
+
+
+  programText += "for (var key in labels) {";
+    if(addWhitespace){programText+="\n\t"};
+  programText += "  if (labels.hasOwnProperty(key)) {";
+    if(addWhitespace){programText+="\n\t"};
+  programText +=  "    console.log(key + ' -> ' + p[key]);";
+    if(addWhitespace){programText+="\n\t"};
+      programText +=  "    if(p[key] === satiation){";
+    if(addWhitespace){programText+="\n\t"};
+      programText +=  "      setVariable(satiation, p[key]);";
+    if(addWhitespace){programText+="\n\t"};
+      programText +=  "    }";
+    if(addWhitespace){programText+="\n\t"};
+  programText += "  }";
+  if(addWhitespace){programText+="\n\t"};
+  programText += "}";
+  if(addWhitespace){programText+="\n\t"};
+  programText += "}";
+
+  return programText;
+}
+*/
+
 var addResourceBarCreateCalls = function(programText, variableValues){
   var currentVariable;
   var numResources = 0; // need to keep track, as each resource needs to be displayed on a different part of the screen.
@@ -331,11 +401,11 @@ var addResourceBarCreateCalls = function(programText, variableValues){
       var barConfigName= "barConfig" + numResources;
       if(addWhitespace){programText+="\n\t"};
       var resourceName = currentVariable.l[0];
-      programText += "var " + barConfigName + " = createProgressBarConfig(" + resourceName + ", " + numResources + ", labels['" + resourceName + "']);";
+      programText += "var " + barConfigName + " = createProgressBarConfig(" + resourceName + ", " + numResources + ", labels['" + resourceName + "'].name);";
       if(addWhitespace){programText+="\n\t"};
       programText += "this.resourceBar" + numResources + " = new HealthBar(this.game, " + barConfigName +")";
       if(addWhitespace){programText+="\n\t"};
-      programText += "addBarLabel(" + barConfigName + ", " + numResources + ", labels['" + resourceName + "']);"
+      programText += "addBarLabel(" + barConfigName + ", " + numResources + ", labels['" + resourceName + "'].name);"
 	if(addWhitespace){programText+="\n\t"};
 
 	
@@ -1356,10 +1426,15 @@ var translateDenotesAssertion = function(a){
 }
 
 var translateLabelAssertion = function(a){
+  //console.log("I'm translating this label assertion: " , JSON.stringify(a, null, 4));
   str = ""
   var e1 = a["l"][0];
   var e2 = a["r"][0];
-  str += "labels['" + e1 + "'] = '" + e2 + "';";
+  var readWrite = a["readWrite"];
+  str += "labels['" + e1 + "'] = {};";
+  str += "labels['" + e1 + "'].name = '" + e2 + "';";
+  str += "labels['" + e1 + "'].variable = '" + e1 + "';";
+  str += "labels['" + e1 + "'].readWrite = '" + readWrite + "';";
   return str;
 }
 

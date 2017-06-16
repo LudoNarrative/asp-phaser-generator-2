@@ -247,7 +247,13 @@
     "relation":"instance_of",
     "r":["function"],
     "params":["varName","value"],
-    "lines":["variables[varName]=value;","State.set(varName, value.toFixed(1));","Display.setAvatar(State);","Display.setStats('storyStats');"]
+    "lines":["variables[varName]=value;",
+      "//State.set(varName, value.toFixed(1));",
+      "console.log('setting varName: ' , varName , ' to ' , value);",
+      "State.set(varName, value);",
+      "Display.setAvatar(State);",
+      "Display.setStats('storyStats');",
+      "StoryAssembler.refreshNarrative();"]
   },
   {
     "l":["getVariable"],
@@ -255,6 +261,20 @@
     "r":["function"],
     "params":["varName"],
     "lines":["return variables[varName];"]
+  },
+  {
+    "l":["informNarrativeOfUpdatedVariables"],
+    "relation":"instance_of",
+    "r":["function"],
+    "params":[],
+    "lines":[
+ "for (i = 0; i < Object.keys(labels).length; i += 1) {",
+  "var variableName = Object.keys(labels)[i];",
+     "    if(labels[variableName].readWrite === 'write'){",
+     "      setVariable(labels[variableName].name, window[labels[variableName].variable]);",
+     "    }",
+     "  }"
+    ]
   },
   {
     "l":["getRandomPoint"],

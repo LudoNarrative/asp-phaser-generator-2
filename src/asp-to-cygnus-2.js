@@ -165,7 +165,15 @@ function translateSimpleDeclaration(terms){
 
 // Example: label(resource(r_1_XX_),satiation). >> r_1_xx has_label satiation
 function translateLabel(terms){
-  return translateSimpleTriple("has_label",terms);
+  var name = terms[0].terms[0].predicate;
+  var label = terms[1].predicate;
+  var readWriteValue = "private"
+  if(terms[2] !== undefined){
+    //if it has a read write value
+    readWriteValue = terms[2].predicate;
+  }
+  return {"l": [name], "relation":"has_label", "r":[label], "readWrite" : readWriteValue}
+  //return translateSimpleTriple("has_label",terms);
 }
 
 function addEntityWallRestitutionAssertion(terms){
