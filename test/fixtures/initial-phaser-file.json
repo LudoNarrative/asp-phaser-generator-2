@@ -249,9 +249,9 @@
     "params":["varName","value"],
     "lines":["variables[varName]=value;",
       "//State.set(varName, value.toFixed(1));",
-      "console.log('setting varName: ' , varName , ' to ' , value);",
+      "//console.log('setting varName: ' , varName , ' to ' , value);",
       "State.set(varName, value);",
-      "Display.setAvatar(State);",
+      "Display.setAvatars(State);",
       "Display.setStats('storyStats');",
       "StoryAssembler.refreshNarrative();"]
   },
