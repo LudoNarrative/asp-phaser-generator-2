@@ -119,7 +119,8 @@ var writePhaserProgram = function(brain){
           
 
           if (p==="update"){
-            programText = addResourceValueClamping(programText, variableValues)
+            programText = addResourceValueClamping(programText, variableValues);
+            programText = addUpdateLabelsWithNewValues(programText, variableValues);
           }
           
           if (p==="update"){
@@ -285,6 +286,11 @@ var addResourceValueClamping = function(programText, variableValues){
     }
   }
   return programText;  
+}
+
+var addUpdateLabelsWithNewValues = function(programText, variableValues){
+  programText += "updateLabelsWithVariableValues()";
+  return programText;
 }
 
 /*
@@ -1435,6 +1441,7 @@ var translateLabelAssertion = function(a){
   str += "labels['" + e1 + "'].name = '" + e2 + "';";
   str += "labels['" + e1 + "'].variable = '" + e1 + "';";
   str += "labels['" + e1 + "'].readWrite = '" + readWrite + "';";
+  str += "labels['" + e1 + "'].value = " + e1 + ";";
   return str;
 }
 

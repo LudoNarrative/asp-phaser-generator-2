@@ -271,9 +271,21 @@
  "for (i = 0; i < Object.keys(labels).length; i += 1) {",
   "var variableName = Object.keys(labels)[i];",
      "    if(labels[variableName].readWrite === 'write'){",
-     "      setVariable(labels[variableName].name, window[labels[variableName].variable]);",
+     "      setVariable(labels[variableName].name, labels[variableName].value);",
      "    }",
      "  }"
+    ]
+  },
+  {
+    "l":["updateLabelsWithVariableValues"],
+    "relation":"instance_of",
+    "r":["function"],
+    "params":[],
+    "lines":[
+    "for (i = 0; i < Object.keys(labels).length; i += 1) {",
+    " var variableName = Object.keys(labels)[i];",
+    " labels[variableName].value = eval(Object.keys(labels)[i]);",
+    "}"
     ]
   },
   {
