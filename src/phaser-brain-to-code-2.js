@@ -335,7 +335,7 @@ var addDefaultPropertyChecks = function(programText){
 var addTimerToUpdateNarrative = function(programText){
 
   if(addWhitespace){programText+="\n\t"};
-  programText += "game.time.events.loop(Phaser.Timer.SECOND * 1, informNarrativeOfUpdatedVariables, this);";
+  programText += "game.time.events.loop(Phaser.Timer.SECOND * 10, informNarrativeOfUpdatedVariables, this);";
   if(addWhitespace){programText+="\n\t"};
 
   return programText;
