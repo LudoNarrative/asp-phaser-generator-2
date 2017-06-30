@@ -1497,9 +1497,11 @@ var translateLookAtAssertion = function(a){
     str += "\n\t\t\tvar targetItem = addedEntities['"+e2+"'].children[curBestIndex];";
   }
   //str += "\n\tvar newAngle = Math.atan2(game.input.mousePointer.y - item.y, game.input.mousePointer.x - item.x);"
-  str += "\n\t\t\tvar newAngle = Math.atan2(targetItem.y - lookerItem.y, targetItem.x - lookerItem.x);"  
-  str += "\n\t\t\tnewAngle = newAngle * (180/Math.PI); //convert from radians to degrees."; 
-  str += "\n\t\t\tlookerItem.angle = newAngle;";
+  str += "\n\t\t\tif(targetItem !== undefined){";
+  str += "\n\t\t\t\tvar newAngle = Math.atan2(targetItem.y - lookerItem.y, targetItem.x - lookerItem.x);"  
+  str += "\n\t\t\t\tnewAngle = newAngle * (180/Math.PI); //convert from radians to degrees."; 
+  str += "\n\t\t\t\tlookerItem.angle = newAngle;";
+  str += "\n\t\t\t}";
   str += "\n\t\t},this);";
 
 

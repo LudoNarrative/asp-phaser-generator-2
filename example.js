@@ -3,7 +3,7 @@ var fs = require('fs');
 var AspPhaserGenerator = require('./index');
 
 
-var aspGame = fs.readFileSync('./test/fixtures/dinner_11-readWritePrivateTest.lp', 'utf8');
+var aspGame = fs.readFileSync('./test/fixtures/dinner_9_lookAtNoEntity.lp', 'utf8');
 
 //var aspGame = fs.readFileSync('./test/fixtures/create_entity_at_cursor.lp', 'utf8');
 
