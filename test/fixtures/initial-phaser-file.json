@@ -3,7 +3,14 @@
     "l":["prog"],
     "relation": "instance_of",
     "r":["program"],
-    "preload": {"images":[]},
+    "preload": {"images":[],"sounds":[
+		{"l":["good_sound"],
+		  "relation":"add_sound",
+		  "r":["assets/sounds/good.wav"]},
+		{"l":["bad_sound"],
+		  "relation":"add_sound",
+		  "r":["assets/sounds/bad.wav"]}
+		  ]},
     "create":{"vars":[],"sprites":[],"listeners":[],"buttons":[],"motion":[],"misc":[]},
     "update":{"vars":[],"listeners":[],"outcomes":[],"motion":[],"misc":[]},
     "render":{}
@@ -55,6 +62,16 @@
     "relation":"instance_of",
     "r":["variable"],
     "value":["{}"]
+  },
+  {
+    "l":["good_sound"],
+    "relation":"instance_of",
+    "r":["sound"]
+  },
+  {
+    "l":["bad_sound"],
+    "relation":"instance_of",
+    "r":["sound"]
   },
   {
     "l":["low"],

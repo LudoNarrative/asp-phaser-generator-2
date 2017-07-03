@@ -191,19 +191,61 @@ function translateSetColor(terms){
   return translateSimpleTriple("set_color",terms);
 }
 
+
+function translateChange(rel,terms){
+  var value1 = "";
+  var value2 = "";
+  
+  var returnHelper = {};
+  returnHelper.relation = rel;
+  if(terms[0].predicate === "property"){
+	  
+	 
+	  var entityName = terms[0].terms[0].terms[0].predicate;
+	  var propertyName = terms[0].terms[1].predicate;
+	  
+	  returnHelper.l = [entityName];
+	  returnHelper.property = propertyName;
+  }
+  else{
+		returnHelper.l  = [terms[0].terms[0].predicate];
+  }
+  if(terms[1].predicate === "property"){
+	  
+	 
+	  var entityName = terms[1].terms[0].terms[0].predicate;
+	  var propertyName = terms[1].terms[1].predicate;
+	  
+	  returnHelper.r = [entityName];
+	  returnHelper.propertyR = propertyName;
+	 
+  }
+  else{
+		returnHelper.r  = [terms[1].terms[0].predicate];
+  }
+  return returnHelper;
+}
+
+
 /*
 Examples:
   increase(resource(r1),scalar(6)) >> r1 increase 6
 */
 function translateIncrease(terms){
-  return translateSimpleTriple2("increase",terms);
+  return translateChange("increase",terms);
+  //return translateSimpleTriple2("increase",terms);
 }
+
+
 /*
 Examples:
   increase(resource(r1),scalar(6)) >> r1 increase 6
   increase_over_time(property(entity(e1),health),scalar(1)) >> increase e1's health property by 1.
 */
 function translateIncreaseOverTime(terms){
+	
+  return translateChange("increase_over_time",terms);
+	/*
   if(terms[0].predicate === "property"){
     //we are increasing or decreasing a property of an entity.
     return translatePropertyChangeOverTime("increase_over_time",terms);
@@ -213,6 +255,7 @@ function translateIncreaseOverTime(terms){
     return translateSimpleTriple2("increase_over_time",terms);
   }
   //return translateSimpleTriple2("increase_over_time",terms);
+  */
 }
 
 /*
@@ -220,7 +263,9 @@ Examples:
   decrease(resource(r1),scalar(6)) >> r1 decrease 6
 */
 function translateDecrease(terms){
-  return translateSimpleTriple2("decrease",terms);
+	
+  return translateChange("decrease",terms);
+  //return translateSimpleTriple2("decrease",terms);
 }
 
 /*
@@ -229,6 +274,7 @@ Examples:
   decrease_over_time(property(entity(e1),health),scalar(1)) >> reduce e1's health property by 1.
 */
 function translateDecreaseOverTime(terms){
+	/*
   if(terms[0].predicate === "property"){
     //we are increasing or decreasing a property of an entity.
     return translatePropertyChangeOverTime("decrease_over_time",terms);
@@ -237,6 +283,9 @@ function translateDecreaseOverTime(terms){
     //we are simply increasing or decreasing a resource
     return translateSimpleTriple2("decrease_over_time",terms);
   }
+  */
+  
+  return translateChange("decrease_over_time",terms);
 }
 
 /*
@@ -801,8 +850,8 @@ var addNormalResult = function(rs, results){
     else if(e=="look_at"){
       rs.push(translateLookAt(fList));
     }
-    else if (e=="decrease_over_time"){
-      rs.push(translateDecreaseOverTime(fList));
+    else if (e=="decrease_over_time" || e == "increase_over_time" || e == "increase" || e == "decrease"){
+      rs.push(translateChange(e,fList));
     }
 
     else if (fList.length==1){

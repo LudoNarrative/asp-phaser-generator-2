@@ -30,7 +30,9 @@ initialize(set_value(resource(r_1_XX_),scalar(9))).
 initialize(set_value(resource(r_2_XX_),scalar(2))).
 
 precondition(control_event(click(entity(e_1_XX_))),outcome(click_to_spin_entity_e_1_XX__XX__XX_)).
-result(outcome(click_to_spin_entity_e_1_XX__XX__XX_),increase(resource(r_2_XX_),scalar(5))).
+
+precondition(ge(resource(r_1_XX_),scalar(0)),outcome(click_to_spin_entity_e_1_XX__XX__XX_)).
+result(outcome(click_to_spin_entity_e_1_XX__XX__XX_),increase(property(entity(e_1_XX_),health),property(entity(e_1_XX_),health))).
 result(outcome(click_to_spin_entity_e_1_XX__XX__XX_),rotates(entity(e_1_XX_),cw,scalar(30))).
 
 precondition(timer_elapsed(t_1_XX_),outcome(o_1_XX_)).

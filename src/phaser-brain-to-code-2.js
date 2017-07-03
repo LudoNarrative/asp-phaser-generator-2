@@ -27,6 +27,8 @@ var writePhaserProgram = function(brain){
   // Grab variable assertions so we can store their values in create.
   var variableValues = [];
 
+  //Grab sounds so we can set them up in create.
+  var sounds = [];
   // Go through each assertion.  If it is a variable initialization,
   // add it to our program.  If it is a goal assertion, update the goals array.
   for (var i in brain.assertions){
@@ -35,6 +37,10 @@ var writePhaserProgram = function(brain){
       programText += defineVariable(brain, brain.assertions[i]);
       variableValues.push(brain.assertions[i]);
     }
+	if (brain.assertions[i]["r"] == "sound"){
+		programText += defineVariable(brain,brain.assertions[i]);
+		sounds.push(brain.assertions[i]);
+	}
     /* REALIZING GOALS */
     if (ctp.isGoalAssertion(brain.assertions[i])){
       updateAspGoals(brain, brain.assertions[i]);
@@ -47,6 +53,7 @@ var writePhaserProgram = function(brain){
     if (ctp.isFunctionAssertion(brain.assertions[j])){
       programText += translateFunctionAssertion(brain.assertions[j]);
     }
+	
     /* WRITING A PROGRAM FROM A PROGRAM ASSERTION CONTAINING PHASER ABSTRACT SYNTAX */
     // We assume, for now, there is only one "program" assertion.
     else if (brain.assertions[j]["relation"]=="instance_of" && brain.assertions[j]["r"].indexOf("program")>=0){
@@ -78,6 +85,7 @@ var writePhaserProgram = function(brain){
           // Also, add default values for arcade physics (like velocity), unless they have been initialized already.
           if (p==="create"){
             programText = addDefaultCreateValues(programText, variableValues, brain, j, p);
+            programText = addCreateSounds(programText, sounds, brain, j, p);
           }
 
           // If this is the update function, include default code about entity
@@ -85,7 +93,6 @@ var writePhaserProgram = function(brain){
           else if (p==="update"){
             programText = addDefaultUpdateValues(programText);
           }
-
           /* Now, we are going to add statements that we see, regardless of
             what type of function they correspond to (because we assume they are organized
             according to the appropriate function names already). */
@@ -100,7 +107,6 @@ var writePhaserProgram = function(brain){
               }
             }
           }
-
           // If we are in the update function, add direction changes.
           if (p==="update"){
             programText = addDefaultUpdateDirections(programText);
@@ -149,7 +155,17 @@ var writePhaserProgram = function(brain){
   // Return the final program text.
   return programText;
 };
-
+ var addCreateSounds = function(programText, sounds, brain, j, p){
+	 
+  if(addWhitespace){programText+="\n"};
+  for (var z=0; z<sounds.length;z++){
+    var curAssert = sounds[z];
+	programText += curAssert["l"][0] + " =  game.add.audio('" + curAssert["l"][0] +"');";
+	if(addWhitespace){programText+="\n"};
+  }
+	 return programText;
+ }
+ 
 /*
   Helper function for writePhaserProgram.
   Writes content inside the create function, including assigning values to variables.
@@ -535,6 +551,9 @@ var addGenericFunctionStatement = function(programText,brain,curAssert,p){
   else if(ctp.isLookAtAssertion(curAssert)){
     programText += translateLookAtAssertion(curAssert);
   }
+  else if (curAssert["relation"] == "add_sound") {
+	  programText += translateAddSound(curAssert);
+  }
   return programText;
 }
 
@@ -788,6 +807,15 @@ var translateConditionalAssertion = function(b,a){
   if (addWhitespace){str+="\t";}
   if (!emptyHypothesis){
     str+="}"
+	if (a["r"][0].handler != undefined && (a["r"][0].handler.indexOf("PressedHandler") > 0  || 	a["r"][0].handler.indexOf("ClickListener") > 0)){
+		used_whitespace = "";
+		if (addWhitespace){
+			used_whitespace = "\n";
+		}
+		str += used_whitespace + "else {"+used_whitespace;
+		str += "bad_sound.play();"+used_whitespace;
+		str += "}";
+	}
   }
   if (addWhitespace){str+="\n";}
   return str;
@@ -1444,7 +1472,11 @@ var translateLabelAssertion = function(a){
   str += "labels['" + e1 + "'].value = " + e1 + ";";
   return str;
 }
-
+var translateAddSound = function(a){
+	str = "";
+	str += "game.load.audio('" + a["l"][0] + "', '" + a["r"][0] + "');";
+	return str;
+}
 var translateLookAtAssertion = function(a){
   str = "";
   var e1 = a["l"][0];

@@ -92,6 +92,7 @@ var updatePreload=function(pID, brain){
       delete newBrain.assertions[i];
     }
   }
+  newProgram["preload"]
   // Update the program assertion.
   newBrain.assertions[pID] = newProgram;
 
@@ -804,37 +805,46 @@ var getNewConclusions = function(newRight, asserts){
 var changeToSetValue = function(assert){
   var newRightA ={};
   newRightA["l"]=assert["l"];
+  newRightA["r"]=assert["r"];
   
   //if we are updating a property, handle that here.
   if(assert["property"] !== undefined){
-    newRightA = {};
     var property = assert["property"];
 
     newRightA["l"]=[assert["l"] +"."+property];
   }
 
+  if(assert["propertyR"] !== undefined){
+    var property = assert["propertyR"];
+
+    newRightA["r"]=[assert["r"] +"."+property];
+  }
+  else{
+	  
+    newRightA["r"]=[assert["r"] ];
+  }
+
   // Here are the "old" values from the cygnus brain corresponding to the right attribute.
   var oldRelation = assert["relation"];
   var oldRight = assert["r"];
-
   if (oldRelation=="increase"){
     newRightA["relation"]="set_value";
     // TODO fix so not assuming newRightA["l"] consists of one element (if needed)
-    newRightA["r"]=[newRightA["l"][0]+"+"+oldRight+"/2"];
+    newRightA["r"]=[newRightA["l"][0]+"+"+ newRightA["r"][0]+"/2"];
   }
   else if (oldRelation=="decrease"){
     newRightA["relation"]="set_value";
-    newRightA["r"]=[newRightA["l"][0]+"-"+oldRight+"/2"];
+    newRightA["r"]=[newRightA["l"][0]+"-"+newRightA["r"][0]+"/2"];
   }
   else if (oldRelation=="increase_over_time"){
     newRightA["relation"]="set_value";
     //newRightA["r"]=[newRightA["l"][0]+"+"+oldRight+"*this.game.time.elapsed/3840.0"];
-    newRightA["r"]=[newRightA["l"][0]+"+"+oldRight+"/40"];
+    newRightA["r"]=[newRightA["l"][0]+"+"+newRightA["r"][0]+"/40"];
   }
   else if (oldRelation=="decrease_over_time"){
     newRightA["relation"]="set_value";
     //newRightA["r"]=[newRightA["l"][0]+"-"+oldRight+"*this.game.time.elapsed/3840.0"];
-    newRightA["r"]=[newRightA["l"][0]+"-"+oldRight+"/40"];
+    newRightA["r"]=[newRightA["l"][0]+"-"+newRightA["r"][0]+"/40"];
   }
   else {
     newRightA["relation"]=oldRelation;
