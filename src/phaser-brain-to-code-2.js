@@ -479,7 +479,8 @@ var setGoalsVariable = function(programText, goals){
   and attempts to translate it.
 */
 var addGenericFunctionStatement = function(programText,brain,curAssert,p){
-  // Declare / change value of variables.
+    // Declare / change value of variables.
+   
   if (ctp.isVariableAssertion(curAssert)){
     programText += translateVariableAssertion(brain, curAssert, true);
   }
@@ -510,7 +511,9 @@ var addGenericFunctionStatement = function(programText,brain,curAssert,p){
   else if (ctp.isGoalAssertion(curAssert)){
     updateAspGoals(brain, curAssert);
   }
-  else if (ctp.isCallbackAssertion(curAssert)){
+    else if (ctp.isCallbackAssertion(curAssert)){
+	console.log("CALLBACK");
+	console.log(curAssert);
     programText += translateListenerAssertion(curAssert);
   }
   else if (ctp.isTimerCallbackAssertion(curAssert)){
@@ -710,7 +713,13 @@ var translateConditionalAssertion = function(b,a){
   if (a["l"].length < 1){
     emptyHypothesis = true;
   }
-
+    console.log("TRANSLATE CONDITIONAL ASSERTION");
+    
+    if(a["r"][0].handler !== undefined && a["r"][0].handler.indexOf("OverlapHandler") >= 0){
+//	str += "if (e1.deleted){ console.log('e1.deleted'); return;}\n";
+//	str += "if (e2.deleted){ console.log('e2.deleted');return;}\n";
+//    str += "console.log('No one deleted');\n";
+    }
   /* Formulate hypothesis. */
   if (!emptyHypothesis){
     str += "if(";
@@ -1019,9 +1028,9 @@ var translateAddSpriteAssertion=function(b,a){
   if (addWhitespace){str+="\n\t\t";}
 
   // (Add some randomness.)
-  str+="x+=(Math.random() * 30) - 15;";
+  //str+="x+=(Math.random() * 30) - 15;";
   if (addWhitespace){str+="\n\t\t";}
-  str+="y+=(Math.random() * 30) - 15;";
+  //str+="y+=(Math.random() * 30) - 15;";
   if (addWhitespace){str+="\n\t\t";}
 
   // (make sure that we aren't over populating the screen!)

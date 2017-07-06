@@ -689,6 +689,8 @@ var updateProgramConditional = function(newBrain, cygnusBrain, newProgram,i){
     if (goal_keyword != undefined){
       newAssert2["goal_keyword"]=goal_keyword;
     }
+      console.log("CYGNUS_TO_PHASER"+functionName);
+      console.log(newAssert2);
     newProgram[functionName]["outcomes"].push(newAssert2);
   }
   // Timer elapsed conditional.
