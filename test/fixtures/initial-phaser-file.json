@@ -545,6 +545,34 @@
       " }",
       "}"
     ]
+  },
+  {
+    "l":["leaveContext"],
+    "relation":"instance_of",
+    "r":["function"],
+    "params":[],
+    "lines":[
+	"game.time.slowMotion = 2;"
+    ]
+  },
+  {
+    "l":["enterContext"],
+    "relation":"instance_of",
+    "r":["function"],
+    "params":[],
+    "lines":[
+	"game.time.slowMotion = 1;"
+    ]
+  },
+  {
+    "l":["setUpSlowDown"],
+    "relation":"instance_of",
+    "r":["function"],
+    "params":[],
+    "lines":[
+	"game.canvas.onmouseenter = enterContext;",
+	"game.canvas.onmouseout = leaveContext;"
+    ]
   }
 
 

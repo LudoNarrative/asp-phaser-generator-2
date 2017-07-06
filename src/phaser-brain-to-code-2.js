@@ -195,6 +195,7 @@ var addDefaultCreateValues = function(programText, variableValues, brain, j, p){
   //add a call to setting up the "walls" that form the boundry of the game
   //the body of this function is defined inside of initial-phaser-file.json
   programText += "\n\tsetUpWalls();\n";
+  programText += "\n\tsetUpSlowDown();\n";
 
   // Add any entities to the canvas.
   // For each content property specified in the function (e.g. "vars"),
