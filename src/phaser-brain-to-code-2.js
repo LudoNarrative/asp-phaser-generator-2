@@ -266,7 +266,11 @@ var addDefaultUpdateDirections = function(programText){
   programText += "entity.forEach(function(item) {"
   if(addWhitespace){programText+="\n\t\t"};
   programText += "item.body.velocity.clamp(-300,300);";
-  if(addWhitespace){programText+="\n\t\t\t"};
+    if(addWhitespace){programText+="\n\t\t\t"};
+    
+  programText += "item.health = Math.max(0, Math.min(item.health, 100));";
+    if(addWhitespace){programText+="\n\t\t\t"};
+    
   programText += "item.alpha = item.health/100;";
   if(addWhitespace){programText+="\n\t\t\t"};
   programText += "if(item.x>game.width){item.x=game.width;}if (item.x<0){item.x=0;} if (item.y>game.height){item.y=game.height;}if (item.y<0){item.y=0;}"
@@ -1443,7 +1447,12 @@ var translateRotatesAssertion = function(a){
   str = "";
   var entityName = a["l"][0];
   var amount = a["r"][0];
-  str+="addedEntities['"+entityName+"'].forEach(function(item){item.angle += "+amount+";}, this);";
+    if(a.handler !== undefined && a.handler.indexOf("ClickListener") >= 0){
+	str+= "clickedOnObject.angle += "+amount+";";
+    }
+    else{
+	str+="addedEntities['"+entityName+"'].forEach(function(item){item.angle += "+amount+";}, this);";
+    }
   return str;
 }
 
