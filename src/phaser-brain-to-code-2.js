@@ -267,6 +267,8 @@ var addDefaultUpdateDirections = function(programText){
   if(addWhitespace){programText+="\n\t\t"};
   programText += "item.body.velocity.clamp(-300,300);";
   if(addWhitespace){programText+="\n\t\t\t"};
+  programText += "item.alpha = item.health/100;";
+  if(addWhitespace){programText+="\n\t\t\t"};
   programText += "if(item.x>game.width){item.x=game.width;}if (item.x<0){item.x=0;} if (item.y>game.height){item.y=game.height;}if (item.y<0){item.y=0;}"
   if(addWhitespace){programText+="\n\t\t"};
   programText += "if(item.deleted){item.destroy();}";
