@@ -237,10 +237,15 @@ var addDefaultUpdateValues = function(programText){
   if(addWhitespace){programText+="\n\t\t"};
   programText += "item.body.velocity.y *= 0.9;";
   if(addWhitespace){programText+="\n\t\t"};
+  programText += "item.invincible = false;";
+  if(addWhitespace){programText+="\n\t\t"};
   programText+="}, this);"
   if(addWhitespace){programText+="\n\t"};
   programText += "}}";
-  if(addWhitespace){programText+="\n"};
+    if(addWhitespace){programText+="\n"};
+
+
+    
   return programText;
 }
 
@@ -275,7 +280,7 @@ var addDefaultUpdateDirections = function(programText){
   if(addWhitespace){programText+="\n\t\t\t"};
   programText += "if(item.x>game.width){item.x=game.width;}if (item.x<0){item.x=0;} if (item.y>game.height){item.y=game.height;}if (item.y<0){item.y=0;}"
   if(addWhitespace){programText+="\n\t\t"};
-  programText += "if(item.deleted){item.destroy();}";
+  programText += "if(item.deleted && !item.invincible){item.destroy();}";
   if(addWhitespace){programText+="\n\t\t"};
   programText+="}, this);"
   if(addWhitespace){programText+="\n\t"};
@@ -722,9 +727,9 @@ var translateConditionalAssertion = function(b,a){
     console.log("TRANSLATE CONDITIONAL ASSERTION");
     
     if(a["r"][0].handler !== undefined && a["r"][0].handler.indexOf("OverlapHandler") >= 0){
-//	str += "if (e1.deleted){ console.log('e1.deleted'); return;}\n";
-//	str += "if (e2.deleted){ console.log('e2.deleted');return;}\n";
-//    str += "console.log('No one deleted');\n";
+	str += "if (e1.deleted || e1.invincible){ console.log('e1.deleted'); return;}\n";
+	str += "if (e2.deleted || e1.invincible){ console.log('e2.deleted');return;}\n";
+    str += "console.log('No one deleted');\n";
     }
   /* Formulate hypothesis. */
   if (!emptyHypothesis){

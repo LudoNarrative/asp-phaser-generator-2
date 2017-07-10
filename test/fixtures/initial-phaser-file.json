@@ -396,6 +396,7 @@
     "params":["item"],
     "lines":[
       "item.deleted=false;",
+      "item.invincible=true;",
       "item.body.collideWorldBounds = true;",
       "item.anchor.x = 0.5;",
       "item.anchor.y = 0.5;",
