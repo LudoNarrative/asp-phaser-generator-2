@@ -44,6 +44,10 @@ function translateASP(lines){
       else if(terms.predicate ==="label"){
         assertionsToAdd = [translateLabel(terms.terms)];
       }
+      // If it is a label statement
+      else if(terms.predicate ==="pool"){
+        assertionsToAdd = [translatePool(terms)];
+      }
       // If it is an initialize statement,
       else if (terms.predicate=="initialize"){
         terms = terms.terms[0];
@@ -163,6 +167,12 @@ function translateSimpleDeclaration(terms){
   return {"l":[declName], "relation":"instance_of", "r":[declType], "tags":["global"]};
 }
 
+function translatePool(terms){
+    var declType = terms.predicate;
+    
+  var declName = terms.terms[0].terms[0].predicate;
+    return {"l":[declName], "relation":"instance_of", "r":["pool"], "location":[terms.terms[1]], "location_order":[terms.terms[2].predicate], "location_gen":[terms.terms[3].predicate]};
+}
 // Example: label(resource(r_1_XX_),satiation). >> r_1_xx has_label satiation
 function translateLabel(terms){
   var name = terms[0].terms[0].predicate;
@@ -408,6 +418,13 @@ function translateAdd(terms){
   else if(locationType === "cursor"){
     return {
       "l":[name],"relation":"add_to_location","r":["cursor"],
+      "num": num, "tags":["create"]
+    } 
+  }
+    else if(locationType === "pool"){
+    return {
+	"l":[terms[0]["terms"][0]["predicate"]],"relation":"add_to_location","r":["pool"],
+	"pool":[terms[2].terms],
       "num": num, "tags":["create"]
     } 
   }
