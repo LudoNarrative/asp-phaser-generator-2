@@ -10,6 +10,7 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
     // Contains realized goals from the ASP code.
     var goals;
     var pools = {};
+    var boundary;
 
     var top = 50;
     var middle = 160;
@@ -50,6 +51,9 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 	    /* REALIZING GOALS */
 	    if (ctp.isGoalAssertion(brain.assertions[i])){
 		updateAspGoals(brain, brain.assertions[i]);
+	    }
+	    if (brain.assertions[i]["r"] == "boundary"){
+		boundary = brain.assertions[i]["l"];
 	    }
 	    if (brain.assertions[i]["r"] == "pool"){
 		name = brain.assertions[i]["l"];
@@ -227,6 +231,9 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
     */
     var addDefaultCreateValues = function(programText, variableValues, brain, j, p){
 	// Define initial values.
+	//Draw the rounded corners of the playspace.
+	programText += establishRoundedPlayArea();
+
 	if(addWhitespace){programText+="\n"};
 	for (var z=0; z<variableValues.length;z++){
 	    var curAssert = variableValues[z];
@@ -244,12 +251,9 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 	    }
 	}
 
-	//Draw the rounded corners of the playspace.
-	programText += establishRoundedPlayArea();
-
 	//add a call to setting up the "walls" that form the boundry of the game
 	//the body of this function is defined inside of initial-phaser-file.json
-	programText += "\n\tsetUpWalls();\n";
+	//programText += "\n\tsetUpWalls();\n";
 	programText += "\n\tsetUpSlowDown();\n";
 
 	// Add any entities to the canvas.
@@ -333,7 +337,19 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 	
 	programText += "item.alpha = item.health/100;";
 	if(addWhitespace){programText+="\n\t\t\t"};
-	programText += "if(item.x>game.width){item.x=game.width;}if (item.x<0){item.x=0;} if (item.y>game.height){item.y=game.height;}if (item.y<0){item.y=0;}"
+
+	//programText += "if(item.x>game.width){item.x=game.width;}if (item.x<0){item.x=0;} if (item.y>game.height){item.y=game.height;}if (item.y<0){item.y=0;}"
+
+	if (boundary == "torus"){
+	
+	    programText += "item.x_teleported += 1;\n";
+	    programText += "item.y_teleported += 1;\n";
+	    if(addWhitespace){programText+="\n\t\t\t"};
+	    programText += " if (item.x_teleported > 5) {if(item.x + item.width/2 >=  xOffset + 400 ){item.x =item.x - 400+2 + item.width;item.x_teleported = 0;}  if (item.x - item.width/2 <= xOffset){item.x =item.x + 400-2 - item.width;item.x_teleported = 0;} }   if (item.y_teleported > 5) { if(item.y + item.height/2 >=  yOffset + 300 ){item.y =item.y - 300+2 + item.height;item.y_teleported = 0;}   if (item.y - item.height/2 <= yOffset){item.y =item.y + 300-2 - item.height;item.y_teleported = 0;}  }\n";
+	}
+	else if (boundary == "closed"){
+	    programText += "if(item.x + item.width/2 > xOffset + 400)){item.x = -item.width/2 + xOffset + 400;}  if(item.x - item.width/2 < xOffset){item.x=xOffset+item.width/2;} if(item.y + item.height/2 > yOffset + 300)){item.y = -item.height/2 + yOffset + 300;} if(item.y - item.height/2 < yOffset){item.y=yOffset+item.height/2;}\n";	    
+	}
 	if(addWhitespace){programText+="\n\t\t"};
 	programText += "if(item.deleted && !item.invincible){item.destroy();}";
 	if(addWhitespace){programText+="\n\t\t"};
