@@ -348,7 +348,7 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 	    programText += " if (item.x_teleported > 5) {if(item.x + item.width/2 >=  xOffset + 400 ){item.x =item.x - 400+2 + item.width;item.x_teleported = 0;}  if (item.x - item.width/2 <= xOffset){item.x =item.x + 400-2 - item.width;item.x_teleported = 0;} }   if (item.y_teleported > 5) { if(item.y + item.height/2 >=  yOffset + 300 ){item.y =item.y - 300+2 + item.height;item.y_teleported = 0;}   if (item.y - item.height/2 <= yOffset){item.y =item.y + 300-2 - item.height;item.y_teleported = 0;}  }\n";
 	}
 	else if (boundary == "closed"){
-	    programText += "if(item.x + item.width/2 > xOffset + 400)){item.x = -item.width/2 + xOffset + 400;}  if(item.x - item.width/2 < xOffset){item.x=xOffset+item.width/2;} if(item.y + item.height/2 > yOffset + 300)){item.y = -item.height/2 + yOffset + 300;} if(item.y - item.height/2 < yOffset){item.y=yOffset+item.height/2;}\n";	    
+	    programText += "if(item.x + item.width/2 > xOffset + 400){item.x = -item.width/2 + xOffset + 400;}  if(item.x - item.width/2 < xOffset){item.x=xOffset+item.width/2;} if(item.y + item.height/2 > yOffset + 300)){item.y = -item.height/2 + yOffset + 300;} if(item.y - item.height/2 < yOffset){item.y=yOffset+item.height/2;}\n";	    
 	}
 	if(addWhitespace){programText+="\n\t\t"};
 	programText += "if(item.deleted && !item.invincible){item.destroy();}";
