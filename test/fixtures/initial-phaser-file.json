@@ -22,6 +22,12 @@
     "value":{"confidence":5,"optimism":2,"difficulty":3}
   },
   {
+    "l":["background"],
+    "relation":"instance_of",
+    "r":["variable"],
+    "value":"game.add.bitmapData(400,300); //graphics = game.make.graphics( 0,0);   graphics.beginFill(0x000000);    graphics.drawRoundedRect(xOffset,yOffset, 400, 300, 10);    graphics.endFill();  graphics.alpha = 0.2; graphics = game.make.sprite(0,0, graphics.generateTexture());  background.draw(graphics,0,0,null,null,'source-in')"
+  },
+  {
     "l":["gridSize"],
     "relation":"instance_of",
     "r":["variable"],
@@ -575,7 +581,49 @@
 	"game.canvas.onmouseout = leaveContext;"
     ]
   }
-
+,
+  {
+    "l":["get_amount"],
+    "relation":"instance_of",
+    "r":["function"],
+    "params":["color"],
+      "lines":[
+	  "pixels = background.getPixels(Phaser.Rectangle(0,0,400,300)).data;",
+	  "colors = {'red':[255,0,0],'blue':[0,0,255],'orange':[255, 87, 51],'green':[41, 159, 55]};",
+	  "color = colors[color];",
+	  "count = 0;",
+	  "for (var ii = 0; ii < pixels.length; ii += 4){",
+	  "\t R = pixels[ii]; G = pixels[ii+1]; B = pixels[ii+2];",
+	  "\t if (color[0] == R && color[1] == G && color[2] == B){ ",
+	  "\t\t count += 1;",
+	  "\t}",
+	  "}",
+	  "return count*10. / (400.*300.);"
+    ]
+  }
+,
+  {
+    "l":["draw"],
+    "relation":"instance_of",
+    "r":["function"],
+      "params":["x","y","shape","color"],
+      "lines":[
+	  "colors = {'red':0xff0000,'blue':0x0000ff,'orange':0xFF5733,'green':0x299F37};",
+	  "color = colors[color];",
+	  "background.draw(shape,x,y,null,null,'source-in');"
+    ]
+  },
+  {
+    "l":["clear"],
+    "relation":"instance_of",
+    "r":["function"],
+      "params":["x","y","shape"],
+      "lines":[
+	  "colors = {'red':0xff0000,'blue':0x0000ff,'orange':0xFF5733,'green':0x299F37};",
+	  "color = colors[color];",
+	  "background.draw(shape,x,y,null,null,'destination-out');"
+    ]
+  }
 
 
 
