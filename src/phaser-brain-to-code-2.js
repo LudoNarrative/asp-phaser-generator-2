@@ -9,9 +9,8 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 
 	// Contains realized goals from the ASP code.
 	var goals;
-	var pools = {};
 	var boundary;
-
+	var pools;
 	var top = 50;
 	var middle = 160;
 	var bottom = 250;
@@ -31,6 +30,7 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 		// Set the realized goals from the ASP code to an empty array.
 		goals = [];
 
+		pools = {};
 		// Grab variable assertions so we can store their values in create.
 		var variableValues = [];
 
