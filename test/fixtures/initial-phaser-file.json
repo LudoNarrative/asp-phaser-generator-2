@@ -406,6 +406,8 @@
       "item.body.collideWorldBounds = true;",
       "item.anchor.x = 0.5;",
       "item.anchor.y = 0.5;",
+      "item.x_teleported = 10;",
+      "item.y_teleported = 10;",
       "item.rotation = 0;",
       "item.health = 100;",
       "if (!item.body.velocity.hasOwnProperty('x')){item.body.velocity.x=0;}",

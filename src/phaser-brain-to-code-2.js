@@ -231,7 +231,6 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 	var addDefaultCreateValues = function(programText, variableValues, brain, j, p){
 		// Define initial values.
 		//Draw the rounded corners of the playspace.
-		programText += establishRoundedPlayArea();
 
 		if(addWhitespace){programText+="\n"};
 		for (var z=0; z<variableValues.length;z++){
@@ -250,6 +249,7 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 			}
 		}
 
+		programText += establishRoundedPlayArea();
 		//add a call to setting up the "walls" that form the boundry of the game
 		//the body of this function is defined inside of initial-phaser-file.json
 		//programText += "\n\tsetUpWalls();\n";
@@ -347,7 +347,7 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 			programText += " if (item.x_teleported > 5) {if(item.x + item.width/2 >=  xOffset + 400 ){item.x =item.x - 400+2 + item.width;item.x_teleported = 0;}  if (item.x - item.width/2 <= xOffset){item.x =item.x + 400-2 - item.width;item.x_teleported = 0;} }   if (item.y_teleported > 5) { if(item.y + item.height/2 >=  yOffset + 300 ){item.y =item.y - 300+2 + item.height;item.y_teleported = 0;}   if (item.y - item.height/2 <= yOffset){item.y =item.y + 300-2 - item.height;item.y_teleported = 0;}  }\n";
 		}
 		else if (boundary == "closed"){
-			programText += "if(item.x + item.width/2 > xOffset + 400)){item.x = -item.width/2 + xOffset + 400;}  if(item.x - item.width/2 < xOffset){item.x=xOffset+item.width/2;} if(item.y + item.height/2 > yOffset + 300)){item.y = -item.height/2 + yOffset + 300;} if(item.y - item.height/2 < yOffset){item.y=yOffset+item.height/2;}\n";	    
+			programText += "if(item.x + item.width/2 > xOffset + 400){item.x = -item.width/2 + xOffset + 400;}  if(item.x - item.width/2 < xOffset){item.x=xOffset+item.width/2;} if(item.y + item.height/2 > yOffset + 300){item.y = -item.height/2 + yOffset + 300;} if(item.y - item.height/2 < yOffset){item.y=yOffset+item.height/2;}\n";	    
 		}
 		if(addWhitespace){programText+="\n\t\t"};
 		programText += "if(item.deleted && !item.invincible){item.destroy();}";
@@ -980,7 +980,7 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 		var starAssetNames = ["starCircleCut.png","starCircleCut2.png","starDiagonalLines.png","starDiagonalLines2.png","starGradientLinear.png","starGradientRadial.png","starGradientRadial2.png","starStyled01.png","starTriCuts.png"];
 		var pentagonAssetNames = ["pentagon.png","pentagon1.0.png","pentagon2.0.png","pentagon3.0.png","pentagon3.1.png"];
 		var triangleAssetNames = ["triangleCircleCut.png","triangleCircleCut2.png","triangleDiagonalLines.png","triangleDiagonalLines2.png","triangleLinearGradient.png","triangleRadialGradient.png","triangleStyled01.png","triangleStyled02.png"];
-
+		console.log("ADD SPRITE");
 		// If the image name exists, add the appropriate preload message for the sprite.
 		if (spriteImgID!=undefined && b.assertions[spriteImgID]!=undefined){
 			if (b.assertions[spriteImgID]["image"]){
@@ -1171,7 +1171,7 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 			pool = pools[entity_pool];
 			if (pool["location_order"] == "random"){
 				str+= "pool_counters['" + entity_pool + "'] = Math.floor(Math.random() * (pools['" +
-				entity_pool + "'].length + 1));\n"
+				entity_pool + "'].length));\n"
 			}
 			else if  (pool["location_order"] == "ordered"){
 				str+="pool_counters['" + entity_pool +

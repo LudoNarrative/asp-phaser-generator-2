@@ -28,7 +28,7 @@ define([], function() {
 		for (var i in lines){
 			// Temporary variable that stores the new assertions to add based on the current line we're translating.
 			var assertionsToAdd = null;
-
+			console.log("HERE");
 			// Parse the line into its arguments.
 			var terms = parseTerms(lines[i])[0][0];
 			if (terms != undefined){
@@ -59,10 +59,11 @@ define([], function() {
 					// TODO: change back to window after done testing.
 					// assertionsToAdd = [window['translate'+functionName](terms.terms)];
 					assertionsToAdd = [eval('translate'+functionName)(terms.terms)];
+					console.log("INIT");
 					if (terms.predicate === "fill" ){
 						assertionsToAdd[0]['tags'] = ['initialize']
 					}
-					
+					console.log(assertionsToAdd);
 					doneLines.push(lines[i]);
 				}
 				// If it is a timerLogic statement,

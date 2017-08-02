@@ -231,7 +231,7 @@ Brain.prototype.getIndivs = function(group){
 // Print all known assertions.
 Brain.prototype.print = function(){
   for (var i in this.assertions){
-    console.log(JSON.stringify(this.assertions[i]));
+  //  console.log(JSON.stringify(this.assertions[i]));
   }
 };
 
@@ -245,16 +245,16 @@ Brain.prototype.prettyprint = function(){
 
 var _prettyprint = function(a, printAllProperties){
   var flag=false;
-  console.log(JSON.stringify(a["l"]) +" "+ a["relation"] +" "+ JSON.stringify(a["r"]));
+//  console.log(JSON.stringify(a["l"]) +" "+ a["relation"] +" "+ JSON.stringify(a["r"]));
   if (printAllProperties){
     for (var p in a) {
       if (a.hasOwnProperty(p) && p!="l" && p!="relation" && p!="r" && typeof a[p]!=="function") {
         flag=true;
-        console.log("\t"+p+": " + JSON.stringify(a[p]));
+    //   console.log("\t"+p+": " + JSON.stringify(a[p]));
       }
     }
   }
-  if (flag){console.log("");}
+  //if (flag){console.log("");}
   return JSON.stringify(a["l"]) +" "+ a["relation"] +" "+ JSON.stringify(a["r"]);
 }
 
@@ -330,7 +330,7 @@ Assertion.prototype.addRequiredProperty = function(propertyName,attributesList){
   if (propertyName in attributesList){
     return attributesList[propertyName];
   }
-  console.log("Warning: no " + propertyName + " property in assertion: \n" + JSON.stringify(attributesList) + "\n");
+ // console.log("Warning: no " + propertyName + " property in assertion: \n" + JSON.stringify(attributesList) + "\n");
   return null;
 };
 

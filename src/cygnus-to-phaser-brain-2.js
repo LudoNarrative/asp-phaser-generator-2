@@ -31,7 +31,7 @@
 			finalBrain = addSprites(pID, finalBrain);
 
 			// Add preload information
-			
+			finalBrain =  updatePreload(pID, finalBrain)
 			return finalBrain;
 		};
 
@@ -71,9 +71,8 @@
 			// newProgram will contain any existing assertions, plus any we modify.
 			var newProgram = JSON.parse(JSON.stringify(brain.assertions[pID]));
 
-			// For each assertion in the brain,
-			var i = brain.assertions.length
-			while (i--){
+			for (var i in brain.assertions){
+				console.log('i--');
 				// If it's a has_sprite assertion,
 				if (isRelationType(brain.assertions[i],"has_sprite")){
 					var inPreload = false;
