@@ -38,11 +38,45 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 		var sounds = [];
 		// Go through each assertion.  If it is a variable initialization,
 		// add it to our program.  If it is a goal assertion, update the goals array.
+		var thresholds = {}
 		for (var i in brain.assertions){
 			/* VARIABLE INSTANTIATIONS */
 			if (ctp.isVariableAssertion(brain.assertions[i])){
 				programText += defineVariable(brain, brain.assertions[i]);
 				variableValues.push(brain.assertions[i]);
+			}
+			if (brain.assertions[i]["relation"]=="instance_of" && brain.assertions[i]["r"].indexOf("program")>=0){
+				// For each function property specified in the object (e.g. "create"),
+				for (var p in brain.assertions[i]) {
+					for (var c in brain.assertions[i][p]) {
+						if (brain.assertions[i][p].hasOwnProperty(c)) {
+							// For each assertion in the list of assertions,
+							for (var a in brain.assertions[i][p][c]){
+								if (ctp.isConditionalAssertion(brain.assertions[i][p][c][a])){	
+									cond = brain.assertions[i][p][c][a];
+									for (var k=0; k< cond["l"].length;k++){
+										if (cond["l"][k]["relation"]=="eq"){
+											thresholds[cond["l"][k]["l"]] = (Number(cond["l"][k]["r"]));
+										}
+										else if (cond["l"][k]["relation"]=="gt"){
+											thresholds[cond["l"][k]["l"]] =(Number(cond["l"][k]["r"]));
+										}
+										else if (cond["l"][k]["relation"]=="ge"){
+											thresholds[cond["l"][k]["l"]] =(Number(cond["l"][k]["r"]));
+										}
+										else if (cond["l"][k]["relation"]=="lt"){
+											thresholds[cond["l"][k]["l"]] =(Number(cond["l"][k]["r"]));
+										}
+										else if (cond["l"][k]["relation"]=="le"){
+											thresholds[cond["l"][k]["l"]] = (Number(cond["l"][k]["r"]));
+										}
+										console.log(thresholds);
+									}
+								}
+							}
+						}
+					}
+				}
 			}
 			if (brain.assertions[i]["r"] == "sound"){
 				programText += defineVariable(brain,brain.assertions[i]);
@@ -174,7 +208,7 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 
 							if (p==="create"){
 								//programText = addResourceBarUpdateCalls(programText, variableValues)
-								programText = addResourceBarCreateCalls(programText, variableValues);
+								programText = addResourceBarCreateCalls(programText, variableValues,thresholds);
 							}
 
 							if (p==="create"){
@@ -492,10 +526,11 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 	}
 	*/
 
-	var addResourceBarCreateCalls = function(programText, variableValues){
+	var addResourceBarCreateCalls = function(programText, variableValues,thresholds){
 		var currentVariable;
 		var numResources = 0; // need to keep track, as each resource needs to be displayed on a different part of the screen.
 		if(addWhitespace){programText+="\n\t"};
+		console.log(thresholds);
 		for(var i = 0; i < variableValues.length; i += 1){
 			
 			currentVariable = variableValues[i];
@@ -512,8 +547,18 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 				programText += "addBarLabel(" + barConfigName + ", " + numResources + ", labels['" + resourceName + "'].name);"
 				if(addWhitespace){programText+="\n\t"};
 
+				var barWidth = 150;
+				x = 100 + (10 * numResources) + (barWidth * numResources) + barWidth*(thresholds[resourceName]-5)/10;
+				programText +=  "graphics = game.add.graphics(" + x + ",  1);\n";
+				programText += "graphics.beginFill(0x000000);\n";
+				programText += "graphics.drawRect(0,0, 5, 18);\n";
+				programText += "graphics.alpha = 0.5;\n";
+				programText += "graphics.endFill();\n";
 				
-				//we've found a variable of type resource. Add a call ot update it to the progrma text!
+				
+				
+				
+				//we've found a variable of type resource. Add a call to update it to the program text!
 				var resourceBarName = "resourceBar" + numResources;
 				var resourceName = currentVariable.l[0];
 				var percentName = "percent" + numResources;
@@ -850,6 +895,7 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 			str += "console.log('No one deleted');\n";
 		}
 		/* Formulate hypothesis. */
+		
 		if (!emptyHypothesis){
 			str += "if(";
 			// Add each assertion in the hypothesis.
@@ -1312,7 +1358,7 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 			if (addWhitespace){str+="\n\t\t";}
 			str+="tempPoint.y *= 10;"
 			if (addWhitespace){str+="\n\t\t";}
-			str+=move_type+"(item, tempPoint, "+speed+"+1);";
+			str+=move_type+"(item, tempPoint, "+speed+");";
 			if (addWhitespace){str+="\n";}
 			if (other=="item2"){
 				str+="}, this);"
@@ -1333,48 +1379,48 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 			if (a["r"][0]==="north"){
 				// move(entity, 0, -1);
 				//str += "moves(item,0,-1);"
-				str += "moves(item,0,-("+amount+"+2));"
+				str += "moves(item,0,-"+amount+");"
 			}
 			else if (a["r"][0]==="south"){
 				//str += "moves(item,0,1);"
-				str += "moves(item,0,("+amount+"+2));"
+				str += "moves(item,0,"+amount+");"
 			}
 			else if (a["r"][0]==="east"){
 				//str += "moves(item,1,0);"
-				str += "moves(item,("+amount+"+2),0);"
+				str += "moves(item,"+amount+",0);"
 			}
 			else if (a["r"][0]==="west"){
 				//str += "moves(item,-1,0);"
-				str += "moves(item,-("+amount+"+2),0);"
+				str += "moves(item,-"+amount+",0);"
 			}
 			else if (a["r"][0]==="northeast"){
 				// move(entity, 0, -1);
 				//str += "moves(item,1,-1);"
-				str += "moves(item,("+amount+"+2),-("+amount+"+2));"
+				str += "moves(item,"+amount+",-"+amount+");"
 			}
 			else if (a["r"][0]==="northwest"){
 				//str += "moves(item,-1,-1);"
-				str += "moves(item,-("+amount+"+2),-("+amount+"+2));"
+				str += "moves(item,-"+amount+",-"+amount+");"
 			}
 			else if (a["r"][0]==="southeast"){
 				//str += "moves(item,1,1);"
-				str += "moves(item,("+amount+"+2),("+amount+"+2));"
+				str += "moves(item,"+amount+","+amount+");"
 			}
 			else if (a["r"][0]==="southwest"){
 				//str += "moves(item,-1,1);"
-				str += "moves(item,-("+amount+"+2),("+amount+"+2));"
+				str += "moves(item,-"+amount+","+amount+");"
 			}
 			else if (a["r"][0]==="forward"){
-				str += "move_forward(item,("+amount+"+2));"
+				str += "move_forward(item,"+amount+");"
 			}
 			else if (a["r"][0]==="backward"){
-				str += "move_backward(item,("+amount+"+2));"
+				str += "move_backward(item,"+amount+");"
 			}
 			else if (a["r"][0]==="left"){
-				str += "move_left(item,("+amount+"+2));"
+				str += "move_left(item,"+amount+");"
 			}
 			else if (a["r"][0]==="right"){
-				str += "move_right(item,("+amount+"+2));"
+				str += "move_right(item,"+amount+");"
 			}
 			if (addWhitespace){str+="\n";}
 		}
