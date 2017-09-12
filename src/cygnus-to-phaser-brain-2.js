@@ -821,11 +821,16 @@ define(["./brain"], function(rensa) {
 
 	    newRightA["r"]=[assert["r"] +"."+property];
 	}
+	else if (assert["resourceR"] !== undefined) {
+	    
+	    newRightA["r"]=[assert["r"] +"/10"];
+	}
 	else{
 	    
 	    newRightA["r"]=[assert["r"] ];
 	}
-
+	
+	
 	// Here are the "old" values from the cygnus brain corresponding to the right attribute.
 	var oldRelation = assert["relation"];
 	var oldRight = assert["r"];

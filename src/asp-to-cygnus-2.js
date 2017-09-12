@@ -222,6 +222,8 @@ define([], function() {
 	
 	var returnHelper = {};
 	returnHelper.relation = rel;
+	console.log("TERMS1.predicate");
+	console.log(terms[1].predicate);
 	if(terms[0].predicate === "property"){
 	    
 	    
@@ -242,6 +244,11 @@ define([], function() {
 	    
 	    returnHelper.r = [entityName];
 	    returnHelper.propertyR = propertyName;
+	    
+	}
+	else if(terms[1].predicate === "resource"){
+	    returnHelper.r  = [terms[1].terms[0].predicate];
+	    returnHelper.resourceR = 1;
 	    
 	}
 	else{

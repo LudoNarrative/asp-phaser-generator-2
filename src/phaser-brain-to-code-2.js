@@ -181,6 +181,11 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 				programText = addTimerToUpdateNarrative(programText); 
 			    }
 			    
+			    if (p==="create"){
+				programText += "updateLabelsWithVariableValues();\n";
+				programText += "informNarrativeOfUpdatedVariables();\n";
+				programText += "updateLabelsWithVariableValues();\n";
+			    }
 
 			    if (p==="update"){
 				programText = addResourceValueClamping(programText, variableValues);
@@ -433,7 +438,7 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
     var addTimerToUpdateNarrative = function(programText){
 
 	if(addWhitespace){programText+="\n\t"};
-	programText += "game.time.events.loop(Phaser.Timer.SECOND * 10, informNarrativeOfUpdatedVariables, this);";
+	programText += "game.time.events.loop(Phaser.Timer.SECOND * 1, informNarrativeOfUpdatedVariables, this);";
 	if(addWhitespace){programText+="\n\t"};
 
 	return programText;

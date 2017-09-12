@@ -16,12 +16,6 @@
     "render":{}
   },
   {
-    "l":["variables"],
-    "relation":"instance_of",
-    "r":["variable"],
-    "value":{"confidence":5,"optimism":2,"difficulty":3}
-  },
-  {
     "l":["background"],
     "relation":"instance_of",
     "r":["variable"],
@@ -270,9 +264,7 @@
     "relation":"instance_of",
     "r":["function"],
     "params":["varName","value"],
-    "lines":["variables[varName]=value;",
-      "//State.set(varName, value.toFixed(1));",
-      "//console.log('setting varName: ' , varName , ' to ' , value);",
+    "lines":[
       "State.set(varName, value);",
       "Display.setAvatars(State);",
       "Display.setStats('storyStats');",
@@ -282,8 +274,11 @@
     "l":["getVariable"],
     "relation":"instance_of",
     "r":["function"],
-    "params":["varName"],
-    "lines":["return variables[varName];"]
+    "params":["variable, varName"],
+      "lines":[
+	  "console.log(variable + ' =  State.get( \"' + varName + '\")' );",
+	  "console.log(eval('State.get( \" ' + varName + '\")' ));",
+	  "eval(variable + ' =  State.get( \"' + varName + '\")' );"]
   },
   {
     "l":["informNarrativeOfUpdatedVariables"],
@@ -295,6 +290,9 @@
   "var variableName = Object.keys(labels)[i];",
      "    if(labels[variableName].readWrite === 'write'){",
      "      setVariable(labels[variableName].name, labels[variableName].value);",
+     "    }",
+     "    if(labels[variableName].readWrite === 'read_only'){",
+     "      getVariable(variableName,labels[variableName].name);",
      "    }",
      "  }"
     ]
@@ -405,10 +403,10 @@
       "item.invincible=true;",
       "item.body.collideWorldBounds = true;",
       "item.anchor.x = 0.5;",
-      "item.anchor.y = 0.5;",
+	"item.anchor.y = 0.5;",
+	"item.rotation = Math.random() * 360;",
       "item.x_teleported = 10;",
       "item.y_teleported = 10;",
-      "item.rotation = 0;",
       "item.health = 100;",
       "if (!item.body.velocity.hasOwnProperty('x')){item.body.velocity.x=0;}",
       "if (!item.body.velocity.hasOwnProperty('y')){item.body.velocity.y=0;}",
