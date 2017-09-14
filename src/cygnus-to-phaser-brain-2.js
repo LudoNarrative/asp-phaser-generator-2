@@ -72,7 +72,7 @@ define(["./brain"], function(rensa) {
 	var newProgram = JSON.parse(JSON.stringify(brain.assertions[pID]));
 
 	for (var i in brain.assertions){
-	    console.log('i--');
+
 	    // If it's a has_sprite assertion,
 	    if (isRelationType(brain.assertions[i],"has_sprite")){
 		var inPreload = false;

@@ -16,12 +16,6 @@
     "render":{}
   },
   {
-    "l":["background"],
-    "relation":"instance_of",
-    "r":["variable"],
-    "value":"game.add.bitmapData(400,300); //graphics = game.make.graphics( 0,0);   graphics.beginFill(0x000000);    graphics.drawRoundedRect(xOffset,yOffset, 400, 300, 10);    graphics.endFill();  graphics.alpha = 0.2; graphics = game.make.sprite(0,0, graphics.generateTexture());  background.draw(graphics,0,0,null,null,'source-in')"
-  },
-  {
     "l":["gridSize"],
     "relation":"instance_of",
     "r":["variable"],
@@ -32,6 +26,12 @@
     "relation":"instance_of",
     "r":["variable"],
     "value":"Math.floor((game.width-1)/gridSize)"
+  },
+  {
+    "l":["brushes"],
+    "relation":"instance_of",
+    "r":["variable"],
+    "value":"{}; brushes['circle'] = game.make.sprite(0,0,'circle'); brushes['square'] = game.make.sprite(0,0,'square');brushes['triangle'] = game.make.sprite(0,0,'triangle');"
   },
   {
     "l":["gridLinesVertical"],
@@ -113,6 +113,12 @@
     "relation":"instance_of",
     "r":["variable"],
     "value":50
+  },
+  {
+    "l":["background"],
+    "relation":"instance_of",
+    "r":["variable"],
+      "value":"game.add.bitmapData(400,300);\ngraphics = game.make.graphics( 0,0);\ngraphics.beginFill(0xff0000);\ngraphics.drawRoundedRect(xOffset,yOffset, 400, 300, 10);\ngraphics.endFill();\ngraphic = game.make.sprite(0,0, graphics.generateTexture());\ngraphic.alpha = 0.2;\nbackground.draw(graphic);background.update();\nbackground.addToWorld(xOffset,yOffset)"
   },
   {
     "l":["lossTextDisplayed"],
@@ -583,23 +589,32 @@
   }
 ,
   {
-    "l":["get_amount"],
-    "relation":"instance_of",
-    "r":["function"],
-    "params":["color"],
+      "l":["get_amount"],
+      "relation":"instance_of",
+      "r":["function"],
+      "params":["color"],
       "lines":[
-	  "pixels = background.getPixels(Phaser.Rectangle(0,0,400,300)).data;",
-	  "colors = {'red':[255,0,0],'blue':[0,0,255],'orange':[255, 87, 51],'green':[41, 159, 55]};",
-	  "color = colors[color];",
-	  "count = 0;",
-	  "for (var ii = 0; ii < pixels.length; ii += 4){",
-	  "\t R = pixels[ii]; G = pixels[ii+1]; B = pixels[ii+2];",
-	  "\t if (color[0] == R && color[1] == G && color[2] == B){ ",
-	  "\t\t count += 1;",
-	  "\t}",
+	  "if ( typeof this.checker_timeout == 'undefined' ){",      
+          "\tthis.checker_timeout = 0;",  
+          "\tthis.last = 0;",
 	  "}",
-	  "return count*10. / (400.*300.);"
-    ]
+	  "this.checker_timeout += 1;",
+	  "if (this.checker_timeout > 60){",
+	  "    this.checker_timeout = 0;",
+	  "    pixels = background.getPixels(new Phaser.Rectangle(0,0,400,300)).data;",
+	  "    colors = {'red':[255,0,0],'blue':[0,0,255],'orange':[255, 87, 51],'green':[41, 159, 55]};",
+	  "    color = colors[color];",
+	  "    count = 0;",
+	  "    for (var ii = 0; ii < pixels.length; ii += 4){",
+	  "        R = pixels[ii]; G = pixels[ii+1]; B = pixels[ii+2];",
+	  "        if (color[0] == R && color[1] == G && color[2] == B){ ",
+	  "            count += 1;",
+	  "        }",
+	  "     }",
+	  "     this.last =  count*10. / (400.*300.);",
+	  "}",
+	  "return this.last;"
+      ]
   }
 ,
   {
@@ -610,18 +625,82 @@
       "lines":[
 	  "colors = {'red':0xff0000,'blue':0x0000ff,'orange':0xFF5733,'green':0x299F37};",
 	  "color = colors[color];",
-	  "background.draw(shape,x,y,null,null,'source-in');"
+	  "shape = brushes[shape];",
+	  "shape.tint = color;",
+	  "background.draw(shape,x,y);",
+	  "background.update();"
     ]
   },
   {
-    "l":["clear"],
-    "relation":"instance_of",
-    "r":["function"],
+      "l":["clear"],
+      "relation":"instance_of",
+      "r":["function"],
       "params":["x","y","shape"],
+      "lines":[
+	  "shape = brushes[shape];",
+	  "background.draw(shape,x,y,null,null,'destination-out');",
+	  "background.update();"
+    ]
+  },
+  {
+      "l":["is_overlapping"],
+      "relation":"instance_of",
+      "r":["function"],
+      "params":["x","y","color"],
       "lines":[
 	  "colors = {'red':0xff0000,'blue':0x0000ff,'orange':0xFF5733,'green':0x299F37};",
 	  "color = colors[color];",
-	  "background.draw(shape,x,y,null,null,'destination-out');"
+	  "pixel = background.getPixel(x, y);",
+	  "pixel = pixel.r*256*256 + pixel.g*256 + pixel.b;",
+	  "return pixel === color;"
+    ]
+  },
+  {
+      "l":["fill"],
+      "relation":"instance_of",
+      "r":["function"],
+      "params":["location","color"],
+      "lines":[
+	  "colors = {'red':0xff0000,'blue':0x0000ff,'orange':0xFF5733,'green':0x299F37};",
+	  "color = colors[color];",
+	  "graphics.clear();",
+	  "if (location == 'all'){",
+	  "graphics.beginFill(color);",
+	  "graphics.drawRoundedRect(xOffset,yOffset, 400, 300, 10);",
+	  "graphics.endFill();",
+	  "graphic = game.make.sprite(0,0, graphics.generateTexture());",
+	  "background.clear();",
+	  "background.draw(graphic);",
+	  "background.update();",
+	  "}",
+	  "else {",
+	  "var y = 0;",
+	  "var height = 100;",
+	  "var x = 0;",
+	  "var width = 133;",
+	  "if (location.indexOf('middle') > 0){",
+	  "y = 100;",
+	  "height = 100;",
+	  "}",
+	  "if (location.indexOf('bottom') > 0){",
+	  "y = 200;",
+	  "height = 100;",
+	  "}",
+	  "if (location.indexOf('center') > 0){",
+	  "x = 133;",
+	  "width = 134;",
+	  "}",
+	  "if (location.indexOf('right') > 0){",
+	  "x = 267;",
+	  "width = 133;",
+	  "}",
+	  "graphics.beginFill(color);",
+	  "graphics.drawRoundedRect(x+xOffset,y+yOffset, width, height, 10);",
+	  "graphics.endFill();",
+	  "graphic = game.make.sprite(0,0, graphics.generateTexture());",
+	  "background.draw(graphic);",
+	  "background.update();",
+	  "}"
     ]
   }
 

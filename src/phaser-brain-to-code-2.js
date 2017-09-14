@@ -643,57 +643,90 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 	    programText += translateAddSound(curAssert);
 	}
 	else if (curAssert["relation"] == "fill"){
+	    console.log('A');
 	    programText += translateFill(curAssert);
-	    console.log("FILL");
+	}
+	else if (curAssert["relation"] == "clear"){
+	    programText += translateClear(curAssert);
+	}
+	else if (curAssert["relation"] == "draw"){
+	    programText += translateDraw(curAssert);
+	}
+	else if (curAssert["relation"] == "clear"){
+	    programText += translateClear(curAssert);
+	}
+	else{
+	    console.log('DONT KNOW WHAT TO DO WITH:');
+	    console.log(curAssert);
 	}
 	return programText;
     }
+    var translateClear = function(cur){
+	var x = "0";
+	var y = "0";
+	var prefix = "";
+	var postfix = "";
+	if (cur.l[0].predicate === "cursor"){
+	    x = "game.input.mousePointer.x"
+	    y = "game.input.mousePointer.y"
+	}
+	else if(cur.handler !== undefined && cur.handler.indexOf("ClickListener") >= 0){
+	    x = "clickedOnObject.x-clickedOnObject.width/2";
+	    y = "clickedOnObject.y-clickedOnObject.height/2";
+	}
+	else {
+	    prefix = "addedEntities['"+cur["l"][0]+"'].forEach(function(item) {\n";
+	    x = "item.x-item.width/2";
+	    y = "item.y-item.height/2";
+	    postfix = "},this)\n;";
+	}
+	
+	
+	return prefix + "clear(" + x + "-xOffset," + y + "-yOffset,'circle');\n" + postfix;
+	
+	
+    }
+    var translateDraw = function(cur){
+	var x = "0";
+	var y = "0";
+	var prefix = "";
+	var postfix = "";
+	if (cur.l[0].predicate === "cursor"){
+	    x = "game.input.mousePointer.x"
+	    y = "game.input.mousePointer.y"
+	}
+	else if(cur.handler !== undefined && cur.handler.indexOf("ClickListener") >= 0){
+	    x = "clickedOnObject.x-clickedOnObject.width/2";
+	    y = "clickedOnObject.y-clickedOnObject.height/2";
+	}
+	else {
+	    prefix = "addedEntities['"+cur["l"][0]+"'].forEach(function(item) {\n";
+	    x = "item.x-item.width/2";
+	    y = "item.y-item.height/2";
+	    postfix = "},this)\n;";
+	}
+	
+	
+	return prefix + "draw(" + x + "-xOffset," + y + "-yOffset,'circle','" + cur.r + "');\n" + postfix;
+	
+    }
     var translateFill = function(cur){
+	console.log(cur);
 	var x = 0;
 	var y = 0;
 	var width = 400;
 	var height = 300;
-	if (cur["l"].predicate === "all"){
-	    
+	location = '';
+	if (cur["l"][0].predicate === "all"){
+	    location = 'all';
 	}
-	else if  (cur["l"].predicate === "location"){
-	    row = cur["l"].terms[0].predicate;
-	    col = cur["l"].terms[1].predicate;
-	    if (row == "top"){
-		y = 0
-	    }
-	    else if (row == "middle") {
-		y = 100;
-		
-	    }
-	    else if (row == "bottom") {
-		y = 200;
-	    }
-	    
-	    if (col == "left"){
-		x = 0;
-	    }
-	    else if (col == "middle"){
-		x = 400/3;
-	    }
-	    else if (col == "right"){
-		x = 2*400/3;
-	    }
-	    width = 400/3;
-	    height = 100;
+	else if  (cur["l"][0].predicate === "location"){
+	    row = cur["l"][0].terms[0].predicate;
+	    col = cur["l"][0].terms[1].predicate;
+	    location = 'location(' + row + ',' + col + ')';
 	}
-	color = cur["r"];
-	var outStr = "";
-	colors = {'red':"0xff0000",'blue':"0x0000ff",'orange':"0xFF5733",'green':"0x299F37"};	
-	outStr += "bmd_graphic = game.add.graphics( 0,0);\n";
-	outStr += "bmd_graphic.beginFill(" + colors[color] +");\n";
-	outStr += "bmd_graphic.drawRoundedRect(xOffset+ " + x+",yOffset + " +y + ", " + width + ", " + height + ", 10);\n";
-	outStr += "bmd_graphic.endFill();\n";
-	outStr += "bmd_graphic.alpha = 0.5;\n";
-	outStr += "bmd_graphic = game.make.sprite(0,0,bmd_graphic.generateTexture());\n";
-	outStr += "background.draw(bmd_graphic, 0 ,0 , null, null,'source-in')\n";
-	
-	return outStr;
+
+	return "fill('" + location + "','" + cur["r"] + "');";
     }
     /*
       The remaining functions will translate an assertion ("a"), sometimes based on the
@@ -947,7 +980,17 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 		str+=translateLookAtAssertion(a["r"][j]);
 	    }
 	    else if (a["r"][j]["relation"]==="fill"){
-		console.log("FILL");
+		str +=translateFill(a["r"][j]);
+	    }
+	    else if (a["r"][j]["relation"]==="draw"){
+		str +=translateDraw(a["r"][j]);
+	    }
+	    else if (a["r"][j]["relation"]==="clear"){
+		str +=translateClear(a["r"][j]);
+	    }
+	    else{
+		console.log("translateConditionalAssertion -- DONT KNOW WHAT TO DO WITH:");
+		console.log(a["r"][j]);
 	    }
 	    if (addWhitespace){str+="\n\t";}
 	}
@@ -987,6 +1030,10 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 	var triangleAssetNames = ["triangleCircleCut.png","triangleCircleCut2.png","triangleDiagonalLines.png","triangleDiagonalLines2.png","triangleLinearGradient.png","triangleRadialGradient.png","triangleStyled01.png","triangleStyled02.png"];
 	console.log("ADD SPRITE");
 	// If the image name exists, add the appropriate preload message for the sprite.
+	
+	str+= "game.load.image('circle','assets/sprites/circle.png');"
+	str+= "game.load.image('triangle','assets/sprites/triangle.png');"
+	str+= "game.load.image('square','assets/sprites/square.png');"
 	if (spriteImgID!=undefined && b.assertions[spriteImgID]!=undefined){
 	    if (b.assertions[spriteImgID]["image"]){
 		var img = b.assertions[spriteImgID]["image"];
@@ -1723,11 +1770,11 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
     var establishRoundedPlayArea = function(){
 	str = ""
 
-	str += "\n\tgraphics = game.add.graphics( 0,0);\n";
-	str += "\tgraphics.beginFill(0x000000);\n";
-	str += "\tgraphics.drawRoundedRect(xOffset,yOffset, 400, 300, 10);\n";
-	str += "\tgraphics.endFill();\n";
-	str += "\tgraphics.alpha = 0.2;\n";
+	str += "\n\tbackground_graphics = game.add.graphics( 0,0);\n";
+	str += "\tbackground_graphics.beginFill(0x000000);\n";
+	str += "\tbackground_graphics.drawRoundedRect(xOffset,yOffset, 400, 300, 10);\n";
+	str += "\tbackground_graphics.endFill();\n";
+	str += "\tbackground_graphics.alpha = 0.2;\n";
 
 	return str;
     }

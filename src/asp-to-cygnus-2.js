@@ -28,7 +28,6 @@ define([], function() {
 	for (var i in lines){
 	    // Temporary variable that stores the new assertions to add based on the current line we're translating.
 	    var assertionsToAdd = null;
-	    console.log("HERE");
 	    // Parse the line into its arguments.
 	    var terms = parseTerms(lines[i])[0][0];
 	    if (terms != undefined){
@@ -59,11 +58,11 @@ define([], function() {
 		    // TODO: change back to window after done testing.
 		    // assertionsToAdd = [window['translate'+functionName](terms.terms)];
 		    assertionsToAdd = [eval('translate'+functionName)(terms.terms)];
-		    console.log("INIT");
+
 		    if (terms.predicate === "fill" ){
 			assertionsToAdd[0]['tags'] = ['initialize']
 		    }
-		    console.log(assertionsToAdd);
+
 		    doneLines.push(lines[i]);
 		}
 		// If it is a timerLogic statement,
@@ -222,8 +221,7 @@ define([], function() {
 	
 	var returnHelper = {};
 	returnHelper.relation = rel;
-	console.log("TERMS1.predicate");
-	console.log(terms[1].predicate);
+
 	if(terms[0].predicate === "property"){
 	    
 	    
@@ -430,7 +428,7 @@ define([], function() {
     function translateClear( terms){
 	var returnHelper = {};
 	returnHelper.l = [terms[0]];
-	returnHelper.relation = "draw";
+	returnHelper.relation = "clear";
 	returnHelper.r = [ terms[1].predicate];
 	return returnHelper;
     }
@@ -727,7 +725,9 @@ define([], function() {
 
 	// For every precondition in preconds,
 	for (i in preconds){
+
 	    if (preconds[i].indexOf("control_event(click(")>=0){
+
 		isClickEvent=true;
 	    }
 	}
@@ -774,6 +774,8 @@ define([], function() {
 		// If this is the control event, don't add to our final array of preconditions.
 		if (a=="control_event"){
 		    // Grab the argument of the click. (Assume bList has one element).
+		    
+		    
 		    var argument = parseTerms(bList[0])[0][0].terms[0].terms[0].predicate;
 		    listenerName = keyword + "_"+ argument+"ClickListener";
 		    var clickAssertion = {"l":[listenerName],"relation":"instance_of","r":["click_listener"],"for":[argument],"tags":["create"],"goal_keyword":keyword};
@@ -919,7 +921,6 @@ define([], function() {
 	    var r = parseTerms(results[i].substring(1));
 	    var e = r[0][1].predicate;
 	    var fList = r[0][1].terms;
-
 	    // TODO: add more if statements for simple translates (like "translateAdd") here as needed
 	    if (e=="add"){
 		rs.push(translateAdd(fList));
@@ -938,10 +939,20 @@ define([], function() {
 		else if(e=="delete"){
 		    rs.push({"l":[fList[0].terms[0].predicate],"relation":"action","r":["delete"]});
 		}
+		else if (e=="clear"){
+		    
+		    rs.push({"l":[fList[0].terms[0]],"relation":e});
+		}
+		else {
+		    console.log("addNormalResult fList.length==1 DONT KNOW WHAT TO DO");
+		}
 	    }
 	    // Push this result into our final array of all results.
 	    else if (fList.length==2){
-		var zTerms = newTranslateNested(fList[0].terms[0]);
+		var zTerms = fList[0]
+		if (fList[0].terms != undefined){
+		    zTerms = newTranslateNested(fList[0].terms[0]);
+		}
 		if(fList[0].predicate === "property"){
 		    zTerms = fList[0].terms[0].terms[0].predicate + "." + fList[0].terms[1].predicate;
 		}
@@ -958,8 +969,19 @@ define([], function() {
 		    var right = [parseInt(newTranslateNested(fList[1].terms[0])),parseInt(newTranslateNested(fList[1].terms[1]))];
 		    rs.push({"l":[zTerms],"relation":e,"r":right});
 		}
-		else{
-		    rs.push({"l":[zTerms],"relation":e,"r":[newTranslateNested(fList[1].terms[0])]});
+		else if (e=="fill"){
+		    
+		    rs.push({"l":[fList[0]],"relation":e,"r":[newTranslateNested(fList[1])]});
+		    
+		}
+		else {
+
+		    if (fList[1].terms != undefined){
+			rs.push({"l":[zTerms],"relation":e,"r":[newTranslateNested(fList[1].terms[0])]});
+		    }
+		    else{
+			rs.push({"l":[zTerms],"relation":e,"r":[newTranslateNested(fList[1])]});
+		    }
 		}
 	    }
 	    else if (fList.length==3){
@@ -970,7 +992,7 @@ define([], function() {
 		    if (fList[1].predicate=="ccw"){
 			rs.push({"l":[zTerms], "relation":e, "r":["-" + tTerms]})
 		    }
-		    else{
+		    else {
 			rs.push({"l":[zTerms], "relation":e, "r":[tTerms]})
 		    }
 		}
