@@ -234,6 +234,7 @@ define([], function() {
 	else{
 	    returnHelper.l  = [terms[0].terms[0].predicate];
 	}
+	console.log(terms[1].predicate);
 	if(terms[1].predicate === "property"){
 	    
 	    
@@ -246,6 +247,12 @@ define([], function() {
 	}
 	else if(terms[1].predicate === "resource"){
 	    returnHelper.r  = [terms[1].terms[0].predicate];
+	    returnHelper.resourceR = 1;
+	    
+	}
+	else if(terms[1].predicate === "amount"){
+
+	    returnHelper.r  = ["get_amount(" + terms[1].terms[0].terms[0] + ")"];
 	    returnHelper.resourceR = 1;
 	    
 	}
@@ -881,6 +888,7 @@ define([], function() {
 	    var right = parseTerms(bList[1]);
 	    if (left_pred === "amount"){
 		left = "get_amount(\"" + left + "\")";
+		
 	    }
 	    if(right[0][0].predicate === "random_int"){
 		right = "random_int(" + right[0][0].terms[0].predicate + "," + right[0][0].terms[1].predicate + ")";
