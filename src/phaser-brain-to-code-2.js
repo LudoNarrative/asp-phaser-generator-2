@@ -675,7 +675,7 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 	    y = "clickedOnObject.y-clickedOnObject.height/2";
 	}
 	else {
-	    prefix = "addedEntities['"+cur["l"][0]+"'].forEach(function(item) {\n";
+	    prefix = "addedEntities['"+cur["l"][0].predicate+"'].forEach(function(item) {\n";
 	    x = "item.x-item.width/2";
 	    y = "item.y-item.height/2";
 	    postfix = "},this)\n;";
@@ -700,7 +700,7 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 	    y = "clickedOnObject.y-clickedOnObject.height/2";
 	}
 	else {
-	    prefix = "addedEntities['"+cur["l"][0]+"'].forEach(function(item) {\n";
+	    prefix = "addedEntities['"+cur["l"][0].predicate+"'].forEach(function(item) {\n";
 	    x = "item.x-item.width/2";
 	    y = "item.y-item.height/2";
 	    postfix = "},this)\n;";
