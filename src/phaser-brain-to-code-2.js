@@ -5,7 +5,7 @@
 define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
     // Change to false to remove whitespace from output.
     var addWhitespace = true;
-    var maxEntityCount = 20;
+    var maxEntityCount = 4;
 
     // Contains realized goals from the ASP code.
     var goals;
@@ -675,7 +675,11 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 	    y = "clickedOnObject.y-clickedOnObject.height/2";
 	}
 	else {
-	    prefix = "addedEntities['"+cur["l"][0]+"'].forEach(function(item) {\n";
+	    var current = cur["l"][0].predicate;
+	    if (current == undefined){
+		current = cur["l"][0];
+	    }
+	    prefix = "addedEntities['"+current+"'].forEach(function(item) {\n";
 	    x = "item.x-item.width/2";
 	    y = "item.y-item.height/2";
 	    postfix = "},this)\n;";
@@ -700,7 +704,11 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 	    y = "clickedOnObject.y-clickedOnObject.height/2";
 	}
 	else {
-	    prefix = "addedEntities['"+cur["l"][0]+"'].forEach(function(item) {\n";
+	    var current = cur["l"][0].predicate;
+	    if (current == undefined){
+		current = cur["l"][0];
+	    }
+	    prefix = "addedEntities['"+current+"'].forEach(function(item) {\n";
 	    x = "item.x-item.width/2";
 	    y = "item.y-item.height/2";
 	    postfix = "},this)\n;";
@@ -716,17 +724,17 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 	var y = 0;
 	var width = 400;
 	var height = 300;
-	location = '';
+	var location_ = '';
 	if (cur["l"][0].predicate === "all"){
-	    location = 'all';
+	    location_ = 'all';
 	}
 	else if  (cur["l"][0].predicate === "location"){
 	    row = cur["l"][0].terms[0].predicate;
 	    col = cur["l"][0].terms[1].predicate;
-	    location = 'location(' + row + ',' + col + ')';
+	    location_ = 'location(' + row + ',' + col + ')';
 	}
 
-	return "fill('" + location + "','" + cur["r"] + "');";
+	return "fill('" + location_ + "','" + cur["r"] + "');";
     }
     /*
       The remaining functions will translate an assertion ("a"), sometimes based on the

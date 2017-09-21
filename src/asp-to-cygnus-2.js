@@ -883,7 +883,8 @@ define([], function() {
 	}
 	else if (bList.length==2){ // B = bList[0], C = bList[1]
 	    var left = parseTerms(bList[0]);
-	    var left_pred = left[0][0].predicate
+	    var left_pred = left[0][0].predicate;
+	    console.log(left[0][0]);
 	    left = left[0][0].terms[0].predicate;
 	    var right = parseTerms(bList[1]);
 	    if (left_pred === "amount"){
@@ -900,6 +901,10 @@ define([], function() {
 	    ps.push({"l":[left],"relation":a,"r":[right]});
 	}
 	else if (bList.length==3){
+	    console.log("LEFT");
+	    console.log(bList[0]);
+	    console.log("RIGHT");
+	    console.log(bList[1]);
 	    var left = parseTerms(bList[0])[0][0].terms[0].predicate;
 	    var right = parseTerms(bList[1])[0][0].terms[0].predicate;
 
@@ -948,8 +953,13 @@ define([], function() {
 		    rs.push({"l":[fList[0].terms[0].predicate],"relation":"action","r":["delete"]});
 		}
 		else if (e=="clear"){
-		    
-		    rs.push({"l":[fList[0].terms[0]],"relation":e});
+
+		    if (fList[0].terms != undefined){
+			rs.push({"l":[fList[0].terms[0]],"relation":e});
+		    }
+		    else{
+			rs.push({"l":[fList[0]],"relation":e});
+		    }
 		}
 		else {
 		    console.log("addNormalResult fList.length==1 DONT KNOW WHAT TO DO");

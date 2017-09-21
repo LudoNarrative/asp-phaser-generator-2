@@ -589,29 +589,57 @@
   }
 ,
   {
+      "l":["clsStopwatch"],
+      "relation":"instance_of",
+      "r":["function"],
+      "params":[],
+      "lines":[
+	  "console.log('CREATED STOPWATC')",
+	  "var startAt= 0;// Time of last start / resume. (0 if not running)",
+	  "var lapTime= 0;// Time on the clock when last stopped in milliseconds",
+	  "var now= function() {",
+	  "return (new Date()).getTime();",
+	  "}; ",
+	  "this.start = function() {",
+	  "startAt= startAt ? startAt : now();",
+	  "};",
+	  "this.stop = function() {",
+	  "lapTime= startAt ? lapTime + now() - startAt : lapTime;",
+	  "startAt= 0; // Paused",
+	  "};",
+	  "this.reset = function() {",
+	  "lapTime = startAt = 0;",
+	  "};",
+	  "this.time = function() {",
+	  "return lapTime + (startAt ? now() - startAt : 0); ",
+	  "};"]
+  },
+  {
       "l":["get_amount"],
       "relation":"instance_of",
       "r":["function"],
       "params":["color"],
       "lines":[
-	  "if ( typeof this.checker_timeout == 'undefined' ){",      
-          "\tthis.checker_timeout = 0;",  
-          "\tthis.last = 0;",
+	  "if ( typeof this.checker_timeout == 'undefined' ){",
+	  "\t console.log('SHOULD CREATE HERE');",
+          "\t this.checker_timeout = new clsStopwatch();",
+          "\t this.checker_timeout.startAt = -100;",
 	  "}",
-	  "this.checker_timeout += 1;",
-	  "if (this.checker_timeout > 60){",
-	  "    this.checker_timeout = 0;",
+	  "var factor = 16;",
+	  "if (this.checker_timeout.time() > 60){",
+	  "    this.checker_timeout.reset();",
 	  "    pixels = background.getPixels(new Phaser.Rectangle(0,0,400,300)).data;",
 	  "    colors = {'red':[255,0,0],'blue':[0,0,255],'orange':[255, 87, 51],'green':[41, 159, 55]};",
 	  "    color = colors[color];",
 	  "    count = 0;",
-	  "    for (var ii = 0; ii < pixels.length; ii += 4){",
+	  "    for (var ii = 0; ii < pixels.length; ii += 4*factor){",
 	  "        R = pixels[ii]; G = pixels[ii+1]; B = pixels[ii+2];",
 	  "        if (color[0] == R && color[1] == G && color[2] == B){ ",
 	  "            count += 1;",
 	  "        }",
 	  "     }",
-	  "     this.last =  count*10. / (400.*300.);",
+	  "     console.log( count*10.*factor / (400.*300.));",
+	  "     this.last =  count*10.*factor / (400.*300.);",
 	  "}",
 	  "return this.last;"
       ]
@@ -623,12 +651,12 @@
     "r":["function"],
       "params":["x","y","shape","color"],
       "lines":[
-	  "colors = {'red':0xff0000,'blue':0x0000ff,'orange':0xFF5733,'green':0x299F37};",
-	  "color = colors[color];",
-	  "shape = brushes[shape];",
-	  "shape.tint = color;",
-	  "background.draw(shape,x,y);",
-	  "background.update();"
+  "colors = {'red':0xff0000,'blue':0x0000ff,'orange':0xFF5733,'green':0x299F37};",
+  "color = colors[color];",
+  "shape = brushes[shape];",
+  "shape.tint = color;",
+  "background.draw(shape,x,y);",
+  "background.update();"
     ]
   },
   {
@@ -637,9 +665,8 @@
       "r":["function"],
       "params":["x","y","shape"],
       "lines":[
-	  "shape = brushes[shape];",
-	  "background.draw(shape,x,y,null,null,'destination-out');",
-	  "background.update();"
+  "shape = brushes[shape];",
+	  "background.draw(shape,x,y,null,null,'destination-out');"
     ]
   },
   {
