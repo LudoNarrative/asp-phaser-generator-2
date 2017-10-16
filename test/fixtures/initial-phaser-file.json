@@ -731,6 +731,23 @@
 	  "background.update();",
 	  "}"
     ]
+  },
+  {
+      "l":["get_distance"],
+      "relation":"instance_of",
+      "r":["function"],
+      "params":["entity","others","mode"],
+      "lines":[
+      "var best = 0;",
+      "if (mode === 'nearest'){ best = Number.POSITIVE_INFINITY;}",
+      "if (mode === 'furthest'){ best = Number.NEGATIVE_INFINITY;}",
+      "addedEntities[other].forEach(function(o) {",
+      "var distance = game.physics.arcade.distanceBetween(entity,o);",
+      "if (mode === 'nearest' && distance < best){ best = distance;}",
+      "if (mode === 'furthest' && distance > best){ best = distance;}",
+      "}, this);",
+      "return best;"
+    ]
   }
 
 

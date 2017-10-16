@@ -661,61 +661,79 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 	}
 	return programText;
     }
-    var translateClear = function(cur){
-	var x = "0";
-	var y = "0";
-	var prefix = "";
-	var postfix = "";
-	if (cur.l[0].predicate === "cursor"){
-	    x = "game.input.mousePointer.x"
-	    y = "game.input.mousePointer.y"
-	}
-	else if(cur.handler !== undefined && cur.handler.indexOf("ClickListener") >= 0){
-	    x = "clickedOnObject.x-clickedOnObject.width/2";
-	    y = "clickedOnObject.y-clickedOnObject.height/2";
-	}
-	else {
-	    var current = cur["l"][0].predicate;
-	    if (current == undefined){
-		current = cur["l"][0];
-	    }
-	    prefix = "addedEntities['"+current+"'].forEach(function(item) {\n";
-	    x = "item.x-item.width/2";
-	    y = "item.y-item.height/2";
-	    postfix = "},this)\n;";
-	}
+    var translateClear = function(cur, nested_entity){
+		var x = "0";
+		var y = "0";
+		var prefix = "";
+		var postfix = "";
+		nested_entity = (typeof nested_entity !== 'undefined') ?  nested_entity : "*****";
+
+		if (cur.l[0].predicate === "cursor"){
+		    x = "game.input.mousePointer.x"
+		    y = "game.input.mousePointer.y"
+		}
+		else if(cur.handler !== undefined && cur.handler.indexOf("ClickListener") >= 0){
+		    x = "clickedOnObject.x-clickedOnObject.width/2";
+		    y = "clickedOnObject.y-clickedOnObject.height/2";
+		}
+		else {
+		    var current = cur["l"][0].predicate;
+		    if (current == undefined){
+				current = cur["l"][0];
+		    }
+		    var nesting = current == nested_entity;
+		    if (!nesting) {
+		    	prefix = "addedEntities['"+current+"'].forEach(function(item) {\n";
+		    	x = "item.x-item.width/2";
+		    	y = "item.y-item.height/2";
+		    	postfix = "},this)\n;";
+		    }
+		    else {
+		    	x = current + ".x-" + current + ".width/2";
+		    	y = current + ".y-" + current + ".height/2";
+		    }
+		}
 	
 	
 	return prefix + "clear(" + x + "-xOffset," + y + "-yOffset,'circle');\n" + postfix;
 	
 	
     }
-    var translateDraw = function(cur){
-	var x = "0";
-	var y = "0";
-	var prefix = "";
-	var postfix = "";
-	if (cur.l[0].predicate === "cursor"){
-	    x = "game.input.mousePointer.x"
-	    y = "game.input.mousePointer.y"
-	}
-	else if(cur.handler !== undefined && cur.handler.indexOf("ClickListener") >= 0){
-	    x = "clickedOnObject.x-clickedOnObject.width/2";
-	    y = "clickedOnObject.y-clickedOnObject.height/2";
-	}
-	else {
-	    var current = cur["l"][0].predicate;
-	    if (current == undefined){
-		current = cur["l"][0];
-	    }
-	    prefix = "addedEntities['"+current+"'].forEach(function(item) {\n";
-	    x = "item.x-item.width/2";
-	    y = "item.y-item.height/2";
-	    postfix = "},this)\n;";
-	}
-	
-	
-	return prefix + "draw(" + x + "-xOffset," + y + "-yOffset,'circle','" + cur.r + "');\n" + postfix;
+    var translateDraw = function(cur, nested_entity){
+		var x = "0";
+		var y = "0";
+		var prefix = "";
+		var postfix = "";
+		nested_entity = (typeof nested_entity !== 'undefined') ?  nested_entity : "*****";
+
+		if (cur.l[0].predicate === "cursor"){
+		    x = "game.input.mousePointer.x"
+		    y = "game.input.mousePointer.y"
+		}
+		else if(cur.handler !== undefined && cur.handler.indexOf("ClickListener") >= 0){
+		    x = "clickedOnObject.x-clickedOnObject.width/2";
+		    y = "clickedOnObject.y-clickedOnObject.height/2";
+		}
+		else {
+		    var current = cur["l"][0].predicate;
+		    if (current == undefined){
+			current = cur["l"][0];
+		    }
+		    var nesting = current == nested_entity;
+		    if (!nesting) {
+		    	prefix = "addedEntities['"+current+"'].forEach(function(item) {\n";
+		    	x = "item.x-item.width/2";
+		    	y = "item.y-item.height/2";
+		    	postfix = "},this)\n;";
+		    }
+		    else {
+		    	x = current + ".x-" + current + ".width/2";
+		    	y = current + ".y-" + current + ".height/2";
+		    }
+		}
+		
+		
+		return prefix + "draw(" + x + "-xOffset," + y + "-yOffset,'circle','" + cur.r + "');\n" + postfix;
 	
     }
     var translateFill = function(cur){
@@ -802,10 +820,21 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
     }
 
     // Convert an assertion that changes the value of a variable to string.
-    var translateSetValue = function(a){
+    var translateSetValue = function(a,nested_entity){
+
+	nested_entity = (typeof nested_entity !== 'undefined') ?  nested_entity : "*****";
 	var str="";
+
+	var entity1 = "";
+	if (a["l"][0].indexOf(".")>0){
+		names = a["l"][0].split(".");
+		// Find entity1
+		entity1 = names[0];
+	}
+
+	console.log(str=a["l"][0] + "=" + a["r"][0] + ";\n")
 	// Check if dealing with properties
-	if ((a["l"][0].indexOf(".")>0 || a["r"][0].indexOf(".")>0) && !(a["l"][0].indexOf("game.")>0) && !(a["r"][0].indexOf("game.")>0)){
+	if (!(nested_entity === entity1) && (a["l"][0].indexOf(".")>0 || a["r"][0].indexOf(".")>0) && !(a["l"][0].indexOf("game.")>0) && !(a["r"][0].indexOf("game.")>0)){
 	    if (a["l"][0].indexOf(".")>0){
 		names = a["l"][0].split(".");
 		// Find entity1
@@ -818,31 +847,26 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 		    // Find entity2
 		    entity2 = names[0];
 		    // Find property2
-		    property2 = names[1];
-
+		    property2 = names.slice(1).join('.');//names[1];
 		    if(entity1 !== entity2){
-			/* CASE 1: If e1.property = e2.property's value, */
-			str+="addedEntities['"+entity1+"'].forEach(function(item){";
-			if(addWhitespace){str+="\n"};
-			str+="addedEntities['"+entity2+"'].forEach(function(item2){";
-			if(addWhitespace){str+="\n"};
-			str+="item." + property1 + " =item2."+property2+";}, this);}, this);"
+		    	throw "It is nonsensical to set a single entity's property to be the value of all of another group of entities' properties."
+		    	//WE ARE FUCKED IF THIS HAPPENS
 		    }
 		    else{
-			/* CASE 1.5: if e1.property  = modified value of e1 (e.g. e1.health = e1.health - 1) */
-			if(a.handler !== undefined && a.handler.indexOf("ClickListener") >= 0){
-			    str="clickedOnObject."+property1+"=clickedOnObject."+property2;
-			}
-			else if(a.handler !== undefined && a.handler.indexOf("OverlapHandler") >= 0){
-			    if (addWhitespace){str+="\n";}
-			    str += "\tif (typeof e1 !== \'undefined\' && e1.key === '" + entity1 + "'){\n\t\te1."+property1+" = " + "e1."+property2+";\n\t}";
-			    if (addWhitespace){str+="\n";}
-			    str += "\tif (typeof e2 !== \'undefined\' && e2.key === '" + entity1 + "'){\n\t\te2."+property1+" = " + "e2."+property2+";\n\t}";
-			    if (addWhitespace){str+="\n";}
-			}
-			else{
-			    str="addedEntities['"+entity1+"'].forEach(function(item){item." + property1 + " = item."+property2+";}, this);";
-			}
+				/* CASE 1.5: if e1.property  = modified value of e1 (e.g. e1.health = e1.health - 1) */
+				if(a.handler !== undefined && a.handler.indexOf("ClickListener") >= 0){
+			    	str="clickedOnObject."+property1+"=clickedOnObject."+property2;
+				}
+				else if(a.handler !== undefined && a.handler.indexOf("OverlapHandler") >= 0){
+				    if (addWhitespace){str+="\n";}
+					    str += "\tif (typeof e1 !== \'undefined\' && e1.key === '" + entity1 + "'){\n\t\te1."+property1+" = " + "e1."+property2+";\n\t}";
+				    if (addWhitespace){str+="\n";}
+				    	str += "\tif (typeof e2 !== \'undefined\' && e2.key === '" + entity1 + "'){\n\t\te2."+property1+" = " + "e2."+property2+";\n\t}";
+				    if (addWhitespace){str+="\n";}
+				}
+				else{
+				    str="addedEntities['"+entity1+"'].forEach(function(item){item." + property1 + " = item."+property2+";}, this);";
+				}
 		    }
 		}
 		/* CASE 2: If e1.property = some_known_var_or_value, */
@@ -889,65 +913,95 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 	    emptyHypothesis = true;
 	}
 	
+		var nested = false;
 	
 	if(a["r"][0].handler !== undefined && a["r"][0].handler.indexOf("OverlapHandler") >= 0){
 	    str += "if (e1.deleted || e1.invincible){ console.log('e1.deleted'); return;}\n";
 	    str += "if (e2.deleted || e1.invincible){ console.log('e2.deleted');return;}\n";
 	    str += "console.log('No one deleted');\n";
 	}
+	var nesting_entity = "****";
 	/* Formulate hypothesis. */
 	if (!emptyHypothesis){
+
+	    for (var i=0; i< a["l"].length;i++){
+	    	console.log("LHS")
+	    	console.log(a["l"][i]["l"][0])
+	    	if (a["l"][i]["l"][0].predicate === "property" ){
+	    		nested = true;
+	    		entity = a["l"][i]["l"][0].terms[0].predicate;
+	    		str += "addedEntities['" + entity +"'].forEach(function(" + entity + ") {";
+	    		var property_name = a["l"][i]["l"][0].terms[1].predicate;
+	    		a["l"][i]["l"] = entity + "." + property_name;
+	    		nesting_entity = entity;
+	    	}
+	    	if (a["l"][i]["l"][0].predicate === "distance"){
+	    		nested = true;
+	    		entity = a["l"][i]["l"][0].terms[0].predicate;
+	    		str += "addedEntities['" + entity +"'].forEach(function(" + entity + ") {";
+	    		var other = a["l"][i]["l"][0].terms[1].predicate;
+	    		var type = a["l"][i]["l"][0].terms[2].predicate;
+	    		a["l"][i]["l"] = 'get_distance(' + entity + ',"' + other + '","' + type + '")\n';
+	    		nesting_entity = entity;
+	    		//todo: JG
+	    		console.log("DISTANCE STU|FFFF");
+	    	}
+	    }
+
 	    str += "if(";
 	    // Add each assertion in the hypothesis.
+
 	    for (var i=0; i< a["l"].length;i++){
-		if (a["l"][i]["relation"]=="eq"){
-		    str += a["l"][i]["l"];
-		    str += "==";
-		    str+=a["l"][i]["r"];
-		}
-		else if (a["l"][i]["relation"]=="gt"){
-		    str += a["l"][i]["l"];
-		    str += ">";
-		    str+=a["l"][i]["r"];
-		}
-		else if (a["l"][i]["relation"]=="ge"){
-		    str += a["l"][i]["l"];
-		    str += ">=";
-		    str+=a["l"][i]["r"];
-		}
-		else if (a["l"][i]["relation"]=="lt"){
-		    str += a["l"][i]["l"];
-		    str += "<";
-		    str+=a["l"][i]["r"];
-		}
-		else if (a["l"][i]["relation"]=="le"){
-		    str += a["l"][i]["l"];
-		    str += "<=";
-		    str+=a["l"][i]["r"];
-		}
-		else if (a["l"][i]["relation"]=="near"){
-		    // str+= |entity2.location - entity1.location| < screen.width*0.1
-		    var left = a["l"][i]["l"];
-		    var right = a["l"][i]["r"];
-		    // var leftLoc = new Phaser.Point(left.x, left.y);
-		    // var rightLoc = new Phaser.Point(right.x, right.y);
-		    // var distance = Phaser.Point.distance(leftLoc,rightLoc);
-		    str+="Phaser.Point.distance(new Phaser.Point("+left+".x,"+left+".y),new Phaser.Point("+right+".x,"+right+".y)) < game.width*0.1";
-		}
-		else if (a["l"][i]["relation"]=="control_event" && a["l"][i]["l"][0]==[ 'mouse_button' ] && a["l"][i]["r"][0]==["held"]){
-		    str+="game.input.activePointer.leftButton.isDown";
-		}
-		else if (a["l"][i]["relation"]=="control_event" && a["l"][i]["l"][0]==[ 'mouse_button' ] && a["l"][i]["r"][0]==["released"]){
-		    str+="!game.input.activePointer.leftButton.isDown";
-		}
-		else{
-		    console.log("Error: unrecognized relation " + a["relation"] + " for conditional assertion.  \n\tFile: PhaserInterpreter.  Function: translateConditionalAssertion.");
-		}
+	    	console.log(a["l"][i]["l"][0]);
+			if (a["l"][i]["relation"]=="eq"){
+			    str += a["l"][i]["l"];
+			    str += "==";
+			    str+=a["l"][i]["r"];
+			}
+			else if (a["l"][i]["relation"]=="gt"){
+			    str += a["l"][i]["l"];
+			    str += ">";
+			    str+=a["l"][i]["r"];
+			}
+			else if (a["l"][i]["relation"]=="ge"){
+
+			    str += a["l"][i]["l"];
+			    str += ">=";
+			    str+=a["l"][i]["r"];
+			}
+			else if (a["l"][i]["relation"]=="lt"){
+			    str += a["l"][i]["l"];
+			    str += "<";
+			    str+=a["l"][i]["r"];
+			}
+			else if (a["l"][i]["relation"]=="le"){
+			    str += a["l"][i]["l"];
+			    str += "<=";
+			    str+=a["l"][i]["r"];
+			}
+			else if (a["l"][i]["relation"]=="near"){
+			    // str+= |entity2.location - entity1.location| < screen.width*0.1
+			    var left = a["l"][i]["l"];
+			    var right = a["l"][i]["r"];
+			    // var leftLoc = new Phaser.Point(left.x, left.y);
+			    // var rightLoc = new Phaser.Point(right.x, right.y);
+			    // var distance = Phaser.Point.distance(leftLoc,rightLoc);
+			    str+="Phaser.Point.distance(new Phaser.Point("+left+".x,"+left+".y),new Phaser.Point("+right+".x,"+right+".y)) < game.width*0.1";
+			}
+			else if (a["l"][i]["relation"]=="control_event" && a["l"][i]["l"][0]==[ 'mouse_button' ] && a["l"][i]["r"][0]==["held"]){
+			    str+="game.input.activePointer.leftButton.isDown";
+			}
+			else if (a["l"][i]["relation"]=="control_event" && a["l"][i]["l"][0]==[ 'mouse_button' ] && a["l"][i]["r"][0]==["released"]){
+			    str+="!game.input.activePointer.leftButton.isDown";
+			}
+			else{
+			    console.log("Error: unrecognized relation " + a["relation"] + " for conditional assertion.  \n\tFile: PhaserInterpreter.  Function: translateConditionalAssertion.");
+			}
 
 
-		if (i <a["l"].length-1){
-		    str+=" " + a["l"][i+1]["logicalOp"] + " ";
-		}
+			if (i <a["l"].length-1){
+			    str+=" " + a["l"][i+1]["logicalOp"] + " ";
+			}
 	    }
 	    str+="){";
 	    if (addWhitespace){str+="\n";}
@@ -957,11 +1011,13 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 	// Add each assertion in the conclusion.
 	if (!emptyHypothesis && addWhitespace){str+="\t\t";}
 	for (var j=0; j<a["r"].length;j++){
+		console.log(a["r"][j]);
 	    if (a["r"][j]["relation"]==="set_value"){
-		str+=translateSetValue(a["r"][j]);
+	    	
+		str+=translateSetValue(a["r"][j],nesting_entity);
 	    }
 	    else if (a["r"][j]["relation"]==="add_to_location"){
-		str+=translateAddSpriteAssertion(b,a["r"][j]);
+		str+=translateAddSpriteAssertion(b,a["r"][j],nesting_entity);
 	    }
 	    else if (a["r"][j]["relation"]==="action" && a["r"][j]["r"].indexOf("delete")>=0){
 		str+=translateDeleteSpriteAssertion(b,a["r"][j]);
@@ -970,31 +1026,31 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 		str+=translateSetMode(b,a["r"][j]);
 	    }
 	    else if (a["r"][j]["relation"]==="move_towards" || a["r"][j]["relation"]==="move_away" || a["r"][j]["relation"]==="moves"){
-		str += translateMove(a["r"][j],a["r"][j]["relation"]);
+		str += translateMove(a["r"][j],a["r"][j]["relation"],nesting_entity);
 	    }
 	    else if (a["r"][j]["relation"]==="instance_of" && a["r"][j]["r"].indexOf("static")>=0){
 		str+=translateStaticAssertion(a["r"][j]);
 	    }
 	    else if (a["r"][j]["relation"]==="set_color"){
-		str+=translateSetColorAssertion(b,a["r"][j]);
+		str+=translateSetColorAssertion(b,a["r"][j],nesting_entity);
 	    }
 	    else if (a["r"][j]["relation"]==="rotates"){
-		str+=translateRotatesAssertion(a["r"][j]);
+		str+=translateRotatesAssertion(a["r"][j],nesting_entity);
 	    }
 	    else if (a["r"][j]["relation"]==="rotate_to"){
-		str+=translateRotateToAssertion(a["r"][j]);
+		str+=translateRotateToAssertion(a["r"][j], nesting_entity);
 	    }
 	    else if (a["r"][j]["relation"]==="look_at"){
-		str+=translateLookAtAssertion(a["r"][j]);
+		str+=translateLookAtAssertion(a["r"][j], nesting_entity);
 	    }
 	    else if (a["r"][j]["relation"]==="fill"){
 		str +=translateFill(a["r"][j]);
 	    }
 	    else if (a["r"][j]["relation"]==="draw"){
-		str +=translateDraw(a["r"][j]);
+		str +=translateDraw(a["r"][j], nesting_entity);
 	    }
 	    else if (a["r"][j]["relation"]==="clear"){
-		str +=translateClear(a["r"][j]);
+		str +=translateClear(a["r"][j], nesting_entity);
 	    }
 	    else{
 		console.log("translateConditionalAssertion -- DONT KNOW WHAT TO DO WITH:");
@@ -1016,6 +1072,9 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 	    }
 	}
 	if (addWhitespace){str+="\n";}
+	if (nested){
+		str += "}, this);"
+	}
 	return str;
     };
 
@@ -1123,11 +1182,14 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
     // relation: "add_to_location"
     // r: ["e2"]
     // num: "10"
-    var translateAddSpriteAssertion=function(b,a){
+    var translateAddSpriteAssertion=function(b,a,nested_entity){
 	var str="";
 	var entityName = a["l"][0]; // e.g. e1
 	var num = a["num"];         // e.g. 10
 	
+	nested_entity = (typeof nested_entity !== 'undefined') ?  nested_entity : "*****";
+	
+
 	var x = 0;
 	var y = 0;
 	// Example 1:
@@ -1186,7 +1248,7 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 
 	// Example 2:
 	// initialize (add(e1, 10, e2)).
-	else if (a["r"][0] === "cursor"){
+	else if (a["r"][0] === "entity"){
 	    var locationToAddTo = a["entityName"];
 	    var handler = a["handler"];
 	    // Find coordinates of entity with name a["r"][0].
@@ -1196,7 +1258,7 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 	    if (addWhitespace){str+="\n\t";}
 	    // TODO: There is probably a better way of finding group item coordinates.
 	    //str+="addedEntities['"+a["r"][0]+"'].forEach(function(item){x=item.x;y=item.y;}, this);";
-	    if(handler.indexOf("ClickListener") >= 0){
+	    if(handler !== undefined && handler.indexOf("ClickListener") >= 0){
 		//we are dealing with a click listener! Add our new guy at the location of the thing that was clicked on!
 		if (addWhitespace){str+="\n\t";}
 		str+="x=clickedOnObject.x";
@@ -1348,9 +1410,24 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
     // entity.body.velocity.x *= 0.1;
     // entity.body.velocity.y *= 0.1;
     // entity.movementProfile(entity, tempPoint)
-    var translateMove = function(a, move_type){
+    var translateMove = function(a, move_type,nested_entity){
 	str = "";
-	str+= "addedEntities['"+a["l"][0]+"'].forEach(function(item) {";
+
+
+	nested_entity = (typeof nested_entity !== 'undefined') ?  nested_entity : "*****";
+	
+	var entity1 = a["l"][0];
+
+	var nested = (entity1 === nested_entity);
+	console.log("MOVE");
+	console.log(entity1);
+	console.log(nested_entity);
+	console.log(nested);
+	if (!nested){
+		str+= "addedEntities['"+a["l"][0]+"'].forEach(function(item) {";
+		entity1 = "item";
+	}
+
 	if (addWhitespace){str+="\n\t\t";}
 	// if move_toward(entity, other) or move_away(entity, other)
 	if (move_type==="move_towards" || move_type==="move_away"){
@@ -1371,7 +1448,7 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 		other="item2";
 		if (addWhitespace){str+="\n\t\t";}
 	    }
-	    str += "var tempPoint = new Phaser.Point("+other+".x-item.x,"+other+".y-item.y);";
+	    str += "var tempPoint = new Phaser.Point("+other+".x-" + entity1 + ".x,"+other+".y-" + entity1 + ".y);";
 	    if (addWhitespace){str+="\n\t\t";}
 	    str+="tempPoint.normalize();"
 	    if (addWhitespace){str+="\n\t\t";}
@@ -1379,7 +1456,7 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 	    if (addWhitespace){str+="\n\t\t";}
 	    str+="tempPoint.y *= 10;"
 	    if (addWhitespace){str+="\n\t\t";}
-	    str+=move_type+"(item, tempPoint, "+speed+"+1);";
+	    str+=move_type+"(" + entity1 + ", tempPoint, "+speed+"+1);";
 	    if (addWhitespace){str+="\n";}
 	    if (other=="item2"){
 		str+="}, this);"
@@ -1400,53 +1477,54 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 	    if (a["r"][0]==="north"){
 		// move(entity, 0, -1);
 		//str += "moves(item,0,-1);"
-		str += "moves(item,0,-("+amount+"+2));"
+		str += "moves(" + entity1 + ",0,-("+amount+"+2));"
 	    }
 	    else if (a["r"][0]==="south"){
-		//str += "moves(item,0,1);"
-		str += "moves(item,0,("+amount+"+2));"
+		//str += "moves(" + entity1 + ",0,1);"
+		str += "moves(" + entity1 + ",0,("+amount+"+2));"
 	    }
 	    else if (a["r"][0]==="east"){
-		//str += "moves(item,1,0);"
-		str += "moves(item,("+amount+"+2),0);"
+		//str += "moves(" + entity1 + ",1,0);"
+		str += "moves(" + entity1 + ",("+amount+"+2),0);"
 	    }
 	    else if (a["r"][0]==="west"){
-		//str += "moves(item,-1,0);"
-		str += "moves(item,-("+amount+"+2),0);"
+		//str += "moves(" + entity1 + ",-1,0);"
+		str += "moves(" + entity1 + ",-("+amount+"+2),0);"
 	    }
 	    else if (a["r"][0]==="northeast"){
 		// move(entity, 0, -1);
-		//str += "moves(item,1,-1);"
-		str += "moves(item,("+amount+"+2),-("+amount+"+2));"
+		//str += "moves(" + entity1 + ",1,-1);"
+		str += "moves(" + entity1 + ",("+amount+"+2),-("+amount+"+2));"
 	    }
 	    else if (a["r"][0]==="northwest"){
-		//str += "moves(item,-1,-1);"
-		str += "moves(item,-("+amount+"+2),-("+amount+"+2));"
+		//str += "moves(" + entity1 + ",-1,-1);"
+		str += "moves(" + entity1 + ",-("+amount+"+2),-("+amount+"+2));"
 	    }
 	    else if (a["r"][0]==="southeast"){
-		//str += "moves(item,1,1);"
-		str += "moves(item,("+amount+"+2),("+amount+"+2));"
+		//str += "moves(" + entity1 + ",1,1);"
+		str += "moves(" + entity1 + ",("+amount+"+2),("+amount+"+2));"
 	    }
 	    else if (a["r"][0]==="southwest"){
-		//str += "moves(item,-1,1);"
-		str += "moves(item,-("+amount+"+2),("+amount+"+2));"
+		//str += "moves(" + entity1 + ",-1,1);"
+		str += "moves(" + entity1 + ",-("+amount+"+2),("+amount+"+2));"
 	    }
 	    else if (a["r"][0]==="forward"){
-		str += "move_forward(item,("+amount+"+2));"
+		str += "move_forward(" + entity1 + ",("+amount+"+2));"
 	    }
 	    else if (a["r"][0]==="backward"){
-		str += "move_backward(item,("+amount+"+2));"
+		str += "move_backward(" + entity1 + ",("+amount+"+2));"
 	    }
 	    else if (a["r"][0]==="left"){
-		str += "move_left(item,("+amount+"+2));"
+		str += "move_left(" + entity1 + ",("+amount+"+2));"
 	    }
 	    else if (a["r"][0]==="right"){
-		str += "move_right(item,("+amount+"+2));"
+		str += "move_right(" + entity1 + ",("+amount+"+2));"
 	    }
 	    if (addWhitespace){str+="\n";}
 	}
-
-	str+="}, this);"
+    if (!nested){
+		str+="}, this);"
+	}
 	if (addWhitespace){str+="\n";}
 	return str;
     }
@@ -1616,10 +1694,14 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 	var timerID = a["l"][0];
 	// Find timer logic assertion ID.
 	var timerLogicID = b.getAssertionsWith({"l":[timerID],"relation":"has_timer_logic"})
-
-	if (timerLogicID != undefined){
+	console.log(b);
+	console.log(a);
+	console.log(timerID);
+	if (timerLogicID !== undefined && timerLogicID !== []){
 	    // Get the timer logic assertion.
 	    var timerLogicAssert = b.getAssertionByID(timerLogicID);
+
+	    console.log(timerLogicID)
 	    if (timerLogicAssert.hasOwnProperty("duration")){
 		var goal_keyword = a["goal_keyword"];
 		var callback = goal_keyword + "_" + timerID + "Listener";
@@ -1635,6 +1717,9 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 		}
 	    }
 	}
+	else{
+		throw "Couldn't find timerLogidID...it's " + timerLogicID;
+	}
 	if(addWhitespace){str+="\n"};
 	return str;
     }
@@ -1643,20 +1728,31 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 	return "addedEntities['"+a["l"][0]+"'].forEach(function(item){item.body.immovable=true;}, this);";
     }
 
-    var translateSetColorAssertion = function(b,a){
+    var translateSetColorAssertion = function(b,a,nesting_entity){
 	str = "";
 	var entityName = a["l"][0];
 	var colorName = a["r"][0];
+
+    var nesting = entityName === nesting_entity;
+    if (!nesting){
+    	str+= "addedEntities['"+entityName+"'].forEach(function(item){";
+    	entityName = "item";
+    }
 	// Find the hex code for the color.
 	var colorID = b.getAssertionsWith({"l":[colorName],"relation":"instance_of","r":["color"]})[0];
 	if (colorID!=undefined){
 	    var hexcode = b.getAssertionByID(colorID)["value"];
-	    str+= "addedEntities['"+entityName+"'].forEach(function(item){item.tint="+hexcode+";}, this);";
+	    str += entityName + ".tint="+hexcode+";"
+	}
+
+	if (!nesting){
+
+	    str += "}, this);";
 	}
 	return str;
     }
 
-    var translateRotatesAssertion = function(a){
+    var translateRotatesAssertion = function(a,nesting_entity){
 	str = "";
 	var entityName = a["l"][0];
 	var amount = a["r"][0];
@@ -1664,16 +1760,37 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 	    str+= "clickedOnObject.angle += "+amount+";";
 	}
 	else{
-	    str+="addedEntities['"+entityName+"'].forEach(function(item){item.angle += "+amount+";}, this);";
+
+	    var nesting = entityName === nesting_entity;
+
+	    if (!nesting){
+	    	str+= "addedEntities['"+entityName+"'].forEach(function(item){";
+	    	entityName = "item";
+	    }
+
+	    str+=entityName + ".angle += "+amount+";";
+	    if (!nesting){
+	    	str += "}, this);";
+	    }
 	}
 	return str;
     }
 
-    var translateRotateToAssertion = function(a){
+    var translateRotateToAssertion = function(a, nesting_entity){
 	str = "";
 	var entityName = a["l"][0];
 	var range = a["r"];
-	str+="addedEntities['"+entityName+"'].forEach(function(item){item.angle = Math.random() * ("+range[1]+"-" + range[0] +") + "+range[0]+";}, this);";
+	var nesting = entityName === nesting_entity;
+
+	if (!nesting) {
+		str+="addedEntities['"+entityName+"'].forEach(function(item){";
+		entityName = "item";
+	}
+	
+	str += entityName + ".angle = Math.random() * ("+range[1]+"-" + range[0] +") + "+range[0]+";";
+	if (!nesting) {
+		str += "}, this)";
+	}
 	return str;
     }
 
@@ -1711,68 +1828,76 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 	str += "game.load.audio('" + a["l"][0] + "', '" + a["r"][0] + "');";
 	return str;
     }
-    var translateLookAtAssertion = function(a){
-	str = "";
-	var e1 = a["l"][0];
-	var e2 = a["r"][0];
-	var choice = a["choice"]; // can be "furthest", "closest", or "random"
-	//str += "//Let's do it again in the function: " , JSON.stringify(a, null, 4);
-	//str += "//AM I EVEN BEING ADDED TO WHERE I HOPE I AM MAYBE? I want " + e1 + " to look at " + e2;
-	//str += "//don't forget this equation: O.angle = Math.atan2(Other.y- E.y, Other.x - E.x);"
-	str += "\t//Make all instances of "+e1+"look at an instance of " + e2 + " using choice parameter: " + choice;
-	//str += "//\n\tvar newAngle = Math.atan2(addedEntities['e_1_XX_'].y - addedEntities['e_2_XX_'], addedEntities['e_1_XX_'].x - addedEntities['e_2_XX_'].x);"
-	if(e2 === "cursor"){
-	    //str += "\n\t\tSPECIAL CODE TO GET CURSOR COORDINATES.";
-	    str += "\n\t\tvar targetItem = {};";
-	    str += "\n\t\ttargetItem.x = game.input.mousePointer.x;";
-	    str += "\n\t\ttargetItem.y = game.input.mousePointer.y;";
-	}
-	str += "\n\t\taddedEntities['"+e1+"'].forEach(function(lookerItem) {";
-	if(e2 === "cursor"){
-	    //str += "\n\t\t\tSET TARGET TO CURSOR COORDINATES";
-	}
-	else{
-	    str += "\n\t\t\tvar curBestDistance = undefined;";
-	    str += "\n\t\t\tvar curBestIndex = -1;";
-	    str += "\n\t\t\tvar curIndex = 0;";
-	    if(choice === "furthest" || choice === "closest" || choice === "nearest"){
-		str += "\n\t\t\taddedEntities['"+e2+"'].forEach(function(lookedAtItem){";
-		str += "\n\t\t\t\tvar distance = Phaser.Math.distance(lookerItem.x, lookerItem.y, lookedAtItem.x, lookedAtItem.y);";
-		str += "\n\t\t\t\tvar index;";
-		if(choice === "furthest"){
-		    str += "\n\t\t\t\tif(curBestDistance === undefined || curBestDistance < distance){"
+    var translateLookAtAssertion = function(a, nesting_entity){
+		str = "";
+		var e1 = a["l"][0];
+		var e2 = a["r"][0];
+		var nesting = e1 === nesting_entity;
+		var choice = a["choice"]; // can be "furthest", "closest", or "random"
+		//str += "//Let's do it again in the function: " , JSON.stringify(a, null, 4);
+		//str += "//AM I EVEN BEING ADDED TO WHERE I HOPE I AM MAYBE? I want " + e1 + " to look at " + e2;
+		//str += "//don't forget this equation: O.angle = Math.atan2(Other.y- E.y, Other.x - E.x);"
+		str += "\t//Make all instances of "+e1+"look at an instance of " + e2 + " using choice parameter: " + choice;
+		//str += "//\n\tvar newAngle = Math.atan2(addedEntities['e_1_XX_'].y - addedEntities['e_2_XX_'], addedEntities['e_1_XX_'].x - addedEntities['e_2_XX_'].x);"
+		if(e2 === "cursor"){
+		    //str += "\n\t\tSPECIAL CODE TO GET CURSOR COORDINATES.";
+		    str += "\n\t\tvar targetItem = {};";
+		    str += "\n\t\ttargetItem.x = game.input.mousePointer.x;";
+		    str += "\n\t\ttargetItem.y = game.input.mousePointer.y;";
 		}
-		else if(choice === "closest" || choice === "nearest"){
-		    str += "\n\t\t\t\tif(curBestDistance === undefined || curBestDistance > distance){"
+
+		if (!nesting) {
+			str += "\n\t\taddedEntities['"+e1+"'].forEach(function(lookerItem) {";
+			e1 = "lookerItem";
 		}
-		str += "\n\t\t\t\t\tcurBestIndex = curIndex;";
-		str += "\n\t\t\t\t\tcurBestDistance = distance;";
-		str += "\n\t\t\t\t}"
-		str += "\n\t\t\t\tcurIndex += 1;";
-		str += "\n\t\t\t},this);"
-	    }
-	    else if(choice ==="random"){
-		str += "\n\t\t\tcurBestIndex = Math.floor(Math.random() * (addedEntities['"+e2+"'].length));"; 
-	    }
-	    else{
-		console.log("ERROR: UNRECOGNIZED VALUE FOR CHOICE IN look_at COMMAND");
-	    }
+		
 
-	    //we care about 
-	    //str += "\n\tconsole.log('BEST INDEX IS:',curBestIndex,'with a distance of: ', curBestDistance);";
-	    str += "\n\t\t\tvar targetItem = addedEntities['"+e2+"'].children[curBestIndex];";
-	}
-	//str += "\n\tvar newAngle = Math.atan2(game.input.mousePointer.y - item.y, game.input.mousePointer.x - item.x);"
-	str += "\n\t\t\tif(targetItem !== undefined){";
-	str += "\n\t\t\t\tvar newAngle = Math.atan2(targetItem.y - lookerItem.y, targetItem.x - lookerItem.x);"  
-	str += "\n\t\t\t\tnewAngle = newAngle * (180/Math.PI); //convert from radians to degrees."; 
-	str += "\n\t\t\t\tlookerItem.angle = newAngle;";
-	str += "\n\t\t\t}";
-	str += "\n\t\t},this);";
+		if(e2 === "cursor"){
+		    //str += "\n\t\t\tSET TARGET TO CURSOR COORDINATES";
+		}
+		else{
+		    str += "\n\t\t\tvar curBestDistance = undefined;";
+		    str += "\n\t\t\tvar curBestIndex = -1;";
+		    str += "\n\t\t\tvar curIndex = 0;";
+		    if(choice === "furthest" || choice === "closest" || choice === "nearest"){
+			str += "\n\t\t\taddedEntities['"+e2+"'].forEach(function(lookedAtItem){";
+			str += "\n\t\t\t\tvar distance = Phaser.Math.distance(" + e1 + ".x, " + e1 + ".y, lookedAtItem.x, lookedAtItem.y);";
+			str += "\n\t\t\t\tvar index;";
+			if(choice === "furthest"){
+			    str += "\n\t\t\t\tif(curBestDistance === undefined || curBestDistance < distance){"
+			}
+			else if(choice === "closest" || choice === "nearest"){
+			    str += "\n\t\t\t\tif(curBestDistance === undefined || curBestDistance > distance){"
+			}
+			str += "\n\t\t\t\t\tcurBestIndex = curIndex;";
+			str += "\n\t\t\t\t\tcurBestDistance = distance;";
+			str += "\n\t\t\t\t}"
+			str += "\n\t\t\t\tcurIndex += 1;";
+			str += "\n\t\t\t},this);"
+		    }
+		    else if(choice ==="random"){
+			str += "\n\t\t\tcurBestIndex = Math.floor(Math.random() * (addedEntities['"+e2+"'].length));"; 
+		    }
+		    else{
+			console.log("ERROR: UNRECOGNIZED VALUE FOR CHOICE IN look_at COMMAND");
+		    }
+
+		    //we care about 
+		    //str += "\n\tconsole.log('BEST INDEX IS:',curBestIndex,'with a distance of: ', curBestDistance);";
+		    str += "\n\t\t\tvar targetItem = addedEntities['"+e2+"'].children[curBestIndex];";
+		}
+		//str += "\n\tvar newAngle = Math.atan2(game.input.mousePointer.y - item.y, game.input.mousePointer.x - item.x);"
+		str += "\n\t\t\tif(targetItem !== undefined){";
+		str += "\n\t\t\t\tvar newAngle = Math.atan2(targetItem.y - " + e1 + ".y, targetItem.x - " + e1 + ".x);"  
+		str += "\n\t\t\t\tnewAngle = newAngle * (180/Math.PI); //convert from radians to degrees."; 
+		str += "\n\t\t\t\t" + e1 + ".angle = newAngle;";
+		str += "\n\t\t\t}";
+		if (!nesting){
+			str += "\n\t\t},this);";
+		}
 
 
-
-	return str;
+		return str;
     }
 
     var establishRoundedPlayArea = function(){

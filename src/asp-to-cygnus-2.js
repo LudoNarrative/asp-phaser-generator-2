@@ -777,13 +777,14 @@ define([], function() {
 	    if (start != -1 && mid != -1){
 		var a = p.substring(0,start);
 		var bList = p.substring(start+1, mid).split(",");
+		bList = parseTerms(p)[0][0].terms;
 
 		// If this is the control event, don't add to our final array of preconditions.
 		if (a=="control_event"){
 		    // Grab the argument of the click. (Assume bList has one element).
 		    
 		    
-		    var argument = parseTerms(bList[0])[0][0].terms[0].terms[0].predicate;
+		    var argument = bList[0].terms[0].terms[0].predicate;
 		    listenerName = keyword + "_"+ argument+"ClickListener";
 		    var clickAssertion = {"l":[listenerName],"relation":"instance_of","r":["click_listener"],"for":[argument],"tags":["create"],"goal_keyword":keyword};
 		    assertionsToAdd.push(clickAssertion);
@@ -838,10 +839,12 @@ define([], function() {
 	    if (start != -1 && mid != -1){
 		var a = p.substring(0,start);
 		var bList = p.substring(start+1, mid).split(",");
+		bList = parseTerms(p)[0][0].terms;
 
 		//there is a chance that bList is not good, because we split on "," and sometimes there are "single terms"
 		//that have commas in them (e.g., random_int(num1,num2))
 		//I guess we're gonna do some munging to try and preserve those combos?
+		/*
 		for(var k = 0; k < bList.length; k += 1){
 		    if(bList[k].indexOf("random_int") >= 0){
 			//ok, we want to merge the value at index k with the value at index k+1
@@ -849,7 +852,7 @@ define([], function() {
 			bList.splice(k+1, 1);
 		    }
 		}
-
+*/
 		// Push this precondition into our final array of all preconditions.
 		ps = addNormalPrecond(ps, bList, a);
 	    }
@@ -871,53 +874,72 @@ define([], function() {
 
 	
 	// check for mouse press
-	if (translateNested(bList[0])==="button(.button"){
-	    bList[0]="mouse_button";
-	    bList[1]=bList[1].replace(/\(|\)/g,'');
-	    ps.push({"l":[bList[0]],"relation":a,"r":[bList[1]]});
+
+	console.log("BLIST");
+	console.log(bList);
+	console.log(bList[0])
+	if (bList[0].terms != undefined && bList[0].predicate == "button"){
+		console.log("MOUSE BUTTON");
+    	//bList[0]="mouse_button";
+    	console.log(bList[0].terms[0].predicate);
+	    //bList[1]=bList[1].replace(/\(|\)/g,'');
+	    ps.push({"l":["mouse_button"],"relation":a,"r":[bList[0].terms[1].predicate]});
 	}
 	else if (bList.length==1){
 	    if (a=="timer_elapsed"){
-		ps.push({"l":[bList[0]],"relation":"has_state","r":[a]});
+		ps.push({"l":[bList[0].predicate],"relation":"has_state","r":[a]});
+	    }
+	    else{
+
 	    }
 	}
 	else if (bList.length==2){ // B = bList[0], C = bList[1]
-	    var left = parseTerms(bList[0]);
-	    var left_pred = left[0][0].predicate;
-	    console.log(left[0][0]);
-	    left = left[0][0].terms[0].predicate;
-	    var right = parseTerms(bList[1]);
+	    var left = bList[0];
+	    var left_pred = left.predicate;
+	    var right = bList[1];
 	    if (left_pred === "amount"){
 		left = "get_amount(\"" + left + "\")";
 		
 	    }
-	    if(right[0][0].predicate === "random_int"){
-		right = "random_int(" + right[0][0].terms[0].predicate + "," + right[0][0].terms[1].predicate + ")";
+	    else if (left_pred === "property"|| left_pred === "distance" ){
+	    	
 	    }
 	    else{
-		right = right[0][0].terms[0].predicate;
+	    	left = left.terms[0].predicate;
 	    }
-	    
+	    if(right.predicate === "random_int"){
+		right = "random_int(" + right.terms[0].predicate + "," + right.terms[1].predicate + ")";
+	    }
+	    else{
+		right = right.terms[0].predicate;
+	    }
+	    console.log(left + " " + a  + " " + right)
 	    ps.push({"l":[left],"relation":a,"r":[right]});
 	}
 	else if (bList.length==3){
+		console.log(bList);
 	    console.log("LEFT");
-	    console.log(bList[0]);
-	    console.log("RIGHT");
-	    console.log(bList[1]);
-	    var left = parseTerms(bList[0])[0][0].terms[0].predicate;
-	    var right = parseTerms(bList[1])[0][0].terms[0].predicate;
-
+	    //var left = bList[0].terms[0].predicate;
+	    //var right = bList[1].terms[0].predicate;
+	    var left = bList[0];
+	    var right = bList[1];
+	    console.log(a);
+	    console.log(bList);
+	    if (a == "ge"){
+	    	console.log(bList);
+	    }
 	    // TODO (if needed)
 	    // if (typeof bList[2] == "number"){
 	    //   ps.push({"l":[left],"relation":a,"r":[right],"num":bList[2]});
 	    // }
 	    // else
 	    if(a=="overlaps"){
-		if (bList[2]=="false"){
-		    a = "not_"+a;
-		}
-		ps.push({"l":[left],"relation":a,"r":[right]});
+			if (bList[2]=="false"){
+			    a = "not_"+a;
+			}
+			left = left.terms[0].predicate;
+			right = right.terms[0].predicate;
+			ps.push({"l":[left],"relation":a,"r":[right]});
 	    }
 	    else{
 		ps.push({"l":[left],"relation":a,"r":[right]});
