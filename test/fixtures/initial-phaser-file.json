@@ -31,7 +31,7 @@
     "l":["brushes"],
     "relation":"instance_of",
     "r":["variable"],
-    "value":"{}; brushes['circle'] = game.make.sprite(0,0,'circle'); brushes['square'] = game.make.sprite(0,0,'square');brushes['triangle'] = game.make.sprite(0,0,'triangle');"
+    "value":"{}; brushes['circle'] = game.make.sprite(0,0,'circle'); brushes['square'] = game.make.sprite(0,0,'square');brushes['trianglee'] = game.make.sprite(0,0,'triangle');"
   },
   {
     "l":["gridLinesVertical"],
@@ -411,6 +411,7 @@
       "item.anchor.x = 0.5;",
 	"item.anchor.y = 0.5;",
 	"item.rotation = Math.random() * 360;",
+	"item.desired_angle = item.angle;",
       "item.x_teleported = 10;",
       "item.y_teleported = 10;",
       "item.health = 100;",
@@ -749,6 +750,28 @@
 	  "console.log(best);",
       "return best*0.75;"
     ]
+  },
+  {
+      "l":["shortAngleDist"],
+      "relation":"instance_of",
+      "r":["function"],
+      "params":["a0","a1"],
+      "lines":[
+	  "var max = Math.PI*2;",
+	  "var da = (a1 - a0) % max;",
+	  "return 2*da % max - da;"
+      ]
+  },
+  {
+      "l":["angleLerp"],
+      "relation":"instance_of",
+      "r":["function"],
+      "params":["a0","a1","t"],
+      "lines":[
+	  "a0 *= Math.PI/180;",
+	  "a1 *= Math.PI/180;",
+	   "return 180/Math.PI*(a0 + shortAngleDist(a0,a1)*t);"
+      ]
   }
 
 

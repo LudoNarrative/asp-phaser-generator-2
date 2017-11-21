@@ -343,7 +343,8 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 	if(addWhitespace){programText+="\n\t\t\t"};
 
 	//programText += "if(item.x>game.width){item.x=game.width;}if (item.x<0){item.x=0;} if (item.y>game.height){item.y=game.height;}if (item.y<0){item.y=0;}"
-
+	
+	programText += "item.angle = angleLerp(item.angle,item.desired_angle,0.05);\n";
 	if (boundary == "torus"){
 	    
 	    programText += "item.x_teleported += 1;\n";
@@ -1757,7 +1758,7 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 	var entityName = a["l"][0];
 	var amount = a["r"][0];
 	if(a.handler !== undefined && a.handler.indexOf("ClickListener") >= 0){
-	    str+= "clickedOnObject.angle += "+amount+";";
+	    str+= "clickedOnObject.desired_angle += "+amount+";";
 	}
 	else{
 
@@ -1768,7 +1769,7 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 	    	entityName = "item";
 	    }
 
-	    str+=entityName + ".angle += "+amount+";";
+	    str+=entityName + ".desired_angle += "+amount+";";
 	    if (!nesting){
 	    	str += "}, this);";
 	    }
@@ -1787,7 +1788,7 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 		entityName = "item";
 	}
 	
-	str += entityName + ".angle = Math.random() * ("+range[1]+"-" + range[0] +") + "+range[0]+";";
+	str += entityName + ".desired_angle = Math.random() * ("+range[1]+"-" + range[0] +") + "+range[0]+";";
 	if (!nesting) {
 		str += "}, this)";
 	}
@@ -1836,7 +1837,7 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 		var choice = a["choice"]; // can be "furthest", "closest", or "random"
 		//str += "//Let's do it again in the function: " , JSON.stringify(a, null, 4);
 		//str += "//AM I EVEN BEING ADDED TO WHERE I HOPE I AM MAYBE? I want " + e1 + " to look at " + e2;
-		//str += "//don't forget this equation: O.angle = Math.atan2(Other.y- E.y, Other.x - E.x);"
+		//str += "//don't forget this equation: O.desired_angle = Math.atan2(Other.y- E.y, Other.x - E.x);"
 		str += "\t//Make all instances of "+e1+"look at an instance of " + e2 + " using choice parameter: " + choice;
 		//str += "//\n\tvar newAngle = Math.atan2(addedEntities['e_1_XX_'].y - addedEntities['e_2_XX_'], addedEntities['e_1_XX_'].x - addedEntities['e_2_XX_'].x);"
 		if(e2 === "cursor"){
@@ -1890,7 +1891,7 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 		str += "\n\t\t\tif(targetItem !== undefined){";
 		str += "\n\t\t\t\tvar newAngle = Math.atan2(targetItem.y - " + e1 + ".y, targetItem.x - " + e1 + ".x);"  
 		str += "\n\t\t\t\tnewAngle = newAngle * (180/Math.PI); //convert from radians to degrees."; 
-		str += "\n\t\t\t\t" + e1 + ".angle = newAngle;";
+		str += "\n\t\t\t\t" + e1 + ".desired_angle = newAngle;";
 		str += "\n\t\t\t}";
 		if (!nesting){
 			str += "\n\t\t},this);";
