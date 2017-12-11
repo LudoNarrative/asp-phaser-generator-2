@@ -231,6 +231,13 @@ define([], function() {
 	    returnHelper.l = [entityName];
 	    returnHelper.property = propertyName;
 	}
+	else if(terms[0].predicate === "amount"){
+	    console.log("AMOUNT L");
+	    console.log(terms[0].terms[0].terms[0].predicate);
+	    returnHelper.l  = ["get_amount(" + terms[0].terms[0].terms[0].predicate + ")"];
+	    returnHelper.resourceL = 1;
+	    
+	}
 	else{
 	    returnHelper.l  = [terms[0].terms[0].predicate];
 	}
@@ -251,8 +258,9 @@ define([], function() {
 	    
 	}
 	else if(terms[1].predicate === "amount"){
-
-	    returnHelper.r  = ["get_amount(" + terms[1].terms[0].terms[0] + ")"];
+	    console.log("AMOUNT");
+	    console.log(terms[1].terms[0].terms[0].predicate);
+	    returnHelper.r  = ["get_amount(" + terms[1].terms[0].terms[0].predicate + ")"];
 	    returnHelper.resourceR = 1;
 	    
 	}
@@ -898,7 +906,8 @@ define([], function() {
 	    var left_pred = left.predicate;
 	    var right = bList[1];
 	    if (left_pred === "amount"){
-		left = "get_amount(\"" + left + "\")";
+		
+		left = "get_amount(\"" + left.terms[0].predicate + "\")";
 		
 	    }
 	    else if (left_pred === "property"|| left_pred === "distance" ){

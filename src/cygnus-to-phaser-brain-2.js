@@ -815,6 +815,10 @@ define(["./brain"], function(rensa) {
 
 	    newRightA["l"]=[assert["l"] +"."+property];
 	}
+	else if (assert["resourceL"] !== undefined) {
+	    
+	    newRightA["l"]=[assert["l"] +"/10"];
+	}
 
 	if(assert["propertyR"] !== undefined){
 	    var property = assert["propertyR"];
