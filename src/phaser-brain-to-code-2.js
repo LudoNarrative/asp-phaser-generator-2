@@ -38,10 +38,14 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 	var sounds = [];
 	// Go through each assertion.  If it is a variable initialization,
 	// add it to our program.  If it is a goal assertion, update the goals array.
+
+	
 	for (var i in brain.assertions){
 	    /* VARIABLE INSTANTIATIONS */
 	    if (ctp.isVariableAssertion(brain.assertions[i])){
 		programText += defineVariable(brain, brain.assertions[i]);
+		console.log("VARIABLE ASSERTION ")
+		console.log(brain.assertions[i]);
 		variableValues.push(brain.assertions[i]);
 	    }
 	    if (brain.assertions[i]["r"] == "sound"){
@@ -160,6 +164,7 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 				    // For each assertion in the list of assertions,
 				    for (var a in brain.assertions[j][p][c]){
 					if (addWhitespace){programText+="\n\t";}
+					console.log("FUNCTION " + p + " " + c + " " + a + " " + brain.assertions[j][p][c][a])
 					programText = addGenericFunctionStatement(programText, brain, brain.assertions[j][p][c][a],p);
 				    }
 				}
@@ -240,8 +245,11 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 	if(addWhitespace){programText+="\n"};
 	for (var z=0; z<variableValues.length;z++){
 	    var curAssert = variableValues[z];
+	    console.log("INITIALIZATION ");
+	    console.log(curAssert);
 	    if (curAssert.hasOwnProperty("value")){
 		if (curAssert["value"]!==""){
+		    
 		    // if(addWhitespace){programText+="\n"};
 		    programText += translateVariableAssertion(brain, curAssert, false);
 		}
@@ -1014,7 +1022,8 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 	for (var j=0; j<a["r"].length;j++){
 		console.log(a["r"][j]);
 	    if (a["r"][j]["relation"]==="set_value"){
-	    	
+	    	console.log("TRANSLATE SET VALUE")
+		
 		str+=translateSetValue(a["r"][j],nesting_entity);
 	    }
 	    else if (a["r"][j]["relation"]==="add_to_location"){
@@ -1474,52 +1483,54 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 	    else{
 		amount = a["num_r"][0];
 	    }
+
+	    var lowest_speed = 4;
 	    // str+="moves(";
 	    if (a["r"][0]==="north"){
 		// move(entity, 0, -1);
 		//str += "moves(item,0,-1);"
-		str += "moves(" + entity1 + ",0,-("+amount+"+2));"
+		str += "moves(" + entity1 + ",0,-("+amount+"+" + lowest_speed +"));"
 	    }
 	    else if (a["r"][0]==="south"){
 		//str += "moves(" + entity1 + ",0,1);"
-		str += "moves(" + entity1 + ",0,("+amount+"+2));"
+		str += "moves(" + entity1 + ",0,("+amount+"+" + lowest_speed +"));"
 	    }
 	    else if (a["r"][0]==="east"){
 		//str += "moves(" + entity1 + ",1,0);"
-		str += "moves(" + entity1 + ",("+amount+"+2),0);"
+		str += "moves(" + entity1 + ",("+amount+"+" + lowest_speed +"),0);"
 	    }
 	    else if (a["r"][0]==="west"){
 		//str += "moves(" + entity1 + ",-1,0);"
-		str += "moves(" + entity1 + ",-("+amount+"+2),0);"
+		str += "moves(" + entity1 + ",-("+amount+"+" + lowest_speed +"),0);"
 	    }
 	    else if (a["r"][0]==="northeast"){
 		// move(entity, 0, -1);
 		//str += "moves(" + entity1 + ",1,-1);"
-		str += "moves(" + entity1 + ",("+amount+"+2),-("+amount+"+2));"
+		str += "moves(" + entity1 + ",("+amount+"+" + lowest_speed +"),-("+amount+"+" + lowest_speed +"));"
 	    }
 	    else if (a["r"][0]==="northwest"){
 		//str += "moves(" + entity1 + ",-1,-1);"
-		str += "moves(" + entity1 + ",-("+amount+"+2),-("+amount+"+2));"
+		str += "moves(" + entity1 + ",-("+amount+"+" + lowest_speed +"),-("+amount+"+" + lowest_speed +"));"
 	    }
 	    else if (a["r"][0]==="southeast"){
 		//str += "moves(" + entity1 + ",1,1);"
-		str += "moves(" + entity1 + ",("+amount+"+2),("+amount+"+2));"
+		str += "moves(" + entity1 + ",("+amount+"+" + lowest_speed +"),("+amount+"+" + lowest_speed +"));"
 	    }
 	    else if (a["r"][0]==="southwest"){
 		//str += "moves(" + entity1 + ",-1,1);"
-		str += "moves(" + entity1 + ",-("+amount+"+2),("+amount+"+2));"
+		str += "moves(" + entity1 + ",-("+amount+"+" + lowest_speed +"),("+amount+"+" + lowest_speed +"));"
 	    }
 	    else if (a["r"][0]==="forward"){
-		str += "move_forward(" + entity1 + ",("+amount+"+2));"
+		str += "move_forward(" + entity1 + ",("+amount+"+" + lowest_speed +"));"
 	    }
 	    else if (a["r"][0]==="backward"){
-		str += "move_backward(" + entity1 + ",("+amount+"+2));"
+		str += "move_backward(" + entity1 + ",("+amount+"+" + lowest_speed +"));"
 	    }
 	    else if (a["r"][0]==="left"){
-		str += "move_left(" + entity1 + ",("+amount+"+2));"
+		str += "move_left(" + entity1 + ",("+amount+"+" + lowest_speed +"));"
 	    }
 	    else if (a["r"][0]==="right"){
-		str += "move_right(" + entity1 + ",("+amount+"+2));"
+		str += "move_right(" + entity1 + ",("+amount+"+" + lowest_speed +"));"
 	    }
 	    if (addWhitespace){str+="\n";}
 	}

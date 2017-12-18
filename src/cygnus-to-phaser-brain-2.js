@@ -128,11 +128,15 @@ define(["./brain"], function(rensa) {
 	    // If we are setting the value of a variable...
 	    else if (isSetValueAssertion(cygnusBrain.assertions[i])){
 		// Deal with any properties (e.g. e1.angle set_value e2.angle)
-		if (cygnusBrain.assertions[i]["l"][0].indexOf(".")>0 || (cygnusBrain.assertions[i]["r"][0].indexOf(".")>0)){
-		    newProgram["create"]["vars"].push(cygnusBrain.assertions[i]);
-		}
-		else{ // ...add to our temp var values array to deal with later.
-		    tempVarValues[cygnusBrain.assertions[i]["l"]] = cygnusBrain.assertions[i]["r"];
+		console.log("Lets see how Sarah totally fucked this one up")
+		console.log(cygnusBrain.assertions[i]);
+		if (cygnusBrain.assertions[i].tags == undefined){
+		    if (cygnusBrain.assertions[i]["l"][0].indexOf(".")>0 || (cygnusBrain.assertions[i]["r"][0].indexOf(".")>0)){
+			newProgram["create"]["vars"].push(cygnusBrain.assertions[i]);
+		    }
+		    else{ // ...add to our temp var values array to deal with later.
+			tempVarValues[cygnusBrain.assertions[i]["l"]] = cygnusBrain.assertions[i]["r"];
+		    }
 		}
 	    }
 	    else if (isLabelAssertion(cygnusBrain.assertions[i])){
