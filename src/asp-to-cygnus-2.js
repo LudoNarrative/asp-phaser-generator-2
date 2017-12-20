@@ -95,9 +95,11 @@
 		    // At this time, if a tick precondition occurs, there are no other preconditions in the group.  If this changes, we will need to alter how this works.
 		    else{
 		    	results = findResults(lines, "tick");
-				//TODO: I THINK WE NEED TO SET preconds = TO SOMETHING HERE, OTHERWISE IT COMPLAINS ABOUT NOT KNOWING WHAT PRECONDS ARE.
-				assertionsToAdd = translateTickPrecondition(results);
-			}
+			console.log("TICK RESULTS");
+			console.log(results);
+			//TODO: I THINK WE NEED TO SET preconds = TO SOMETHING HERE, OTHERWISE IT COMPLAINS ABOUT NOT KNOWING WHAT PRECONDS ARE.
+			assertionsToAdd = translateTickPrecondition(results);
+		    }
 
 		    // Add keyword to the list that shows we've already addressed it.
 		    doneKeywords.push(keyword);
@@ -149,6 +151,9 @@ return assertions;
 		result["goal_keyword"]="tick";
 		assertionsToAdd.push(result);
 	}
+
+	  console.log("tick assertions");
+	  console.log(assertionsToAdd);
 	return assertionsToAdd;
 }
 
@@ -1060,7 +1065,9 @@ rs = addNormalResult(rs, results);
 					rs.push({"l":[fList[0]],"relation":e,"r":[newTranslateNested(fList[1])]});
 
 				}
-				else if (e=="set_value"){
+			else if (e=="set_value"){
+			    console.log("SETTING VALUE");
+			    console.log(fList);
 					rs.push(translateSetValue(fList));
 				}
 				else {

@@ -164,7 +164,8 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 				    // For each assertion in the list of assertions,
 				    for (var a in brain.assertions[j][p][c]){
 					if (addWhitespace){programText+="\n\t";}
-					console.log("FUNCTION " + p + " " + c + " " + a + " " + brain.assertions[j][p][c][a])
+					console.log("FUNCTION " + p + " " + c + " " + a + " ")
+					console.log(brain.assertions[j][p][c][a])
 					programText = addGenericFunctionStatement(programText, brain, brain.assertions[j][p][c][a],p);
 				    }
 				}
@@ -582,6 +583,8 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 	    programText += translateConditionalAssertion(brain, curAssert);
 	}
 	else if (ctp.isSetValueAssertion(curAssert)){
+	    console.log("TRANSLATING SET VALUE");
+	    console.log(curAssert);
 	    programText += translateSetValue(curAssert);
 	}
 	else if (ctp.isRelationType(curAssert, "has_sprite")){

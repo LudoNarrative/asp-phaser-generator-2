@@ -31,7 +31,7 @@
     "l":["brushes"],
     "relation":"instance_of",
     "r":["variable"],
-    "value":"{}; brushes['circle'] = game.make.sprite(0,0,'circle'); brushes['square'] = game.make.sprite(0,0,'square');brushes['trianglee'] = game.make.sprite(0,0,'triangle');"
+    "value":"{}; brushes['circle'] = game.make.sprite(0,0,'circle'); brushes['square'] = game.make.sprite(0,0,'square');brushes['triangle'] = game.make.sprite(0,0,'triangle');"
   },
   {
     "l":["gridLinesVertical"],
@@ -118,7 +118,7 @@
     "l":["background"],
     "relation":"instance_of",
     "r":["variable"],
-      "value":"game.add.bitmapData(400,300);\ngraphics = game.make.graphics( 0,0);\ngraphics.beginFill(0xff0000);\ngraphics.drawRoundedRect(xOffset,yOffset, 400, 300, 10);\ngraphics.endFill();\ngraphic = game.make.sprite(0,0, graphics.generateTexture());\ngraphic.alpha = 0.2;\nbackground.draw(graphic);background.update();\nbackground.addToWorld(xOffset,yOffset)"
+      "value":"game.add.bitmapData(400,300);\ngraphics = game.make.graphics( 0,0);\ngraphics.beginFill(0x000000);\ngraphics.drawRoundedRect(xOffset,yOffset, 400, 300, 10);\ngraphics.endFill();\ngraphic = game.make.sprite(0,0, graphics.generateTexture());\ngraphic.alpha = 0.0;\nbackground.draw(graphic);background.update();\nbackground.addToWorld(xOffset,yOffset)"
   },
   {
     "l":["lossTextDisplayed"],
@@ -619,16 +619,16 @@
       "l":["get_amount"],
       "relation":"instance_of",
       "r":["function"],
-      "params":["color"],
+      "params":["colorStr"],
       "lines":[
 	  "var factor = 16;",
+	  "    colors = {'red':[255,0,0],'blue':[0,0,255],'orange':[255, 87, 51],'green':[41, 159, 55],'clear':[0, 0, 0]};",
 	  "if ( typeof this.checker_timeout == 'undefined' ){",
 	  "\t console.log('SHOULD CREATE HERE');",
           "\t this.checker_timeout = new clsStopwatch();",
           "\t this.checker_timeout.start();",
 	  "    pixels = background.getPixels(new Phaser.Rectangle(0,0,400,300)).data;",
-	  "    colors = {'red':[255,0,0],'blue':[0,0,255],'orange':[255, 87, 51],'green':[41, 159, 55]};",
-	  "    color = colors[color];",
+	  "    color = colors[colorStr];",
 	  "    count = 0;",
 	  "    for (var ii = 0; ii < pixels.length; ii += 4*factor){",
 	  "        R = pixels[ii]; G = pixels[ii+1]; B = pixels[ii+2];",
@@ -636,15 +636,15 @@
 	  "            count += 1;",
 	  "        }",
 	  "     }",
-	  "     console.log('COLOR = ' + (count*10.*factor / (400.*300.)));",
-	  "     this.last =  count*10.*factor / (400.*300.);",
+	  "     console.log('COLOR = ' + colorStr +' '+ (count*10.*factor / (400.*300.)));",
+	  "     this.last =[];",
+	  "     this.last[colorStr] =  count*10.*factor / (400.*300.);",
 	  "}", 
 	  "if (this.checker_timeout.time() > 1000){",
 	  "    this.checker_timeout.reset();",
           "\t this.checker_timeout.start();",
 	  "    pixels = background.getPixels(new Phaser.Rectangle(0,0,400,300)).data;",
-	  "    colors = {'red':[255,0,0],'blue':[0,0,255],'orange':[255, 87, 51],'green':[41, 159, 55]};",
-	  "    color = colors[color];",
+	  "    color = colors[colorStr];",
 	  "    count = 0;",
 	  "    for (var ii = 0; ii < pixels.length; ii += 4*factor){",
 	  "        R = pixels[ii]; G = pixels[ii+1]; B = pixels[ii+2];",
@@ -652,10 +652,10 @@
 	  "            count += 1;",
 	  "        }",
 	  "     }",
-	  "     console.log( count*10.*factor / (400.*300.));",
-	  "     this.last =  count*10.*factor / (400.*300.);",
+	  "     console.log('COLOR = ' +  count*10.*factor / (400.*300.));",
+	  "     this.last[colorStr] =  count*10.*factor / (400.*300.);",
 	  "}",
-	  "return this.last;"
+	  "return this.last[colorStr];"
       ]
   }
 ,

@@ -129,13 +129,21 @@ define(["./brain"], function(rensa) {
 	    else if (isSetValueAssertion(cygnusBrain.assertions[i])){
 		// Deal with any properties (e.g. e1.angle set_value e2.angle)
 		console.log("Lets see how Sarah totally fucked this one up")
+		console.log("OH SHE REALLY FUCKED IT UP BAD")
 		console.log(cygnusBrain.assertions[i]);
 		if (cygnusBrain.assertions[i].tags == undefined){
 		    if (cygnusBrain.assertions[i]["l"][0].indexOf(".")>0 || (cygnusBrain.assertions[i]["r"][0].indexOf(".")>0)){
 			newProgram["create"]["vars"].push(cygnusBrain.assertions[i]);
 		    }
 		    else{ // ...add to our temp var values array to deal with later.
+			console.log("DEAR BOWDOIN, YOU MADE A HIRING MISTAKE");
+			console.log(cygnusBrain.assertions[i]);
 			tempVarValues[cygnusBrain.assertions[i]["l"]] = cygnusBrain.assertions[i]["r"];
+		    }
+		}
+		else {
+		    if (cygnusBrain.assertions[i].hasOwnProperty("tags")){
+			newProgram["update"]["misc"].push(cygnusBrain.assertions[i]);			
 		    }
 		}
 	    }
@@ -191,9 +199,13 @@ define(["./brain"], function(rensa) {
 
 	    // If the assertion has been tagged with "update",
 	    else if (cygnusBrain.assertions[i].hasOwnProperty("tags")){
+		console.log("********************************************* PHASER BRAIN STUFF");
+		console.log(cygnusBrain.assertions[i])
 		if (cygnusBrain.assertions[i]["tags"].indexOf("update")>=0){
+		console.log("********************************************* UPDATE");
 		    // If the value of a variable is changing (increase/decrease/over_time), we need to tell Phaser's update function (specifically the "vars" slot).
 		    if (isUpdateValueAssertion(cygnusBrain.assertions[i])){
+		console.log("********************************************* VARS");
 			newProgram["update"]["vars"].push(changeToSetValue(cygnusBrain.assertions[i]));
 		    }
 		    // Otherwise, we should still add to the update function (but in the "misc" category).
