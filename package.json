@@ -6,6 +6,9 @@
   "scripts": {
     "test": "tape test/*.js | colortape"
   },
+  "dependencies": {
+    "amd-loader": "^0.0.8"
+  },
   "author": "",
   "license": "ISC",
   "devDependencies": {
