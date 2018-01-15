@@ -9,5 +9,3 @@ Node package for converting from ASP format into a Phaser game.
 - Run 'npm install amd-loader'
 - Run tests with `npm test`
 - Run the example with `node example.js`
-
-
