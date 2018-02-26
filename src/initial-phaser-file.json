@@ -409,15 +409,24 @@
       "item.invincible=true;",
       "item.body.collideWorldBounds = true;",
       "item.anchor.x = 0.5;",
-	"item.anchor.y = 0.5;",
-	"item.rotation = Math.random() * 360;",
-	"item.desired_angle = item.angle;",
+	    "item.anchor.y = 0.5;",
+	    "item.rotation = Math.random() * 360;",
+	    "item.desired_angle = item.angle;",
       "item.x_teleported = 10;",
       "item.y_teleported = 10;",
       "item.health = 100;",
       "if (!item.body.velocity.hasOwnProperty('x')){item.body.velocity.x=0;}",
       "if (!item.body.velocity.hasOwnProperty('y')){item.body.velocity.y=0;}",
-      "if (!item.body.hasOwnProperty('angularVelocity')){item.body.angularVelocity=0;}"
+      "if (!item.body.hasOwnProperty('angularVelocity')){item.body.angularVelocity=0;}",
+      "var entityName = item.key;",
+      "if (labels.hasOwnProperty(entityName)) {",
+      "\t var labelText = labels[entityName].name;",
+      "\t var entityLabel = game.add.text(0,0,labelText,{font:'16px Arial',fill:'#ffffff'});",
+      "\t entityLabel.anchor.set(1.5,0.5);",
+      "\t item.addChild (entityLabel);",
+      "\t console.log('labels:',Object.keys(labels));",
+      "\t console.log('labelText:',labelText);",
+      "}"      
     ]
   },
   {
@@ -434,7 +443,7 @@
       " mode='loss';",
       " game.stage.backgroundColor = '#400';",
       " if(!lossTextDisplayed){",
-      "   displayText('(Loss State Reached)');",
+      "   displayText('Game Over');",
       "   lossTextDisplayed=true",
       " }",
       "}"]
@@ -444,7 +453,7 @@
     "relation":"instance_of",
     "r":["function"],
     "params":["t"],
-    "lines":["var style = { font: 'bold 32px Arial', fill: '#fff', boundsAlignH: 'center', boundsAlignV: 'middle'};","text = game.add.text(0, 0, t, style);"]
+    "lines":["var style = { font: 'bold 32px Arial', fill: '#fff', boundsAlignH: 'center', boundsAlignV: 'middle'};","text = game.add.text(250.5, 200.5, t, style);","text.anchor.x = 0.5; text.anchor.y = 0.5;"]
   },
   {
     "l":["goals"],
@@ -530,14 +539,10 @@
       "  text.anchor.set(0.5,0.5);",
       "  text.align = 'center';",
       "  //  Font style",
-      "  text.font = 'Arial Black';",
+      "  text.font = 'Arial';",
       "  text.fontSize =16;",
-      "  text.fontWeight = 'bold';",
       "  //text.width = barWidth;",
       "  //text.height = barHeight;",
-      "  //  Stroke color and thickness",
-      "  text.stroke = '#000000';",
-      "  text.strokeThickness = 1;",
       "  text.fill = '#000000';",
       "}"
     ]

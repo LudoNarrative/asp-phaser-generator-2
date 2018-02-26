@@ -105,7 +105,8 @@ define(["./brain"], function(rensa) {
       Input: ID of the program assertion, initial Phaser brain, cygnus brain.
       Output: the updated brain.
     */
-    var mergeInitialWithCygnus = function(pID, initialBrain, cygnusBrain){
+    var mergeInitialWithCygnus = function(pID, initialBrain, cygnusBrain) {
+
         // Make a clone of the initial brain.
         var newBrain = initialBrain.clone();
 
@@ -120,18 +121,21 @@ define(["./brain"], function(rensa) {
 
         // For each assertion in the cygnus brain,
         for (var i in cygnusBrain.assertions){
-            // If it's an assertion that declares something is a variable (like "e1 instance_of entity"), store it in our temp var types array to deal with later.
+
+            // Variable declaration assertion (like "e1 instance_of entity"), store it in our temp var types array to deal with later.
             if (isVariableTypeAssertion(cygnusBrain.assertions[i])){
                 tempVarTypes[cygnusBrain.assertions[i]["l"]] = cygnusBrain.assertions[i]["r"];
             }
+
             // If we are setting the value of a variable...
             else if (isSetValueAssertion(cygnusBrain.assertions[i])){
+
                 // Deal with any properties (e.g. e1.angle set_value e2.angle)
                 if (cygnusBrain.assertions[i].tags == undefined){
                     if (cygnusBrain.assertions[i]["l"][0].indexOf(".")>0 || (cygnusBrain.assertions[i]["r"][0].indexOf(".")>0)){
                         newProgram["create"]["vars"].push(cygnusBrain.assertions[i]);
                     }
-                    else{ // ...add to our temp var values array to deal with later.
+                    else { // ...add to our temp var values array to deal with later.
                         tempVarValues[cygnusBrain.assertions[i]["l"]] = cygnusBrain.assertions[i]["r"];
                     }
                 }
@@ -141,25 +145,30 @@ define(["./brain"], function(rensa) {
                     }
                 }
             }
+
+            // Label assertion
             else if (isLabelAssertion(cygnusBrain.assertions[i])){
                 newProgram["create"]["vars"].push(cygnusBrain.assertions[i]);
+                //console.log("label assertion:");
+                //console.log(cygnusBrain.assertions[i]);
+                //console.log(newProgram);
             }
+
             else if (cygnusBrain.assertions[i].tags != undefined && cygnusBrain.assertions[i]["tags"].indexOf("initialize") > -1){
                 newProgram["create"]["misc"].push(cygnusBrain.assertions[i]);
 
             }
-            else if (
-                isStaticAssertion(cygnusBrain.assertions[i]) || isRotatesAssertion(cygnusBrain.assertions[i]) ||
-                    isRotateToAssertion(cygnusBrain.assertions[i])
-            ){
+
+            else if ( isStaticAssertion(cygnusBrain.assertions[i]) || 
+                      isRotatesAssertion(cygnusBrain.assertions[i]) ||
+                      isRotateToAssertion(cygnusBrain.assertions[i]) ){
                 // Move to create.
                 newProgram["create"]["misc"].push(cygnusBrain.assertions[i]);
             }
-            else if (
-                isSetColorAssertion(cygnusBrain.assertions[i]) ||
-                    isRestitutionAssertion(cygnusBrain.assertions[i]) ||
-                    isDenotesAssertion(cygnusBrain.assertions[i])
-            ){
+
+            else if ( isSetColorAssertion(cygnusBrain.assertions[i]) ||
+                      isRestitutionAssertion(cygnusBrain.assertions[i]) ||
+                      isDenotesAssertion(cygnusBrain.assertions[i]) ){
                 // Move to update.
                 newProgram["update"]["misc"].push(cygnusBrain.assertions[i]);
             }
@@ -167,25 +176,27 @@ define(["./brain"], function(rensa) {
             // If it's a conditional assertion, different things might happen based on
             // whether it is a click, overlap, mouse pressed, or timer logic conditional.
             // All of this is handled in the updateProgramConditional() function.
-            else if (isConditionalAssertion(cygnusBrain.assertions[i])){
+            else if (isConditionalAssertion(cygnusBrain.assertions[i])) {
                 var updatedProgram = updateProgramConditional(newBrain,cygnusBrain,newProgram,i);
                 newBrain = updatedProgram[0];
                 newProgram = updatedProgram[1]
             }
+
             // If something is moving, we need to tell both the update and create functions in Phaser.
-            else if (isMotionAssertion(cygnusBrain.assertions[i])){
-                if (cygnusBrain.assertions[i].hasOwnProperty("tags")){
-                    if (cygnusBrain.assertions[i]["tags"].indexOf("update")>=0){
+            else if (isMotionAssertion(cygnusBrain.assertions[i])) {
+                if (cygnusBrain.assertions[i].hasOwnProperty("tags")) {
+                    if (cygnusBrain.assertions[i]["tags"].indexOf("update")>=0) {
                         newProgram["update"]["motion"].push(cygnusBrain.assertions[i]);
                     }
-                    else{
+                    else {
                         newProgram["create"]["motion"].push(cygnusBrain.assertions[i]);
                     }
                 }
-                else{
+                else {
                     newProgram["create"]["motion"].push(cygnusBrain.assertions[i]);
                 }
             }
+
             // If something is draggable, we need to tell Phaser's update function.
             else if (isDraggableAssertion(cygnusBrain.assertions[i])){
                 newProgram["update"]["vars"].push(cygnusBrain.assertions[i]);

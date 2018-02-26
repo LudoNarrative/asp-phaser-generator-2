@@ -1,11 +1,12 @@
 /*
-  This file generates a string containing a complete Phaser program, giving a brain that contains Phaser abstract syntax.
+  This file generates a string containing a complete Phaser program, given a brain that contains Phaser abstract syntax.
 */
 //define(["ctp", "rensa"], function(ctp, rensa) {
 define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
     // Change to false to remove whitespace from output.
     var addWhitespace = true;
     var maxEntityCount = 4;
+    var labelEntities = true;
 
     // Contains realized goals from the ASP code.
     var goals;
@@ -36,11 +37,12 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 
         //Grab sounds so we can set them up in create.
         var sounds = [];
-        // Go through each assertion.  If it is a variable initialization,
+
+        // Go through each assertion, looking for variable declarations, goals, and pools.
+        // If it is a variable initialization,
         // add it to our program.  If it is a goal assertion, update the goals array.
+        for (var i in brain.assertions) {
 
-
-        for (var i in brain.assertions){
             /* VARIABLE INSTANTIATIONS */
             if (ctp.isVariableAssertion(brain.assertions[i])){
                 programText += defineVariable(brain, brain.assertions[i]);
@@ -52,13 +54,18 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
                 programText += defineVariable(brain,brain.assertions[i]);
                 sounds.push(brain.assertions[i]);
             }
+
             /* REALIZING GOALS */
             if (ctp.isGoalAssertion(brain.assertions[i])){
                 updateAspGoals(brain, brain.assertions[i]);
             }
+
+            // Boundary type
             if (brain.assertions[i]["r"] == "boundary"){
                 boundary = brain.assertions[i]["l"];
             }
+
+            // Pools
             if (brain.assertions[i]["r"] == "pool"){
                 name = brain.assertions[i]["l"];
                 if (Object.keys(pools).length == 0){
@@ -104,7 +111,6 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
                     x = right;
                 }
 
-
                 programText += "pools['" + name + "'].push({'x':" + x +",'y':" + y + "});\n";
 
             }
@@ -112,6 +118,7 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 
         // Now, go through the assertions again.
         for (var j in brain.assertions){
+
             /* DEFINED FUNCTIONS */
             if (ctp.isFunctionAssertion(brain.assertions[j])){
                 programText += translateFunctionAssertion(brain.assertions[j]);
@@ -120,8 +127,10 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
             /* WRITING A PROGRAM FROM A PROGRAM ASSERTION CONTAINING PHASER ABSTRACT SYNTAX */
             // We assume, for now, there is only one "program" assertion.
             else if (brain.assertions[j]["relation"]=="instance_of" && brain.assertions[j]["r"].indexOf("program")>=0){
+
                 // For each function property specified in the object (e.g. "create"),
                 for (var p in brain.assertions[j]) {
+
                     if (brain.assertions[j].hasOwnProperty(p) && typeof brain.assertions[j][p]!=="function") {
                         if (p!="l" && p!="relation" && p!="r"){
                             // We're going to write the content for that function!
@@ -139,6 +148,7 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
                                 }
                             }
                             programText += "){";
+
                             /* (Now we can define the body of the function.) */
                             // If this is the create function, assign any initial variable values.
                             // (We assign variable values here, because outside the functions, variables like
@@ -164,8 +174,8 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
                                     // For each assertion in the list of assertions,
                                     for (var a in brain.assertions[j][p][c]){
                                         if (addWhitespace){programText+="\n\t";}
-                                        console.log("FUNCTION " + p + " " + c + " " + a + " ")
-                                        console.log(brain.assertions[j][p][c][a])
+                                        //console.log("FUNCTION " + p + " " + c + " " + a + " ")
+                                        //console.log(brain.assertions[j][p][c][a])
                                         programText = addGenericFunctionStatement(programText, brain, brain.assertions[j][p][c][a],p);
                                     }
                                 }
@@ -180,7 +190,7 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 
                             if (p==="create"){
                                 //programText = addResourceBarUpdateCalls(programText, variableValues)
-                                programText = addResourceBarCreateCalls(programText, variableValues);
+                                programText = addResourceBarCreateCalls (programText, variableValues);
                             }
 
                             if (p==="create"){
@@ -191,6 +201,9 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
                                 programText += "updateLabelsWithVariableValues();\n";
                                 programText += "informNarrativeOfUpdatedVariables();\n";
                                 programText += "updateLabelsWithVariableValues();\n";
+                                if (labelEntities) {
+                                    programText = addEntityLabelCreateCalls (programText, variableValues);
+                                }
                             }
 
                             if (p==="update"){
@@ -199,7 +212,8 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
                             }
 
                             if (p==="update"){
-                                programText = addResourceBarUpdateCalls(programText, variableValues)
+                                programText = addResourceBarUpdateCalls(programText, variableValues);
+                                // addEntityLabelUpdateCalls()?
                             }
                             if (p==="update"){
                                 programText = addDefaultPropertyChecks(programText);
@@ -224,6 +238,7 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
         // Return the final program text.
         return programText;
     };
+    
     var addCreateSounds = function(programText, sounds, brain, j, p){
 
         if(addWhitespace){programText+="\n"};
@@ -246,8 +261,8 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
         if(addWhitespace){programText+="\n"};
         for (var z=0; z<variableValues.length;z++){
             var curAssert = variableValues[z];
-            console.log("INITIALIZATION ");
-            console.log(curAssert);
+            //console.log("INITIALIZATION ");
+            //console.log(curAssert);
             if (curAssert.hasOwnProperty("value")){
                 if (curAssert["value"]!==""){
 
@@ -418,18 +433,27 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 
             currentVariable = variableValues[i];
             var variableTypeArray = currentVariable.variableType; // might be undefined
+
             if(variableTypeArray !== undefined && variableTypeArray[0] === "resource"){
                 //we've found a variable of type resource. Add a call ot update it to the progrma text!
                 var resourceBarName = "resourceBar" + numResources;
                 var resourceName = currentVariable.l[0];
                 var percentName = "percent" + numResources;
+
                 if(addWhitespace){programText+="\n\t"};
+
                 programText += "var " + percentName + " = " + resourceName + "/10;";
+                
                 if(addWhitespace){programText+="\n\t"};
+                
                 programText += percentName + " = " + percentName + " * 100;";
+                
                 if(addWhitespace){programText+="\n\t"};
+                
                 programText += "this."+resourceBarName+".setPercent("+percentName+");";
+                
                 if(addWhitespace){programText+="\n\t"};
+                
                 numResources += 1; // update at end, we want the first bar to have a count of zero.
             }
         }
@@ -516,6 +540,7 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
             currentVariable = variableValues[i];
             var variableTypeArray = currentVariable.variableType; // might be undefined
             if(variableTypeArray !== undefined && variableTypeArray[0] === "resource"){
+
                 //we've found a variable of type resource. Add a call ot update it to the progrma text!
                 var barConfigName= "barConfig" + numResources;
                 if(addWhitespace){programText+="\n\t"};
@@ -532,6 +557,7 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
                 var resourceBarName = "resourceBar" + numResources;
                 var resourceName = currentVariable.l[0];
                 var percentName = "percent" + numResources;
+
                 if(addWhitespace){programText+="\n\t"};
                 programText += "var " + percentName + " = " + resourceName + "/10;";
                 if(addWhitespace){programText+="\n\t"};
@@ -541,10 +567,33 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
                 if(addWhitespace){programText+="\n\t"};
 
                 numResources += 1; // update at end, we want the first bar to have a count of zero.
-
             }
         }
         return programText;
+    }
+
+
+    /*
+     * Newly added 
+     */
+    var addEntityLabelCreateCalls = function (programText, variableValues){
+
+        programText +=  "for (var k in addedEntities) {\n" +
+                        "\t if (addedEntities.hasOwnProperty(k)) {\n" +
+                        "\t \t var entity = addedEntities[k];\n" +
+                        "\t \t var labelText = labels[k].name;\n" +
+                        "\t \t entity.forEach (function(item) {\n" +
+                        "\t \t \t //console.log('item',item);\n" +
+                        "\t \t \t var entityLabel = game.add.text (0,0,labelText," +
+                            "{font:'16px Arial',fill:'#ffffff'});\n" +
+                        "\t \t \t entityLabel.anchor.set(1.5,0.5);\n" +
+                        "\t \t \t item.addChild(entityLabel);\n" +
+                        "\t \t })\n"+
+                        "\t }\n"+
+                        "}\n";
+
+        return programText;
+
     }
 
     /*

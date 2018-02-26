@@ -9,18 +9,13 @@ define([], function() {
         this.assertions = {};
     }
 
-    // Check if an assertion is already part of this Brain object's assertions list.
-    Brain.prototype.hasAssertion = function(a){
-        var assert = new Assertion(a);
-        for (var i in this.assertions){
-            if (this.assertions[i].equals(assert)){return true;}
+    // Makes a brain given a list of concepts.
+    var makeBrain = function(facts){
+        var brain = new Brain();
+        for (var i in facts){
+            brain.addAssertion(facts[i]);
         }
-        return false;
-    };
-
-    // Returns an array containing all assertions.
-    Brain.prototype.getAssertions = function(){
-        return $.map(this.assertions, function(value, key) { return value });
+        return brain;
     };
 
     // Returns the intersection between two brains.
@@ -50,6 +45,20 @@ define([], function() {
             return true;
         }
         return false;
+    };
+
+    // Check if an assertion is already part of this Brain object's assertions list.
+    Brain.prototype.hasAssertion = function(a){
+        var assert = new Assertion(a);
+        for (var i in this.assertions){
+            if (this.assertions[i].equals(assert)){return true;}
+        }
+        return false;
+    };
+
+    // Returns an array containing all assertions.
+    Brain.prototype.getAssertions = function(){
+        return $.map(this.assertions, function(value, key) { return value });
     };
 
     // Remove an assertion from the assertions list.
@@ -341,15 +350,6 @@ define([], function() {
             return attributesList[propertyName];
         }
         return defaultValue;
-    };
-
-    // Makes a brain given a list of concepts.
-    var makeBrain = function(facts){
-        var brain = new Brain();
-        for (var i in facts){
-            brain.addAssertion(facts[i]);
-        }
-        return brain;
     };
 
     // Checks if an array contains an object.

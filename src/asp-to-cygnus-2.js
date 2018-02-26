@@ -1,18 +1,27 @@
 /*
-  This file translates the generated ASP logic into Rensa-flavored JSON. Useful for visualizing the generated ASP games, as well as for translating the generated games into Phaser code.
-*/
-
-/*
-  Takes in a string array, where each element of the array is a single command given by the game generator.
-
-  Returns a list ("assertions") containing all assertions that will be added to the Cygnus brain.
+  This file translates the generated ASP logic into Rensa-flavored JSON. 
+  Useful for visualizing the generated ASP games, as well as for translating the generated games into Phaser code.
 */
 
 define([], function() {
 
-    function translateASP(lines){
+    /*
+     * Takes a string array, where each element is a single Cygnus (ASP) statement.
+     *  Parses each statement into a special JSON object with 'predicate' and 'terms' fields using parseTerms().
+     *  Then enters a large if-else chain which translates the predicate-terms object into a Rensa assertion.
+     *    Rensa assertions generally take the form "l" (left hand side of rule), "relation", "r" (right), with optional 
+     *    additional fields. 
+     *       Examples of relations: instance_of, has_label, apply_restitution, has_sprite, set_value, 
+     *                              moves, move_toward, move_away, fill, draw, clear, overlaps_color,
+     *                              add_to_location, look_at, set_acceleration, rotate_to, set_mode, 
+     *                              has_timer_logic, causes, has_state
+     * Returns a list ("assertions") containing all assertions that will be added to the Cygnus brain.
+     *
+     * TODO: More precise name
+     */
+    function translateASP (lines){
+
         // Final list of translated assertions.
-        // Ben adding a dumb line for repo test.
         var assertions = [];
 
         // A list containing all translated lines.
@@ -25,35 +34,49 @@ define([], function() {
         var preconds;
 
         // For each line,
-        for (var i in lines){
+        for (var i in lines) {
             // Temporary variable that stores the new assertions to add based on the current line we're translating.
             var assertionsToAdd = null;
-            // Parse the line into its arguments.
 
-
+            // Parse the line, create an object with the properties "predicate" -- the predicate name,
+            // and "terms" -- array of everything inside the parens of a predicate, which may include another predicate.
             var terms = parseTerms(lines[i])[0][0];
-            if (terms != undefined){
+
+            if (terms != undefined) {
+
+                // Cygnus declaration predicate, e.g., entity(e1), resource(food), flag(foo)
                 if (isSimpleDeclarationPredicate(terms.predicate)){
+
                     assertionsToAdd = [translateSimpleDeclaration(terms)];
                     doneLines.push(lines[i]);
-                    //we want to add an additional restitution assertion for each entity for pushing up against the game walls.
+
+                    // Add an additional restitution assertion for each entity for pushing up against the game walls.
                     if(isEntityPredicate(terms.predicate)){
                         assertionsToAdd.push(addEntityWallRestitutionAssertion(terms));
                     }
                 }
+
                 // If it is a label statement
-                else if(terms.predicate ==="label"){
-                    assertionsToAdd = [translateLabel(terms.terms)];
+                else if (terms.predicate === "label") {
+                    if (terms.terms[0].predicate == "entity") {
+                        assertionsToAdd = [translateEntityLabel(terms.terms)];
+                    } else if (terms.terms[0].predicate == "resource") {
+                        assertionsToAdd = [translateResourceLabel(terms.terms)];
+                    }
+                    console.log(assertionsToAdd);
                 }
-                // If it is a label statement
-                else if(terms.predicate ==="pool"){
+
+                // If it is a pool statement
+                else if (terms.predicate === "pool") {
                     assertionsToAdd = [translatePool(terms)];
                 }
-                else if(terms.predicate ==="boundary"){
+
+                else if (terms.predicate === "boundary") {
                     assertionsToAdd = [translateBoundary(terms)];
                 }
+
                 // If it is an initialize statement,
-                else if (terms.predicate=="initialize"){
+                else if (terms.predicate == "initialize") {
                     terms = terms.terms[0];
                     functionName = capitalizeFirstLetter(makeStandardJSName(terms.predicate));
                     // Call function that corresponds to the predicate.
@@ -61,27 +84,29 @@ define([], function() {
                     // TODO: avoid use of eval
                     assertionsToAdd = [eval('translate'+functionName)(terms.terms)];
 
-                    if (terms.predicate === "fill" ){
+                    if (terms.predicate === "fill" ) {
                         assertionsToAdd[0]['tags'] = ['initialize']
                     }
 
                     doneLines.push(lines[i]);
                 }
+
                 // If it is a timerLogic statement,
-                else if (terms.predicate=="timer_logic"){
+                else if (terms.predicate == "timer_logic") {
                     assertionsToAdd = [translateTimerLogic(terms.terms)];
                     doneLines.push(lines[i]);
                 }
+
                 // If it is a precondition,
-                else if (terms.predicate=="precondition"){
+                else if (terms.predicate == "precondition") {
                     var outcome = terms.terms[1];
                     // If this is a precondition with a defined string outcome (e.g. "t1"),
-                    if (outcome.terms){
+                    if (outcome.terms) {
                         // This is the string inside outcome(), e.g., "t1".
                         var keyword = terms.terms[1].terms[0].predicate;
 
                         // If we haven't addressed this keyword,
-                        if (doneKeywords.indexOf(keyword)==-1){
+                        if (doneKeywords.indexOf(keyword)==-1) {
                             // Find all related preconditions and results.
                             preconds = findPreconds(lines, keyword);
                             results = findResults(lines, keyword);
@@ -90,10 +115,11 @@ define([], function() {
                             assertionsToAdd = translatePrecondition(preconds, results, keyword);
                         }
                     }
+
                     // Otherwise, assume this is a precondition on tick.
                     // All of the results should simply be put in the update function.
                     // At this time, if a tick precondition occurs, there are no other preconditions in the group.  If this changes, we will need to alter how this works.
-                    else{
+                    else {
                         results = findResults(lines, "tick");
                         console.log("TICK RESULTS");
                         console.log(results);
@@ -121,10 +147,88 @@ define([], function() {
                         }
                     }
                 }
+
             }
         }
         return assertions;
     }
+
+    /*
+      parseTerms()
+      Takes a string -- a Cygnus ASP statement
+
+      Returns an array containing each predicate and term inside the argument as the first element.  
+      (The second element is used to recursively analyze the arguments string.  
+      At the end of the process, the second element is the empty string.)
+
+      TODO: Only return the first element array
+
+      Example:
+      JSON.stringify(parseTerms("initialize(set_sprite(entity(e1),square)).")[0][0]) >>
+      {
+        "predicate":"initialize",
+        "terms":[
+            {
+                "predicate":"set_sprite",
+                "terms":[
+                    {
+                        "predicate":"entity",
+                        "terms":[{"predicate":"e1"}]
+                    },
+                    {"predicate":"square"}
+                ]
+            }
+        ]
+      }
+    */
+    function parseTerms(arguments){
+        var terms = [];
+        while (arguments.length > 0){
+            var lParen = arguments.indexOf("(");
+            var rParen = arguments.indexOf(")");
+            comma = arguments.indexOf(",");
+            if (lParen < 0){
+                lParen = arguments.length-1;
+            }
+            if (rParen < 0){
+                rParen = arguments.length-1;
+            }
+            if (comma < 0){
+                comma = arguments.length-1;
+            }
+            var next = Math.min(lParen,rParen,comma);
+            var nextC = arguments.charAt(next);
+            var pred = arguments;
+            if (nextC=='('){
+                pred = arguments.substring(0,next);
+                var newTerms = parseTerms(arguments.substring(next+1));
+                var subTerms = newTerms[0];
+                arguments = newTerms[1];
+                terms.push({"predicate":pred,"terms":subTerms});
+            }
+            else if (nextC==')'){
+                pred = arguments.substring(0,next);
+                if (pred != ""){
+                    terms.push({"predicate":pred});
+                }
+                arguments = arguments.substring(next+1);
+                return [terms, arguments];
+            }
+            else if (nextC==','){
+                pred = arguments.substring(0,next);
+                if (pred != ""){
+                    terms.push({"predicate":pred});
+                }
+                arguments = arguments.substring(next+1);
+            }
+            else{
+                terms.push({"predicate":pred});
+                arguments = "";
+            }
+        }
+        return [terms, ""];
+    }
+
 
     /*
       Translates a precondition that occurs on tick (every update).
@@ -192,8 +296,10 @@ define([], function() {
         var declName = terms.terms[0].terms[0].predicate;
         return {"l":[declName], "relation":"instance_of", "r":["pool"], "location":[terms.terms[1]], "location_order":[terms.terms[2].predicate], "location_gen":[terms.terms[3].predicate]};
     }
+
     // Example: label(resource(r_1_XX_),satiation). >> r_1_xx has_label satiation
-    function translateLabel(terms){
+    //       or label(entity(e1),food).
+    function translateResourceLabel(terms){
         var name = terms[0].terms[0].predicate;
         var label = terms[1].predicate;
         var readWriteValue = "private"
@@ -203,6 +309,13 @@ define([], function() {
         }
         return {"l": [name], "relation":"has_label", "r":[label], "readWrite" : readWriteValue}
         //return translateSimpleTriple("has_label",terms);
+    }
+
+    // Example: label(entity(e1),food).
+    function translateEntityLabel(terms){
+        var name = terms[0].terms[0].predicate;
+        var label = terms[1].predicate;
+        return {"l": [name], "relation":"has_label", "r":[label]}
     }
 
     function addEntityWallRestitutionAssertion(terms){
@@ -370,14 +483,10 @@ define([], function() {
         //return translateSimpleTriple2("set_value",terms);
 
         // check to see the type of term 1, check to see the type of term 2
-        console.log("This code is actually run");
-        console.log(terms);
         var to_set = translateByType(terms[0]);
-        var set_to = translateByType(terms[1])
+        var set_to = translateByType(terms[1]);
 
-        return {"l":[to_set],"relation":"set_value","r":[set_to]}
-
-
+        return {"l":[to_set],"relation":"set_value","r":[set_to]};
     }
 
     /*
@@ -618,74 +727,6 @@ define([], function() {
         var duration = terms[1].terms[0].predicate;
         var logicType = terms[2].predicate;
         return {"l":[timerID],"relation":"has_timer_logic","r":[logicType],"duration":duration}
-    }
-
-    /*
-      Takes in a string ("arguments"), which represents the ASP command as given by the game generator.
-
-      Returns an array containing each predicate and term inside the argument as the first element.  (The second element is used to recursively analyze the arguments string.  At the end of the process, the second element is the empty string.)
-
-      Example:
-      JSON.stringify(parseTerms("initialize(set_sprite(e1,square)).")[0][0]) >>
-      {
-      "predicate":"initialize",
-      "terms":[
-      {
-      "predicate":"set_sprite",
-      "terms":[
-      {
-      "predicate":"entity",
-      "terms":[{"predicate":"e1"}]
-      },
-      {"predicate":"circle"}
-      ]}]}
-    */
-    function parseTerms(arguments){
-        var terms = [];
-        while (arguments.length > 0){
-            var lParen = arguments.indexOf("(");
-            var rParen = arguments.indexOf(")");
-            comma = arguments.indexOf(",");
-            if (lParen < 0){
-                lParen = arguments.length-1;
-            }
-            if (rParen < 0){
-                rParen = arguments.length-1;
-            }
-            if (comma < 0){
-                comma = arguments.length-1;
-            }
-            var next = Math.min(lParen,rParen,comma);
-            var nextC = arguments.charAt(next);
-            var pred = arguments;
-            if (nextC=='('){
-                pred = arguments.substring(0,next);
-                var newTerms = parseTerms(arguments.substring(next+1));
-                var subTerms = newTerms[0];
-                arguments = newTerms[1];
-                terms.push({"predicate":pred,"terms":subTerms});
-            }
-            else if (nextC==')'){
-                pred = arguments.substring(0,next);
-                if (pred != ""){
-                    terms.push({"predicate":pred});
-                }
-                arguments = arguments.substring(next+1);
-                return [terms, arguments];
-            }
-            else if (nextC==','){
-                pred = arguments.substring(0,next);
-                if (pred != ""){
-                    terms.push({"predicate":pred});
-                }
-                arguments = arguments.substring(next+1);
-            }
-            else{
-                terms.push({"predicate":pred});
-                arguments = "";
-            }
-        }
-        return [terms, ""];
     }
 
     /*
