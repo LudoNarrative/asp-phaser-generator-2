@@ -63,7 +63,7 @@ define([], function() {
                     } else if (terms.terms[0].predicate == "resource") {
                         assertionsToAdd = [translateResourceLabel(terms.terms)];
                     }
-                    console.log(assertionsToAdd);
+                    //console.log(assertionsToAdd);
                 }
 
                 // If it is a pool statement
@@ -121,8 +121,8 @@ define([], function() {
                     // At this time, if a tick precondition occurs, there are no other preconditions in the group.  If this changes, we will need to alter how this works.
                     else {
                         results = findResults(lines, "tick");
-                        console.log("TICK RESULTS");
-                        console.log(results);
+                        //console.log("TICK RESULTS");
+                        //console.log(results);
                         //TODO: I THINK WE NEED TO SET preconds = TO SOMETHING HERE, OTHERWISE IT COMPLAINS ABOUT NOT KNOWING WHAT PRECONDS ARE.
                         assertionsToAdd = translateTickPrecondition(results);
                     }
@@ -256,8 +256,8 @@ define([], function() {
             assertionsToAdd.push(result);
         }
 
-        console.log("tick assertions");
-        console.log(assertionsToAdd);
+        //console.log("tick assertions");
+        //console.log(assertionsToAdd);
         return assertionsToAdd;
     }
 
@@ -351,8 +351,8 @@ define([], function() {
             returnHelper.property = propertyName;
         }
         else if(terms[0].predicate === "amount"){
-            console.log("AMOUNT L");
-            console.log(terms[0].terms[0].terms[0].predicate);
+            //console.log("AMOUNT L");
+            //console.log(terms[0].terms[0].terms[0].predicate);
             returnHelper.l  = ["get_amount(" + terms[0].terms[0].terms[0].predicate + ")"];
             returnHelper.resourceL = 1;
 
@@ -360,7 +360,7 @@ define([], function() {
         else{
             returnHelper.l  = [terms[0].terms[0].predicate];
         }
-        console.log(terms[1].predicate);
+        //console.log(terms[1].predicate);
         if(terms[1].predicate === "property"){
 
 
@@ -377,8 +377,8 @@ define([], function() {
 
         }
         else if(terms[1].predicate === "amount"){
-            console.log("AMOUNT");
-            console.log(terms[1].terms[0].terms[0].predicate);
+            //console.log("AMOUNT");
+            //console.log(terms[1].terms[0].terms[0].predicate);
             returnHelper.r  = ["get_amount(" + terms[1].terms[0].terms[0].predicate + ")"];
             returnHelper.resourceR = 1;
 
@@ -454,8 +454,8 @@ define([], function() {
     function translateByType(term){
 
         var type = term.predicate;
-        console.log("Translating by type")
-        console.log(term);
+        //console.log("Translating by type")
+        //console.log(term);
         if (type == "resource"){
             return term.terms[0].predicate;
         }
@@ -964,13 +964,13 @@ define([], function() {
 
         // check for mouse press
 
-        console.log("BLIST");
-        console.log(bList);
-        console.log(bList[0])
+        //console.log("BLIST");
+        //console.log(bList);
+        //console.log(bList[0])
         if (bList[0].terms != undefined && bList[0].predicate == "button"){
-            console.log("MOUSE BUTTON");
+            //console.log("MOUSE BUTTON");
             //bList[0]="mouse_button";
-            console.log(bList[0].terms[0].predicate);
+            //console.log(bList[0].terms[0].predicate);
             //bList[1]=bList[1].replace(/\(|\)/g,'');
             ps.push({"l":["mouse_button"],"relation":a,"r":[bList[0].terms[1].predicate]});
         }
@@ -1003,20 +1003,20 @@ define([], function() {
             else{
                 right = right.terms[0].predicate;
             }
-            console.log(left + " " + a  + " " + right)
+            //console.log(left + " " + a  + " " + right)
             ps.push({"l":[left],"relation":a,"r":[right]});
         }
         else if (bList.length==3){
-            console.log(bList);
-            console.log("LEFT");
+            //console.log(bList);
+            //console.log("LEFT");
             //var left = bList[0].terms[0].predicate;
             //var right = bList[1].terms[0].predicate;
             var left = bList[0];
             var right = bList[1];
-            console.log(a);
-            console.log(bList);
+            //console.log(a);
+            //console.log(bList);
             if (a == "ge"){
-                console.log(bList);
+                //console.log(bList);
             }
             // TODO (if needed)
             // if (typeof bList[2] == "number"){
@@ -1046,8 +1046,8 @@ define([], function() {
             var r = parseTerms(results[i].substring(1));
             var e = r[0][1].predicate;
             var fList = r[0][1].terms;
-            console.log("TRANSLATE NORMAL RESULT");
-            console.log(fList);
+            //console.log("TRANSLATE NORMAL RESULT");
+            //console.log(fList);
             // TODO: add more if statements for simple translates (like "translateAdd") here as needed
             if (e=="add"){
                 rs.push(translateAdd(fList));
@@ -1076,7 +1076,7 @@ define([], function() {
                     }
                 }
                 else {
-                    console.log("addNormalResult fList.length==1 DONT KNOW WHAT TO DO");
+                    //console.log("addNormalResult fList.length==1 DONT KNOW WHAT TO DO");
                 }
             }
             // Push this result into our final array of all results.
@@ -1107,8 +1107,8 @@ define([], function() {
 
                 }
                 else if (e=="set_value"){
-                    console.log("SETTING VALUE");
-                    console.log(fList);
+                    //console.log("SETTING VALUE");
+                    //console.log(fList);
                     rs.push(translateSetValue(fList));
                 }
                 else {

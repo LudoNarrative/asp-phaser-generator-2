@@ -204,13 +204,13 @@ define(["./brain"], function(rensa) {
 
             // If the assertion has been tagged with "update",
             else if (cygnusBrain.assertions[i].hasOwnProperty("tags")){
-                console.log("********************************************* PHASER BRAIN STUFF");
-                console.log(cygnusBrain.assertions[i])
+                //console.log("********************************************* PHASER BRAIN STUFF");
+                //console.log(cygnusBrain.assertions[i])
                 if (cygnusBrain.assertions[i]["tags"].indexOf("update")>=0){
-                    console.log("********************************************* UPDATE");
+                    //console.log("********************************************* UPDATE");
                     // If the value of a variable is changing (increase/decrease/over_time), we need to tell Phaser's update function (specifically the "vars" slot).
                     if (isUpdateValueAssertion(cygnusBrain.assertions[i])){
-                        console.log("********************************************* VARS");
+                        //console.log("********************************************* VARS");
                         newProgram["update"]["vars"].push(changeToSetValue(cygnusBrain.assertions[i]));
                     }
                     // Otherwise, we should still add to the update function (but in the "misc" category).

@@ -46,8 +46,8 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
             /* VARIABLE INSTANTIATIONS */
             if (ctp.isVariableAssertion(brain.assertions[i])){
                 programText += defineVariable(brain, brain.assertions[i]);
-                console.log("VARIABLE ASSERTION ")
-                console.log(brain.assertions[i]);
+                //console.log("VARIABLE ASSERTION ")
+                //console.log(brain.assertions[i]);
                 variableValues.push(brain.assertions[i]);
             }
             if (brain.assertions[i]["r"] == "sound"){
@@ -98,7 +98,7 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
                     y = bottom;
                 }
                 else{
-                    console.log("Warning: keyword " + row + " is not a known row name.");
+                    //console.log("Warning: keyword " + row + " is not a known row name.");
                 }
 
                 if (col=="left"){
@@ -555,9 +555,9 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
                 programText += "this.resourceBar" + numResources + " = new HealthBar(this.game, " + barConfigName +")";
                 if(addWhitespace){programText+="\n\t"};
 
-                programText += "\n console.log('labels:',labels);";
-                console.log ("current Variable: ", currentVariable);
-                console.log ("resourceName: ", resourceName);
+                //programText += "\n console.log('labels:',labels);";
+                //console.log ("current Variable: ", currentVariable);
+                //console.log ("resourceName: ", resourceName);
 
                 //programText += "if (labels[" + resourceName + "] != undefined) { " +
                 //   "\n console.log('resource label:', labels['" + resourceName + "'].name);" +
@@ -656,8 +656,8 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
             programText += translateConditionalAssertion(brain, curAssert);
         }
         else if (ctp.isSetValueAssertion(curAssert)){
-            console.log("TRANSLATING SET VALUE");
-            console.log(curAssert);
+            //console.log("TRANSLATING SET VALUE");
+            //console.log(curAssert);
             programText += translateSetValue(curAssert);
         }
         else if (ctp.isRelationType(curAssert, "has_sprite")){
@@ -728,7 +728,7 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
             programText += translateAddSound(curAssert);
         }
         else if (curAssert["relation"] == "fill"){
-            console.log('A');
+            //console.log('A');
             programText += translateFill(curAssert);
         }
         else if (curAssert["relation"] == "clear"){
@@ -741,8 +741,8 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
             programText += translateClear(curAssert);
         }
         else{
-            console.log('DONT KNOW WHAT TO DO WITH:');
-            console.log(curAssert);
+            //console.log('DONT KNOW WHAT TO DO WITH:');
+            //console.log(curAssert);
         }
         return programText;
     }
@@ -822,7 +822,7 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 
     }
     var translateFill = function(cur){
-        console.log(cur);
+        //console.log(cur);
         var x = 0;
         var y = 0;
         var width = 400;
@@ -917,7 +917,7 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
             entity1 = names[0];
         }
 
-        console.log(str=a["l"][0] + "=" + a["r"][0] + ";\n")
+        //console.log(str=a["l"][0] + "=" + a["r"][0] + ";\n")
         // Check if dealing with properties
         if (!(nested_entity === entity1) && (a["l"][0].indexOf(".")>0 || a["r"][0].indexOf(".")>0) && !(a["l"][0].indexOf("game.")>0) && !(a["r"][0].indexOf("game.")>0)){
             if (a["l"][0].indexOf(".")>0){
@@ -1009,8 +1009,8 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
         if (!emptyHypothesis){
 
             for (var i=0; i< a["l"].length;i++){
-                console.log("LHS")
-                console.log(a["l"][i]["l"][0])
+                //console.log("LHS")
+                //console.log(a["l"][i]["l"][0])
                 if (a["l"][i]["l"][0].predicate === "property" ){
                     nested = true;
                     entity = a["l"][i]["l"][0].terms[0].predicate;
@@ -1028,7 +1028,7 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
                     a["l"][i]["l"] = 'get_distance(' + entity + ',"' + other + '","' + type + '")\n';
                     nesting_entity = entity;
                     //todo: JG
-                    console.log("DISTANCE STU|FFFF");
+                    //console.log("DISTANCE STU|FFFF");
                 }
             }
 
@@ -1036,7 +1036,7 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
             // Add each assertion in the hypothesis.
 
             for (var i=0; i< a["l"].length;i++){
-                console.log(a["l"][i]["l"][0]);
+                //console.log(a["l"][i]["l"][0]);
                 if (a["l"][i]["relation"]=="eq"){
                     str += a["l"][i]["l"];
                     str += "==";
@@ -1079,7 +1079,7 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
                     str+="!game.input.activePointer.leftButton.isDown";
                 }
                 else{
-                    console.log("Error: unrecognized relation " + a["relation"] + " for conditional assertion.  \n\tFile: PhaserInterpreter.  Function: translateConditionalAssertion.");
+                    console.error("Error: unrecognized relation " + a["relation"] + " for conditional assertion.  \n\tFile: PhaserInterpreter.  Function: translateConditionalAssertion.");
                 }
 
 
@@ -1095,9 +1095,9 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
         // Add each assertion in the conclusion.
         if (!emptyHypothesis && addWhitespace){str+="\t\t";}
         for (var j=0; j<a["r"].length;j++){
-            console.log(a["r"][j]);
+            //console.log(a["r"][j]);
             if (a["r"][j]["relation"]==="set_value"){
-                console.log("TRANSLATE SET VALUE")
+                //console.log("TRANSLATE SET VALUE")
 
                 str+=translateSetValue(a["r"][j],nesting_entity);
             }
@@ -1138,8 +1138,8 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
                 str +=translateClear(a["r"][j], nesting_entity);
             }
             else{
-                console.log("translateConditionalAssertion -- DONT KNOW WHAT TO DO WITH:");
-                console.log(a["r"][j]);
+                //console.log("translateConditionalAssertion -- DONT KNOW WHAT TO DO WITH:");
+                //console.log(a["r"][j]);
             }
             if (addWhitespace){str+="\n\t";}
         }
@@ -1180,7 +1180,7 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
         var starAssetNames = ["starCircleCut.png","starCircleCut2.png","starDiagonalLines.png","starDiagonalLines2.png","starGradientLinear.png","starGradientRadial.png","starGradientRadial2.png","starStyled01.png","starTriCuts.png"];
         var pentagonAssetNames = ["pentagon.png","pentagon1.0.png","pentagon2.0.png","pentagon3.0.png","pentagon3.1.png"];
         var triangleAssetNames = ["triangleCircleCut.png","triangleCircleCut2.png","triangleDiagonalLines.png","triangleDiagonalLines2.png","triangleLinearGradient.png","triangleRadialGradient.png","triangleStyled01.png","triangleStyled02.png"];
-        console.log("ADD SPRITE");
+        //console.log("ADD SPRITE");
         // If the image name exists, add the appropriate preload message for the sprite.
 
         str+= "game.load.image('circle','assets/sprites/circle.png');"
@@ -1297,7 +1297,7 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
                 y = bottom;
             }
             else{
-                console.log("Warning: keyword " + row + " is not a known row name.");
+                //console.log("Warning: keyword " + row + " is not a known row name.");
             }
 
             if (col=="left"){
@@ -1310,7 +1310,7 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
                 x = right;
             }
             else{
-                console.log("Warning: keyword " + col + " is not a known col name.");
+                //console.log("Warning: keyword " + col + " is not a known col name.");
             }
             str+="var x="+x+"+ xOffset;";
             str+="var y="+y+"+ yOffset;";
@@ -1364,7 +1364,7 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 
         if (num.indexOf("_") >= 0){
             str+="var num_to_add ="+num+"/3;\n";
-            str+="console.log( num_to_add);";
+            //str+="console.log( num_to_add);";
 
             num = "num_to_add";
         }
@@ -1504,10 +1504,10 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
         var entity1 = a["l"][0];
 
         var nested = (entity1 === nested_entity);
-        console.log("MOVE");
-        console.log(entity1);
-        console.log(nested_entity);
-        console.log(nested);
+        //console.log("MOVE");
+        //console.log(entity1);
+        //console.log(nested_entity);
+        //console.log(nested);
         if (!nested){
             str+= "addedEntities['"+a["l"][0]+"'].forEach(function(item) {";
             entity1 = "item";
@@ -1734,7 +1734,7 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
                 realizedGoal = goalType.charAt(0).toUpperCase() + goalType.substr(1).toLowerCase() + " " + goalObj;
             }
             else {
-                console.log("ERROR: Unrecognized goal object.")
+                console.error("ERROR: Unrecognized goal object.")
             }
             // Add the realized goal to the "goals" array.
             if (realizedGoal !== ""){
@@ -1781,14 +1781,14 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
         var timerID = a["l"][0];
         // Find timer logic assertion ID.
         var timerLogicID = b.getAssertionsWith({"l":[timerID],"relation":"has_timer_logic"})
-        console.log(b);
-        console.log(a);
-        console.log(timerID);
+        //console.log(b);
+        //console.log(a);
+        //console.log(timerID);
         if (timerLogicID !== undefined && timerLogicID !== []){
             // Get the timer logic assertion.
             var timerLogicAssert = b.getAssertionByID(timerLogicID);
 
-            console.log(timerLogicID)
+            //console.log(timerLogicID)
             if (timerLogicAssert.hasOwnProperty("duration")){
                 var goal_keyword = a["goal_keyword"];
                 var callback = goal_keyword + "_" + timerID + "Listener";
@@ -1966,7 +1966,7 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
                 str += "\n\t\t\tcurBestIndex = Math.floor(Math.random() * (addedEntities['"+e2+"'].length));";
             }
             else{
-                console.log("ERROR: UNRECOGNIZED VALUE FOR CHOICE IN look_at COMMAND");
+                console.error("ERROR: UNRECOGNIZED VALUE FOR CHOICE IN look_at COMMAND");
             }
 
             //we care about
