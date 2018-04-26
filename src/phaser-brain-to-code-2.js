@@ -549,6 +549,9 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
                 if(addWhitespace){programText+="\n\t"};
                 programText += "this.resourceBar" + numResources + " = new HealthBar(this.game, " + barConfigName +")";
                 if(addWhitespace){programText+="\n\t"};
+
+                console.log("resource bar name:",resourceName);
+
                 programText += "addBarLabel(" + barConfigName + ", " + numResources + ", labels['" + resourceName + "'].name);"
                 if(addWhitespace){programText+="\n\t"};
 
@@ -574,21 +577,24 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 
 
     /*
-     * Newly added 
+     * Add labels to entities (if a label was defined for that entity)
      */
     var addEntityLabelCreateCalls = function (programText, variableValues){
 
         programText +=  "for (var k in addedEntities) {\n" +
                         "\t if (addedEntities.hasOwnProperty(k)) {\n" +
                         "\t \t var entity = addedEntities[k];\n" +
-                        "\t \t var labelText = labels[k].name;\n" +
-                        "\t \t entity.forEach (function(item) {\n" +
-                        "\t \t \t //console.log('item',item);\n" +
-                        "\t \t \t var entityLabel = game.add.text (0,0,labelText," +
+                        "\t \t if (labels[k] != null) {\n" +
+                        "\t \t \t var labelText = labels[k].name;\n" +
+                        "\t \t \t console.log ('entity labeltext',labelText);\n" +
+                        "\t \t \t entity.forEach (function(item) {\n" +
+                        "\t \t \t \t //console.log('item',item);\n" +
+                        "\t \t \t \t var entityLabel = game.add.text (0,0,labelText," +
                             "{font:'16px Arial',fill:'#ffffff'});\n" +
-                        "\t \t \t entityLabel.anchor.set(1.5,0.5);\n" +
-                        "\t \t \t item.addChild(entityLabel);\n" +
-                        "\t \t })\n"+
+                        "\t \t \t \t entityLabel.anchor.set(1.5,0.5);\n" +
+                        "\t \t \t \t item.addChild(entityLabel);\n" +
+                        "\t \t \t })\n"+
+                        "\t \t }\n"+
                         "\t }\n"+
                         "}\n";
 
