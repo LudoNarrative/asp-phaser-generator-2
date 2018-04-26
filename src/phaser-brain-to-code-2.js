@@ -190,6 +190,8 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
 
                             if (p==="create"){
                                 //programText = addResourceBarUpdateCalls(programText, variableValues)
+                                programText += "updateLabelsWithVariableValues();\n";
+
                                 programText = addResourceBarCreateCalls (programText, variableValues);
                             }
 
@@ -541,18 +543,34 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
             var variableTypeArray = currentVariable.variableType; // might be undefined
             if(variableTypeArray !== undefined && variableTypeArray[0] === "resource"){
 
-                //we've found a variable of type resource. Add a call ot update it to the progrma text!
+                //we've found a variable of type resource. Add a call to update it to the program text!
                 var barConfigName= "barConfig" + numResources;
                 if(addWhitespace){programText+="\n\t"};
                 var resourceName = currentVariable.l[0];
-                programText += "var " + barConfigName + " = createProgressBarConfig(" + resourceName + ", " + numResources + ", labels['" + resourceName + "'].name);";
+                
+                programText += "var " + barConfigName + " = createProgressBarConfig(" + resourceName + ", " + numResources + ");";//", labels['" + resourceName + "'].name);";
+
+                
                 if(addWhitespace){programText+="\n\t"};
                 programText += "this.resourceBar" + numResources + " = new HealthBar(this.game, " + barConfigName +")";
                 if(addWhitespace){programText+="\n\t"};
 
-                console.log("resource bar name:",resourceName);
+                programText += "\n console.log('labels:',labels);";
+                console.log ("current Variable: ", currentVariable);
+                console.log ("resourceName: ", resourceName);
 
-                programText += "addBarLabel(" + barConfigName + ", " + numResources + ", labels['" + resourceName + "'].name);"
+                //programText += "if (labels[" + resourceName + "] != undefined) { " +
+                //   "\n console.log('resource label:', labels['" + resourceName + "'].name);" +
+                 //   "\n } else { console.log (" + resourceName + ", 'has no label'); } ";
+
+                //programText += "addBarLabel(" + barConfigName + ", " + numResources + ", labels['" + resourceName + "'].name);"
+                programText += //"\n if(labels[" + resourceName + "] != undefined) {" +
+                    "\n \t addBarLabel(" + barConfigName + ", " + numResources + ", labels['" + resourceName +
+                    "'].name);";// +
+                    //"\n console.log('resource label:', labels['" + resourceName + "'].name);" +
+                    //"\n }" ;
+
+
                 if(addWhitespace){programText+="\n\t"};
 
 
@@ -586,7 +604,7 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
                         "\t \t var entity = addedEntities[k];\n" +
                         "\t \t if (labels[k] != null) {\n" +
                         "\t \t \t var labelText = labels[k].name;\n" +
-                        "\t \t \t console.log ('entity labeltext',labelText);\n" +
+                        "\t \t \t //console.log ('entity labeltext',labelText);\n" +
                         "\t \t \t entity.forEach (function(item) {\n" +
                         "\t \t \t \t //console.log('item',item);\n" +
                         "\t \t \t \t var entityLabel = game.add.text (0,0,labelText," +

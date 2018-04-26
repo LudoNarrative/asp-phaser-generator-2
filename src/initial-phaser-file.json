@@ -508,7 +508,7 @@
     "l":["createProgressBarConfig"],
     "relation":"instance_of",
     "r":["function"],
-    "params":["resourceValue","resourceCount","label"],
+    "params":["resourceValue","resourceCount"],
     "lines":[
       "var barConfig = {};",
       "var barHeight = 18;",
