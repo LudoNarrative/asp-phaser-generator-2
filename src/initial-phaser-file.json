@@ -282,8 +282,8 @@
     "r":["function"],
     "params":["variable, varName"],
       "lines":[
-	  "console.log(variable + ' =  State.get( \"' + varName + '\")' );",
-	  "console.log(eval('State.get( \" ' + varName + '\")' ));",
+	  "//console.log(variable + ' =  State.get( \"' + varName + '\")' );",
+	  "//console.log(eval('State.get( \" ' + varName + '\")' ));",
 	  "eval(variable + ' =  State.get( \"' + varName + '\")' );"]
   },
   {
@@ -424,8 +424,8 @@
       "\t var entityLabel = game.add.text(0,0,labelText,{font:'16px Arial',fill:'#ffffff'});",
       "\t entityLabel.anchor.set(1.5,0.5);",
       "\t item.addChild (entityLabel);",
-      "\t console.log('labels:',Object.keys(labels));",
-      "\t console.log('labelText:',labelText);",
+      "\t //console.log('labels:',Object.keys(labels));",
+      "\t //console.log('labelText:',labelText);",
       "}"      
     ]
   },
@@ -600,7 +600,7 @@
       "r":["function"],
       "params":[],
       "lines":[
-	  "console.log('CREATED STOPWATC')",
+	  "//console.log('CREATED STOPWATC')",
 	  "var startAt= 0;// Time of last start / resume. (0 if not running)",
 	  "var lapTime= 0;// Time on the clock when last stopped in milliseconds",
 	  "var now= function() {",
@@ -629,7 +629,7 @@
 	  "var factor = 16;",
 	  "    colors = {'red':[255,0,0],'blue':[0,0,255],'orange':[255, 87, 51],'green':[41, 159, 55],'clear':[0, 0, 0]};",
 	  "if ( typeof this.checker_timeout == 'undefined' ){",
-	  "\t console.log('SHOULD CREATE HERE');",
+	  "\t //console.log('SHOULD CREATE HERE');",
           "\t this.checker_timeout = new clsStopwatch();",
           "\t this.checker_timeout.start();",
 	  "    pixels = background.getPixels(new Phaser.Rectangle(0,0,400,300)).data;",
@@ -641,7 +641,7 @@
 	  "            count += 1;",
 	  "        }",
 	  "     }",
-	  "     console.log('COLOR = ' + colorStr +' '+ (count*10.*factor / (400.*300.)));",
+	  "     //console.log('COLOR = ' + colorStr +' '+ (count*10.*factor / (400.*300.)));",
 	  "     this.last =[];",
 	  "     this.last[colorStr] =  count*10.*factor / (400.*300.);",
 	  "}", 
@@ -657,7 +657,7 @@
 	  "            count += 1;",
 	  "        }",
 	  "     }",
-	  "     console.log('COLOR = ' +  count*10.*factor / (400.*300.));",
+	  "     //console.log('COLOR = ' +  count*10.*factor / (400.*300.));",
 	  "     this.last[colorStr] =  count*10.*factor / (400.*300.);",
 	  "}",
 	  "return this.last[colorStr];"
@@ -763,7 +763,7 @@
       "if (mode === 'nearest' && distance < best){ best = distance;}",
       "if (mode === 'furthest' && distance > best){ best = distance;}",
 	  "}, this);",
-	  "console.log(best);",
+	  "//console.log(best);",
       "return best*0.75;"
     ]
   },
