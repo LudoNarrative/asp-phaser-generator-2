@@ -422,7 +422,7 @@
       "if (labels.hasOwnProperty(entityName)) {",
       "\t var labelText = labels[entityName].name;",
       "\t var entityLabel = game.add.text(0,0,labelText,{font:'16px Arial',fill:'#ffffff'});",
-      "\t entityLabel.anchor.set(1.5,0.5);",
+      "\t entityLabel.anchor.set(2.1,0.4);",
       "\t item.addChild (entityLabel);",
       "\t //console.log('labels:',Object.keys(labels));",
       "\t //console.log('labelText:',labelText);",

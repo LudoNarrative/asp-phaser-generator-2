@@ -609,7 +609,7 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
                         "\t \t \t \t //console.log('item',item);\n" +
                         "\t \t \t \t var entityLabel = game.add.text (0,0,labelText," +
                             "{font:'16px Arial',fill:'#ffffff'});\n" +
-                        "\t \t \t \t entityLabel.anchor.set(1.5,0.5);\n" +
+                        "\t \t \t \t entityLabel.anchor.set(2.1,0.4);\n" +
                         "\t \t \t \t item.addChild(entityLabel);\n" +
                         "\t \t \t })\n"+
                         "\t \t }\n"+
