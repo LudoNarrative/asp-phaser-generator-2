@@ -1151,9 +1151,9 @@ define(["./cygnus-to-phaser-brain-2", "./brain"], function(ctp, rensa) {
                 if (addWhitespace){
                     used_whitespace = "\n";
                 }
-                str += used_whitespace + "else {"+used_whitespace;
-                str += "bad_sound.play();"+used_whitespace;
-                str += "}";
+                //str += used_whitespace + "else {"+used_whitespace;
+                //str += "bad_sound.play();"+used_whitespace;
+                //str += "}";
             }
         }
         if (addWhitespace){str+="\n";}
